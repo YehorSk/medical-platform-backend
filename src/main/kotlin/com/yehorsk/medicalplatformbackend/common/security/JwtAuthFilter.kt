@@ -1,11 +1,14 @@
 package com.yehorsk.medicalplatformbackend.common.security
 
 import com.yehorsk.medicalplatformbackend.common.util.JwtService
+import com.yehorsk.medicalplatformbackend.user.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserDoesNotExistException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -24,10 +27,11 @@ class JwtAuthFilter(
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             if(jwtService.validateAccessToken(authHeader)) {
                 val userId = jwtService.getUserIdFromToken(authHeader)
+                val userRole = jwtService.getUserRoleFromToken(authHeader)
                 val auth = UsernamePasswordAuthenticationToken(
                     userId,
                     null,
-                    emptyList()
+                    listOf(SimpleGrantedAuthority("ROLE_$userRole"))
                 )
                 SecurityContextHolder.getContext().authentication = auth
             }

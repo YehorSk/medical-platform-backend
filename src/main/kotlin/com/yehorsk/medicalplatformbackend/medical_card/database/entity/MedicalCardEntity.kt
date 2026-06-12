@@ -1,5 +1,6 @@
 package com.yehorsk.medicalplatformbackend.medical_card.database.entity
 
+import com.yehorsk.medicalplatformbackend.common.domain.type.AllergenId
 import com.yehorsk.medicalplatformbackend.common.domain.type.MedicalCardId
 import com.yehorsk.medicalplatformbackend.user.database.entity.UserEntity
 import jakarta.persistence.CascadeType
@@ -39,13 +40,33 @@ class MedicalCardEntity(
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
-    var allergens: MutableList<PatientHasAllergenEntity> = mutableListOf(),
+    var allergens: MutableSet<PatientHasAllergenEntity> = mutableSetOf(),
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    var createdAt: Instant? = null,
+    var createdAt: Instant = Instant.now(),
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    var updatedAt: Instant? = null,
-)
+    var updatedAt: Instant = Instant.now(),
+){
+
+    fun addAllergen(allergen: AllergenEntity, note: String? = null, severity: AllergySeverity){
+        if(allergens.any{ it.allergen.id == allergen.id}) return
+        allergens.add(
+            PatientHasAllergenEntity(
+                allergen = allergen,
+                medicalCard = this,
+                note = note,
+                severity = severity
+            )
+        )
+    }
+
+    fun removerAllergen(allergenId: AllergenId){
+        allergens.removeIf {
+            it.allergen.id == allergenId
+        }
+    }
+
+}

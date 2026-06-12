@@ -78,11 +78,11 @@ class UserEntity(
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    var createdAt: Instant? = null,
+    var createdAt: Instant = Instant.now(),
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    var updatedAt: Instant? = null,
+    var updatedAt: Instant = Instant.now(),
 )
 
 enum class UserRole {

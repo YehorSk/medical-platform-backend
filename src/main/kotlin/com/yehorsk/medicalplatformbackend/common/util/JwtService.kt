@@ -2,6 +2,7 @@ package com.yehorsk.medicalplatformbackend.common.util
 
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidTokenException
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
+import com.yehorsk.medicalplatformbackend.user.database.entity.UserRole
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
@@ -28,6 +29,7 @@ class JwtService(
     private fun generateToken(
         userId: UserId,
         type: String,
+        role: UserRole,
         expiry: Long
     ): String {
         val now = Date()
@@ -35,6 +37,7 @@ class JwtService(
         return Jwts
             .builder()
             .subject(userId.toString())
+            .claim("role", role.name)
             .claim("type", type)
             .issuedAt(now)
             .expiration(expiryDate)
@@ -42,12 +45,12 @@ class JwtService(
             .compact()
     }
 
-    fun generateAccessToken(userId: UserId): String {
-        return generateToken(userId, "access", accessTokenValidityMs)
+    fun generateAccessToken(userId: UserId, role: UserRole): String {
+        return generateToken(userId, "access", role, accessTokenValidityMs)
     }
 
-    fun generateRefreshToken(userId: UserId): String {
-        return generateToken(userId, "refresh", refreshTokenValidityMs)
+    fun generateRefreshToken(userId: UserId, role: UserRole): String {
+        return generateToken(userId, "refresh", role, refreshTokenValidityMs)
     }
 
     fun validateAccessToken(token: String): Boolean {
@@ -65,6 +68,11 @@ class JwtService(
     fun getUserIdFromToken(token: String): UserId {
         val claims = parseAllClaims(token) ?: throw InvalidTokenException()
         return UUID.fromString(claims.subject)
+    }
+
+    fun getUserRoleFromToken(token: String): UserRole {
+        val claims = parseAllClaims(token) ?: throw InvalidTokenException()
+        return UserRole.valueOf(claims["role"] as String)
     }
 
     private fun parseAllClaims(token: String): Claims? {

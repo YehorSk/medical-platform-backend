@@ -22,7 +22,7 @@ enum class AllergySeverity {
 class PatientHasAllergenEntity(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: PatientHasAllergenId? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,5 +37,5 @@ class PatientHasAllergenEntity(
     var note: String? = null,
 
     @Enumerated(EnumType.STRING)
-    var severity: AllergySeverity? = null
+    var severity: AllergySeverity
 )

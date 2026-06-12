@@ -18,12 +18,6 @@ class AuthController(
     private val authService: AuthService
 ) {
 
-//    @PreAuthorize("isAuthenticated()")
-//    @GetMapping("/")
-//    fun user(@AuthenticationPrincipal principal: CustomUserDetails): UserResponseDto {
-//        return principal.user.toUserResponseDto()
-//    }
-
     @PostMapping("/register")
     fun register(
         @Valid @RequestBody request: RegisterRequestDto

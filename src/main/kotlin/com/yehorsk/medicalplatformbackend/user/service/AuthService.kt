@@ -92,8 +92,8 @@ class AuthService(
         }
 
         return user.id?.let { id ->
-            val accessToken = jwtService.generateAccessToken(id)
-            val refreshToken = jwtService.generateRefreshToken(id)
+            val accessToken = jwtService.generateAccessToken(id, user.role)
+            val refreshToken = jwtService.generateRefreshToken(id, user.role)
 
             storeRefreshToken(user, refreshToken)
 
@@ -120,8 +120,8 @@ class AuthService(
 
         refreshTokenRepository.deleteByUserIdAndHashedToken(userId, hashed)
 
-        val newAccessToken = jwtService.generateAccessToken(userId)
-        val newRefreshToken = jwtService.generateRefreshToken(userId)
+        val newAccessToken = jwtService.generateAccessToken(userId, user.role)
+        val newRefreshToken = jwtService.generateRefreshToken(userId, user.role)
 
         storeRefreshToken(user, newRefreshToken)
 

@@ -4,7 +4,9 @@ import java.util.UUID
 
 typealias UserId = UUID
 typealias DoctorId = UUID
+typealias SpecializationId = UUID
 typealias MedicalCardId = UUID
 typealias AllergenCategoryId = UUID
 typealias AllergenId = UUID
 typealias PatientHasAllergenId = UUID
+typealias DoctorHasSpecializationsId = UUID
