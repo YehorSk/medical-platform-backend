@@ -95,7 +95,9 @@ class AuthService(
             val accessToken = jwtService.generateAccessToken(id, user.role)
             val refreshToken = jwtService.generateRefreshToken(id, user.role)
 
-            storeRefreshToken(user, refreshToken)
+            user.id?.let {
+                storeRefreshToken(it, refreshToken)
+            }
 
             AuthenticatedUserResponseDto(
                 user = user.toUserResponseDto(),
@@ -123,7 +125,9 @@ class AuthService(
         val newAccessToken = jwtService.generateAccessToken(userId, user.role)
         val newRefreshToken = jwtService.generateRefreshToken(userId, user.role)
 
-        storeRefreshToken(user, newRefreshToken)
+        user.id?.let {
+            storeRefreshToken(it, newRefreshToken)
+        }
 
         return AuthenticatedUserResponseDto(
             user = user.toUserResponseDto(),
@@ -139,13 +143,13 @@ class AuthService(
         refreshTokenRepository.deleteByUserIdAndHashedToken(userId, hashed)
     }
 
-    private fun storeRefreshToken(user: UserEntity, token: String){
+    private fun storeRefreshToken(userId: UserId, token: String){
         val hashed = hashToken(token)
         val expiresAt = Instant.now().plusMillis(jwtService.refreshTokenValidityMs)
 
         refreshTokenRepository.save(
             RefreshTokenEntity(
-                user = user,
+                userId = userId,
                 hashedToken = hashed,
                 expiresAt = expiresAt
             )

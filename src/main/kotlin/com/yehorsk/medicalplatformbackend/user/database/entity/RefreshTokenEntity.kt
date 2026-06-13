@@ -1,5 +1,6 @@
 package com.yehorsk.medicalplatformbackend.user.database.entity
 
+import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -13,18 +14,15 @@ import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 
 @Entity
-@Table(
-    name = "refresh_tokens"
-)
+@Table(name = "refresh_tokens")
 class RefreshTokenEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true)
-    var user: UserEntity,
+    @Column(name = "user_id", nullable = false)
+    var userId: UserId,
 
     @Column(nullable = false)
     var expiresAt: Instant,

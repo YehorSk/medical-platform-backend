@@ -10,7 +10,9 @@ import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserAlreadyExist
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserDoesNotExistException
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserNotAuthenticatedException
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -18,66 +20,83 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class AuthExceptionHandler {
 
     @ExceptionHandler(EmailIsTakenException::class)
-    fun handleEmailTaken(e: EmailIsTakenException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.CONFLICT)
-            .body(mapOf("email" to "Email is already taken"))
-    }
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun onEmailIsTaken(e: EmailIsTakenException) = mapOf(
+        "code" to "EMAIL_TAKEN",
+        "message" to e.message
+    )
 
     @ExceptionHandler(InvalidCredentialsException::class)
-    fun handleInvalidCredentials(e: InvalidCredentialsException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(mapOf("error" to "Invalid credentials"))
-    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun onInvalidCredentials(e: InvalidCredentialsException) = mapOf(
+        "code" to "INVALID_CREDENTIALS",
+        "message" to e.message
+    )
 
     @ExceptionHandler(UserDoesNotExistException::class)
-    fun handleUserDoesNotExist(e: UserDoesNotExistException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(mapOf("error" to "User does not exist"))
-    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun onUserDoesNotExist(e: UserDoesNotExistException) = mapOf(
+        "code" to "USER_NOT_FOUND",
+        "message" to e.message
+    )
 
     @ExceptionHandler(UserAlreadyExistException::class)
-    fun handleUserAlreadyExist(e: UserAlreadyExistException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(mapOf("error" to "User already exist"))
-    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun onUserAlreadyExist(e: UserAlreadyExistException) = mapOf(
+        "code" to "USER_EXISTS",
+        "message" to e.message
+    )
 
     @ExceptionHandler(DoctorAlreadyExistException::class)
-    fun handleDoctorAlreadyExist(e: DoctorAlreadyExistException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(mapOf("error" to "Doctor already exist"))
-    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun onDoctorAlreadyExist(e: DoctorAlreadyExistException) = mapOf(
+        "code" to "DOCTOR_EXISTS",
+        "message" to e.message
+    )
 
     @ExceptionHandler(DoctorNotApprovedException::class)
-    fun handleDoctorNotApproved(e: DoctorNotApprovedException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(mapOf("error" to "Doctor not approved"))
-    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun onDoctorNotApproved(e: DoctorNotApprovedException) = mapOf(
+        "code" to "DOCTOR_NOT_APPROVED",
+        "message" to e.message
+    )
 
     @ExceptionHandler(UserNotAuthenticatedException::class)
-    fun userNotAuthenticated(e: UserNotAuthenticatedException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(mapOf("error" to "User isn't authenticated."))
-    }
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun onUserNotAuthenticated(e: UserNotAuthenticatedException) = mapOf(
+        "code" to "UNAUTHORIZED",
+        "message" to e.message
+    )
 
     @ExceptionHandler(InvalidRefreshTokenException::class)
-    fun invalidRefreshToken(e: InvalidRefreshTokenException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(mapOf("error" to "Invalid refresh token"))
-    }
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun onInvalidRefreshToken(e: InvalidRefreshTokenException) = mapOf(
+        "code" to "INVALID_REFRESH_TOKEN",
+        "message" to e.message
+    )
 
     @ExceptionHandler(InvalidAccessTokenException::class)
-    fun invalidAccessToken(e: InvalidAccessTokenException): ResponseEntity<Map<String, String>> {
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun onInvalidAccessToken(e: InvalidAccessTokenException) = mapOf(
+        "code" to "INVALID_ACCESS_TOKEN",
+        "message" to e.message
+    )
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun onValidationException(
+        e: MethodArgumentNotValidException
+    ): ResponseEntity<Map<String, Any>> {
+        val errors = e.bindingResult!!.allErrors.map {
+            it.defaultMessage ?: "Invalid value"
+        }
         return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(mapOf("error" to "Invalid access token"))
+            .status(HttpStatus.BAD_REQUEST)
+            .body(
+                mapOf(
+                    "code" to "VALIDATION_ERROR",
+                    "errors" to errors
+                )
+            )
     }
 
 }
