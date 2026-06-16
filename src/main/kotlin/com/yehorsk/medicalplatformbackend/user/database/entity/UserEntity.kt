@@ -60,6 +60,9 @@ class UserEntity(
     @Column(nullable = false)
     var role: UserRole = UserRole.PATIENT,
 
+    @Enumerated(EnumType.STRING)
+    var lang: UserLang = UserLang.EN,
+
     @OneToOne(
         fetch = FetchType.LAZY,
         mappedBy = "user",
@@ -87,4 +90,8 @@ class UserEntity(
 
 enum class UserRole {
     PATIENT, DOCTOR, ADMIN
+}
+
+enum class UserLang {
+    EN, SK, AU, RU
 }

@@ -3,7 +3,7 @@ package com.yehorsk.medicalplatformbackend.user.service.validation
 import jakarta.validation.Constraint
 import kotlin.reflect.KClass
 
-@Target(AnnotationTarget.TYPE, AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Constraint(validatedBy = [PasswordMatchesValidator::class])
 annotation class PasswordMatches(

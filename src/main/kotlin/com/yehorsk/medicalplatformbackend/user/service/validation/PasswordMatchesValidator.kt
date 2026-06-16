@@ -6,9 +6,16 @@ import jakarta.validation.ConstraintValidatorContext
 
 class PasswordMatchesValidator: ConstraintValidator<PasswordMatches, RegisterRequestDto> {
 
-    override fun isValid(dto: RegisterRequestDto?, p1: ConstraintValidatorContext?): Boolean {
+    override fun isValid(dto: RegisterRequestDto?, context: ConstraintValidatorContext?): Boolean {
         if (dto == null) return true
-        return dto.password == dto.passwordConfirm
+        if (dto.password == dto.passwordConfirm) return true
+
+        context?.disableDefaultConstraintViolation()
+        context?.buildConstraintViolationWithTemplate("Passwords do not match")
+            ?.addPropertyNode("passwordConfirm")
+            ?.addConstraintViolation()
+
+        return false
     }
 
 }

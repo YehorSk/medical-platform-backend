@@ -1,8 +1,8 @@
 package com.yehorsk.medicalplatformbackend.common.util
 
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidTokenException
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.user.database.entity.UserRole
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidTokenException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders

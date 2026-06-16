@@ -1,8 +1,6 @@
 package com.yehorsk.medicalplatformbackend.common.security
 
 import com.yehorsk.medicalplatformbackend.common.util.JwtService
-import com.yehorsk.medicalplatformbackend.user.database.repository.UserRepository
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserDoesNotExistException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

@@ -3,10 +3,10 @@ package com.yehorsk.medicalplatformbackend.common.security
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.user.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.user.database.repository.UserRepository
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserNotAuthenticatedException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserNotAuthenticatedException
 import java.util.UUID
 
 @Component

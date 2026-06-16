@@ -1,18 +1,11 @@
 package com.yehorsk.medicalplatformbackend.user.exceptions
 
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.DoctorAlreadyExistException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.DoctorNotApprovedException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.EmailIsTakenException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidAccessTokenException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidCredentialsException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidRefreshTokenException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserAlreadyExistException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserDoesNotExistException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserNotAuthenticatedException
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+import com.yehorsk.medicalplatformbackend.common.domain.domain.response.ErrorResponse
+import com.yehorsk.medicalplatformbackend.common.domain.exceptions.toResponse
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.*
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -20,83 +13,74 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class AuthExceptionHandler {
 
     @ExceptionHandler(EmailIsTakenException::class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    fun onEmailIsTaken(e: EmailIsTakenException) = mapOf(
-        "code" to "EMAIL_TAKEN",
-        "message" to e.message
-    )
+    fun onEmailIsTaken(e: EmailIsTakenException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(InvalidCredentialsException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun onInvalidCredentials(e: InvalidCredentialsException) = mapOf(
-        "code" to "INVALID_CREDENTIALS",
-        "message" to e.message
-    )
+    fun onInvalidCredentials(e: InvalidCredentialsException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(UserDoesNotExistException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun onUserDoesNotExist(e: UserDoesNotExistException) = mapOf(
-        "code" to "USER_NOT_FOUND",
-        "message" to e.message
-    )
+    fun onUserDoesNotExist(e: UserDoesNotExistException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(UserAlreadyExistException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun onUserAlreadyExist(e: UserAlreadyExistException) = mapOf(
-        "code" to "USER_EXISTS",
-        "message" to e.message
-    )
+    fun onUserAlreadyExist(e: UserAlreadyExistException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(DoctorAlreadyExistException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun onDoctorAlreadyExist(e: DoctorAlreadyExistException) = mapOf(
-        "code" to "DOCTOR_EXISTS",
-        "message" to e.message
-    )
+    fun onDoctorAlreadyExist(e: DoctorAlreadyExistException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(DoctorNotApprovedException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun onDoctorNotApproved(e: DoctorNotApprovedException) = mapOf(
-        "code" to "DOCTOR_NOT_APPROVED",
-        "message" to e.message
-    )
+    fun onDoctorNotApproved(e: DoctorNotApprovedException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(UserNotAuthenticatedException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    fun onUserNotAuthenticated(e: UserNotAuthenticatedException) = mapOf(
-        "code" to "UNAUTHORIZED",
-        "message" to e.message
-    )
+    fun onUserNotAuthenticated(e: UserNotAuthenticatedException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(InvalidRefreshTokenException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    fun onInvalidRefreshToken(e: InvalidRefreshTokenException) = mapOf(
-        "code" to "INVALID_REFRESH_TOKEN",
-        "message" to e.message
-    )
+    fun onInvalidRefreshToken(e: InvalidRefreshTokenException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(InvalidAccessTokenException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    fun onInvalidAccessToken(e: InvalidAccessTokenException) = mapOf(
-        "code" to "INVALID_ACCESS_TOKEN",
-        "message" to e.message
-    )
+    fun onInvalidAccessToken(e: InvalidAccessTokenException, request: HttpServletRequest) =
+        e.toResponse(request)
+
+    @ExceptionHandler(InvalidTokenException::class)
+    fun onInvalidToken(e: InvalidTokenException, request: HttpServletRequest) =
+        e.toResponse(request)
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun onValidationException(
-        e: MethodArgumentNotValidException
-    ): ResponseEntity<Map<String, Any>> {
-        val errors = e.bindingResult!!.allErrors.map {
-            it.defaultMessage ?: "Invalid value"
-        }
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(
-                mapOf(
-                    "code" to "VALIDATION_ERROR",
-                    "errors" to errors
-                )
+        e: MethodArgumentNotValidException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
+        val fieldErrors = e.bindingResult.fieldErrors.map { fe ->
+            ErrorResponse.FieldError(
+                field = fe.field,
+                message = fe.defaultMessage ?: "Invalid value"
             )
+        }
+
+        val objectErrors = e.bindingResult.globalErrors.map { oe ->
+            ErrorResponse.FieldError(
+                field = oe.objectName,
+                message = oe.defaultMessage ?: "Invalid value"
+            )
+        }
+
+        val errors = fieldErrors + objectErrors
+        return ResponseEntity.badRequest().body(
+            ErrorResponse(
+                status = 400,
+                errorCode = "VALIDATION_ERROR",
+                message = "Validation failed",
+                path = request.requestURI,
+                errors = errors
+            )
+        )
     }
 
 }
