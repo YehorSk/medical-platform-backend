@@ -77,9 +77,9 @@ class DoctorEntity(
         }
     }
 
-    fun approve(approvedByUser: UserEntity) {
-        this.approved = true
-        this.approvedBy = approvedByUser
+    fun changeApprovalStatus(byUser: UserEntity, status: Boolean) {
+        this.approved = status
+        this.approvedBy = byUser
         this.approvedAt = Instant.now()
     }
 

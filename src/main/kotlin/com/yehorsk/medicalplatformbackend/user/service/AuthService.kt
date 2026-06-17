@@ -5,14 +5,14 @@ import com.yehorsk.medicalplatformbackend.common.util.JwtService
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
+import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.DoctorAlreadyExistException
+import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.DoctorNotApprovedException
 import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
 import com.yehorsk.medicalplatformbackend.user.database.entity.RefreshTokenEntity
 import com.yehorsk.medicalplatformbackend.user.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.user.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.user.database.repository.RefreshTokenRepository
 import com.yehorsk.medicalplatformbackend.user.database.repository.UserRepository
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.DoctorAlreadyExistException
-import com.yehorsk.medicalplatformbackend.user.exceptions.types.DoctorNotApprovedException
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidCredentialsException
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidTokenException
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserAlreadyExistException

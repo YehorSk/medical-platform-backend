@@ -4,33 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="Add repositories and seeders for allergen and specialization entities">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/domain/domain/response/ErrorResponse.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/domain/exceptions/AppException.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/SpecializationRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/seeder/UserSeeder.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/lang/messages.properties" afterDir="false" />
+    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="Refactor exception handling">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/exceptions/GlobalExceptionHandler.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/controller/DoctorController.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/exceptions/SpecializationExceptionHandler.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/exceptions/types/DoctorExceptions.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/exceptions/types/SpecializationExceptions.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/dto/request/ChangeDoctorApprovalStatusDto.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/CurrentUserProvider.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/CurrentUserProvider.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/JwtAuthFilter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/JwtAuthFilter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/util/JwtService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/util/JwtService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/SecurityConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/SecurityConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/DoctorEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/DoctorEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/DoctorRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/DoctorRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/SpecializationRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/SpecializationRepository.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/exceptions/DoctorExceptionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/exceptions/DoctorExceptionHandler.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/DoctorService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/DoctorService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/entity/UserEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/entity/UserEntity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/AuthExceptionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/AuthExceptionHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/DoctorAlreadyExistException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/DoctorNotApprovedException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/EmailIsTakenException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/InvalidAccessTokenException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/InvalidCredentialsException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/InvalidRefreshTokenException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/InvalidTokenException.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserExceptions.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserAlreadyExistException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserDoesNotExistException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserNotAuthenticatedException.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserExceptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserExceptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/AuthService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/PasswordMatches.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/PasswordMatches.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/PasswordMatchesValidator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/PasswordMatchesValidator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/RoleMatchesValidator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/RoleMatchesValidator.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +36,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="74" />
+    <option name="cachedIndexableFilesCount" value="68" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -56,8 +49,8 @@
       <list>
         <option value="Kotlin Data Class" />
         <option value="Kotlin Interface" />
-        <option value="Kotlin Class" />
         <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -86,61 +79,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000000002393763" />
-      <entry key="MS500" value="1.0119073814870294" />
-      <entry key="S2" value="1.3303346014145663" />
-      <entry key="S5" value="1.6420688886767667" />
-      <entry key="S10" value="1.8012920121137939" />
-      <entry key="S30" value="1.928923632361688" />
-      <entry key="S60" value="1.978178909109175" />
-      <entry key="M2" value="2.1515847231174146" />
-      <entry key="M5" value="2.784492101868555" />
-      <entry key="M10" value="3.4339927716300584" />
-      <entry key="M15" value="3.798750720558624" />
-      <entry key="M30" value="4.493867944348708" />
-      <entry key="H1" value="8.550162777637583" />
-      <entry key="H2" value="28.8140948120809" />
-      <entry key="H4" value="89.472555000658" />
-      <entry key="D1" value="418.32388172611047" />
-      <entry key="W1" value="585.9032733414043" />
+      <entry key="MS100" value="1.000000005546653" />
+      <entry key="MS500" value="1.0296158010601149" />
+      <entry key="S2" value="1.9917729276098846" />
+      <entry key="S5" value="3.9748661194129085" />
+      <entry key="S10" value="5.903688567118319" />
+      <entry key="S30" value="8.255261983587175" />
+      <entry key="S60" value="9.067160181113286" />
+      <entry key="M2" value="9.528163659010355" />
+      <entry key="M5" value="11.121398233043998" />
+      <entry key="M10" value="18.35401165671034" />
+      <entry key="M15" value="27.124907655285345" />
+      <entry key="M30" value="48.575732789211486" />
+      <entry key="H1" value="72.506275700643" />
+      <entry key="H2" value="100.9853123082682" />
+      <entry key="H4" value="158.8355101987511" />
+      <entry key="D1" value="501.1721767362959" />
+      <entry key="W1" value="692.8397911500441" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="1.4717376193180833E-257" />
-      <entry key="S2" value="6.29560705610309E-65" />
-      <entry key="S5" value="2.4748372620645808E-26" />
-      <entry key="S10" value="2.0733103219613342E-13" />
-      <entry key="S30" value="9.227411958322692E-5" />
-      <entry key="S60" value="0.013553218270943778" />
-      <entry key="M2" value="0.16454399867532668" />
-      <entry key="M5" value="0.7363253480828472" />
-      <entry key="M10" value="1.2135040846430902" />
-      <entry key="M15" value="1.4341431087630085" />
-      <entry key="M30" value="1.888990371140196" />
-      <entry key="H1" value="6.304053981825921" />
-      <entry key="H2" value="30.039835633064193" />
-      <entry key="H4" value="93.8511579148126" />
-      <entry key="D1" value="355.92010399417165" />
-      <entry key="W1" value="470.74596894553775" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="1.124384644540416E-165" />
+      <entry key="S5" value="1.0480112927344759E-66" />
+      <entry key="S10" value="1.0237255086848242E-33" />
+      <entry key="S30" value="1.0471499132017019E-11" />
+      <entry key="S60" value="5.59329220526895E-6" />
+      <entry key="M2" value="0.009617315270288185" />
+      <entry key="M5" value="1.3032844548365172" />
+      <entry key="M10" value="8.226400394890366" />
+      <entry key="M15" value="16.76123955532049" />
+      <entry key="M30" value="37.69103709989589" />
+      <entry key="H1" value="60.27735161923145" />
+      <entry key="H2" value="88.15752444974605" />
+      <entry key="H4" value="146.93032090446553" />
+      <entry key="D1" value="426.3373445329503" />
+      <entry key="W1" value="561.8689272891592" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="3.736191931242031E-6" />
-      <entry key="MS500" value="0.08280142711096845" />
-      <entry key="S2" value="0.696482518647435" />
-      <entry key="S5" value="1.2606718949433942" />
-      <entry key="S10" value="1.5766601494455" />
-      <entry key="S30" value="1.8448037595431337" />
-      <entry key="S60" value="1.9475288030004976" />
-      <entry key="M2" value="2.2894367402503604" />
-      <entry key="M5" value="3.5032863995823798" />
-      <entry key="M10" value="4.635136988090222" />
-      <entry key="M15" value="5.223286926496669" />
-      <entry key="M30" value="6.376904149510912" />
-      <entry key="H1" value="14.848486031849733" />
-      <entry key="H2" value="58.84271729834599" />
-      <entry key="H4" value="183.30556235048604" />
-      <entry key="D1" value="774.2322129263954" />
-      <entry key="W1" value="1056.64701285773" />
+      <entry key="MS100" value="1.0274432062421959E-6" />
+      <entry key="MS500" value="0.09271307381843616" />
+      <entry key="S2" value="1.4900743374038075" />
+      <entry key="S5" value="3.7244295750126444" />
+      <entry key="S10" value="5.764119591633644" />
+      <entry key="S30" value="8.20389447208112" />
+      <entry key="S60" value="9.040703195497745" />
+      <entry key="M2" value="9.524091230422874" />
+      <entry key="M5" value="12.408985314952172" />
+      <entry key="M10" value="26.547242556272092" />
+      <entry key="M15" value="43.843759966380624" />
+      <entry key="M30" value="86.2207754220221" />
+      <entry key="H1" value="132.74690102756952" />
+      <entry key="H2" value="189.11530313794648" />
+      <entry key="H4" value="305.7410027743238" />
+      <entry key="D1" value="927.4961559473462" />
+      <entry key="W1" value="1254.706165429749" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -261,6 +254,7 @@
       <workItem from="1781250758217" duration="8307000" />
       <workItem from="1781286317832" duration="4116000" />
       <workItem from="1781353446635" duration="7475000" />
+      <workItem from="1781711341116" duration="9066000" />
     </task>
     <task id="LOCAL-00001" summary="Implement basic user authentication">
       <option name="closed" value="true" />
@@ -278,7 +272,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781290437214</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Refactor exception handling">
+      <option name="closed" value="true" />
+      <created>1781631840139</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1781631840139</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -298,6 +300,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Implement basic user authentication" />
     <MESSAGE value="Add repositories and seeders for allergen and specialization entities" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add repositories and seeders for allergen and specialization entities" />
+    <MESSAGE value="Refactor exception handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor exception handling" />
   </component>
 </project>

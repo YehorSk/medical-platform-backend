@@ -5,4 +5,7 @@ import com.yehorsk.medicalplatformbackend.doctor.database.entity.SpecializationE
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface SpecializationRepository: JpaRepository<SpecializationEntity, SpecializationId> {
+
+    fun findSpecializationEntitiesById(specializationId: SpecializationId): SpecializationEntity?
+
 }

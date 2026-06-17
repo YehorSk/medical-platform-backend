@@ -22,16 +22,15 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/auth/**")
-                    .permitAll()
                     .requestMatchers("/api/auth/change-password")
                     .authenticated()
+                    .requestMatchers("/api/auth/**")
+                    .permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,
                         DispatcherType.FORWARD,
                     )
                     .permitAll()
-                    .requestMatchers("/rooms/").hasRole("ADMIN")
                     .anyRequest().authenticated()
             }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)

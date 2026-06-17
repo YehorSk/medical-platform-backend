@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param
 
 interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId> {
 
+    fun findDoctorEntityBy(doctorId: DoctorId): DoctorEntity?
+
     fun existsByLicenseNumber(number: String): Boolean
 
     fun findByLicenseNumber(number: String): DoctorEntity?

@@ -14,15 +14,10 @@ class CurrentUserProvider(
     private val userRepository: UserRepository
 ) {
 
-    fun getCurrentUser(): UserDetails{
-        val user = SecurityContextHolder.getContext().authentication?.principal as? UserDetails
-            ?: throw UserNotAuthenticatedException()
-        return user
-    }
-
     fun getCurrentUserId(): UserId {
-        val userIdString = getCurrentUser().username
-        return UUID.fromString(userIdString)
+        val principal = SecurityContextHolder.getContext().authentication?.principal
+        return principal as? UserId
+            ?: throw UserNotAuthenticatedException()
     }
 
     fun getCurrentUserEntity(): UserEntity {
@@ -30,5 +25,4 @@ class CurrentUserProvider(
         return userRepository.findById(userId)
             .orElseThrow { UserNotAuthenticatedException() }
     }
-
 }
