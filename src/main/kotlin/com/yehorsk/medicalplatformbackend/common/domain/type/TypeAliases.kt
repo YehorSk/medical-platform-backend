@@ -10,3 +10,4 @@ typealias AllergenCategoryId = UUID
 typealias AllergenId = UUID
 typealias PatientHasAllergenId = UUID
 typealias DoctorHasSpecializationsId = UUID
+typealias PatientHasDoctorId = UUID
