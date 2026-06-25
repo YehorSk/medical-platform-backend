@@ -22,6 +22,7 @@ import com.yehorsk.medicalplatformbackend.user.service.dto.request.RegisterReque
 import com.yehorsk.medicalplatformbackend.user.service.dto.response.AuthenticatedUserResponseDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.response.RegisterResponseDto
 import com.yehorsk.medicalplatformbackend.user.service.mappers.toUserResponseDto
+import com.yehorsk.medicalplatformbackend.user.service.mappers.toUserRole
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.security.MessageDigest
@@ -49,10 +50,10 @@ class AuthService(
             hashedPassword = passwordEncoder.encode(request.password)!!,
             firstName = request.firstName,
             lastName = request.lastName,
-            role = request.role
+            role = request.role.toUserRole()
         )
 
-        if (request.role == UserRole.DOCTOR) {
+        if (request.role.toUserRole() == UserRole.DOCTOR) {
 
             val licenseNumber = request.licenseNumber
                 ?.takeIf { it.isNotBlank() }

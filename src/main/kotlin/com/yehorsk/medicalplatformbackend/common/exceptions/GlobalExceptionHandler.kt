@@ -2,6 +2,7 @@ package com.yehorsk.medicalplatformbackend.common.exceptions
 
 import com.yehorsk.medicalplatformbackend.common.domain.domain.response.ErrorResponse
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -30,9 +31,9 @@ class GlobalExceptionHandler {
         }
 
         val errors = fieldErrors + objectErrors
-        return ResponseEntity.badRequest().body(
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
             ErrorResponse(
-                status = 400,
+                status = 422,
                 errorCode = "VALIDATION_ERROR",
                 message = "Validation failed",
                 path = request.requestURI,

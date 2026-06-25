@@ -11,16 +11,20 @@ class RoleMatchesValidator: ConstraintValidator<RoleMatches, RegisterRequestDto>
         dto: RegisterRequestDto?,
         context: ConstraintValidatorContext
     ): Boolean {
-
         if (dto == null) return false
-        if(dto.role == UserRole.PATIENT || dto.role == UserRole.DOCTOR) return true
 
-        context.disableDefaultConstraintViolation()
-        context.buildConstraintViolationWithTemplate("Role is invalid")
-            ?.addPropertyNode("role")
-            ?.addConstraintViolation()
+        val allowed = setOf("PATIENT", "DOCTOR")
 
-        return false
+        val valid = dto.role.uppercase() in allowed
+
+        if (!valid) {
+            context.disableDefaultConstraintViolation()
+            context.buildConstraintViolationWithTemplate("Role is invalid")
+                .addPropertyNode("role")
+                .addConstraintViolation()
+        }
+
+        return valid
     }
 
 }

@@ -1,10 +1,10 @@
 package com.yehorsk.medicalplatformbackend.user.service.dto.request
 
 import com.yehorsk.medicalplatformbackend.user.service.validation.PasswordMatches
-import com.yehorsk.medicalplatformbackend.user.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.user.service.validation.RoleMatches
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 
 @PasswordMatches
 @RoleMatches
@@ -20,6 +20,9 @@ data class RegisterRequestDto(
     val firstName: String,
     @field:NotBlank(message = "Last name is required")
     val lastName: String,
-    val role: UserRole,
+    @field:NotBlank(message = "Phone is required")
+    val phone: String,
+    @field:NotNull(message = "Role is required")
+    var role: String,
     val licenseNumber: String? = null
 )
