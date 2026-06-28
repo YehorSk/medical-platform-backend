@@ -29,4 +29,16 @@ class AuthExceptionHandler {
     fun onUserNotAuthenticated(e: UserNotAuthenticatedException, request: HttpServletRequest) =
         e.toResponse(request)
 
+    @ExceptionHandler(InvalidResetCodeException::class)
+    fun onInvalidResetCode(e: InvalidResetCodeException, request: HttpServletRequest) =
+        e.toResponse(request)
+
+    @ExceptionHandler(ExpiredResetCodeException::class)
+    fun onExpiredResetCode(e: ExpiredResetCodeException, request: HttpServletRequest) =
+        e.toResponse(request)
+
+    @ExceptionHandler(TooManyAttemptsException::class)
+    fun onTooManyAttempts(e: TooManyAttemptsException, request: HttpServletRequest) =
+        e.toResponse(request)
+
 }

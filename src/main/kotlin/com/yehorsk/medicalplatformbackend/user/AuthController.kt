@@ -1,11 +1,15 @@
 package com.yehorsk.medicalplatformbackend.user
 
 import com.yehorsk.medicalplatformbackend.user.service.AuthService
+import com.yehorsk.medicalplatformbackend.user.service.PasswordResetService
+import com.yehorsk.medicalplatformbackend.user.service.dto.request.GetResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.LoginRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.RefreshTokenRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.RegisterRequestDto
+import com.yehorsk.medicalplatformbackend.user.service.dto.request.ResetPasswordRequestDto
+import com.yehorsk.medicalplatformbackend.user.service.dto.request.VerifyResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.response.AuthenticatedUserResponseDto
-import com.yehorsk.medicalplatformbackend.user.service.dto.response.RegisterResponseDto
+import com.yehorsk.medicalplatformbackend.user.service.dto.response.MessageResponseDto
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,13 +19,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val pwdResetService: PasswordResetService
 ) {
 
     @PostMapping("/register")
     fun register(
         @Valid @RequestBody request: RegisterRequestDto
-    ): RegisterResponseDto {
+    ): MessageResponseDto {
         return authService.register(request)
     }
 
@@ -44,6 +49,30 @@ class AuthController(
         @Valid @RequestBody request: RefreshTokenRequestDto
     ) {
         authService.logout(request.refreshToken)
+    }
+
+    @PostMapping("/forgot-password")
+    fun forgotPassword(
+        @Valid @RequestBody request: GetResetTokenRequestDto
+    ): MessageResponseDto {
+        pwdResetService.requestReset(request)
+        return MessageResponseDto("If this email exists, a reset code has been sent")
+    }
+
+    @PostMapping("/verify-reset-code")
+    fun verifyResetCode(
+        @Valid @RequestBody request: VerifyResetTokenRequestDto
+    ): MessageResponseDto {
+        pwdResetService.verifyCode(request)
+        return MessageResponseDto("Code verified")
+    }
+
+    @PostMapping("/reset-password")
+    fun resetPassword(
+        @Valid @RequestBody request: ResetPasswordRequestDto
+    ): MessageResponseDto {
+        pwdResetService.resetPassword(request)
+        return MessageResponseDto("Password has been reset")
     }
 
 }

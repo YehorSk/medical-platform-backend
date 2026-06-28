@@ -9,3 +9,6 @@ class InvalidTokenException : AppException("INVALID_TOKEN", HttpStatus.UNAUTHORI
 class UserAlreadyExistException : AppException("USER_EXISTS", HttpStatus.CONFLICT, "User already exists")
 class UserDoesNotExistException : AppException("USER_NOT_FOUND", HttpStatus.NOT_FOUND, "User does not exist")
 class UserNotAuthenticatedException : AppException("UNAUTHORIZED", HttpStatus.UNAUTHORIZED, "Not authenticated")
+class InvalidResetCodeException : AppException("INVALID_RESET_CODE",HttpStatus.BAD_REQUEST,"The reset code is invalid")
+class ExpiredResetCodeException : AppException("EXPIRED_RESET_CODE",HttpStatus.BAD_REQUEST,"The reset code has expired")
+class TooManyAttemptsException : AppException("TOO_MANY_ATTEMPTS",HttpStatus.TOO_MANY_REQUESTS,"Too many failed attempts, please request a new code")

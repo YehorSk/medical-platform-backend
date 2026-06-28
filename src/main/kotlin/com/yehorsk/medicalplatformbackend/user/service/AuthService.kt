@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.user.service
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
+import com.yehorsk.medicalplatformbackend.common.service.MailService
 import com.yehorsk.medicalplatformbackend.common.util.JwtService
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
@@ -20,7 +21,7 @@ import com.yehorsk.medicalplatformbackend.user.exceptions.types.UserDoesNotExist
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.LoginRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.RegisterRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.response.AuthenticatedUserResponseDto
-import com.yehorsk.medicalplatformbackend.user.service.dto.response.RegisterResponseDto
+import com.yehorsk.medicalplatformbackend.user.service.dto.response.MessageResponseDto
 import com.yehorsk.medicalplatformbackend.user.service.mappers.toUserResponseDto
 import com.yehorsk.medicalplatformbackend.user.service.mappers.toUserRole
 import jakarta.transaction.Transactional
@@ -32,6 +33,7 @@ import java.util.Base64
 @Service
 class AuthService(
     private val jwtService: JwtService,
+    private val mailService: MailService,
     private val userRepository: UserRepository,
     private val doctorRepository: DoctorRepository,
     private val passwordEncoder: PasswordEncoder,
@@ -39,7 +41,7 @@ class AuthService(
 ) {
 
     @Transactional
-    fun register(request: RegisterRequestDto): RegisterResponseDto {
+    fun register(request: RegisterRequestDto): MessageResponseDto {
 
         if (userRepository.findByEmail(request.email) != null) {
             throw UserAlreadyExistException()
@@ -77,7 +79,7 @@ class AuthService(
 
         userRepository.save(user)
 
-        return RegisterResponseDto()
+        return MessageResponseDto("Registration successful. Please verify your email.")
     }
 
     fun login(request: LoginRequestDto): AuthenticatedUserResponseDto{

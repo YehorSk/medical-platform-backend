@@ -42,10 +42,22 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:latest
+    container_name: redis-medical-platform
+    networks:
+      - medical_platform_network
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-medical-platform-data:/data
+    command: redis-server --appendonly yes
+
 volumes:
   postgres_data:
   mailpit-medical-platform-data:
   minio-medical-platform-data:
+  redis-medical-platform-data:
 
 networks:
   medical_platform_network:

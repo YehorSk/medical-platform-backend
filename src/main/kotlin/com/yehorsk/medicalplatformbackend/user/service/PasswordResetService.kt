@@ -1,0 +1,100 @@
+package com.yehorsk.medicalplatformbackend.user.service
+
+import com.yehorsk.medicalplatformbackend.common.service.MailService
+import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
+import com.yehorsk.medicalplatformbackend.user.database.entity.ResetTokenEntity
+import com.yehorsk.medicalplatformbackend.user.database.repository.ResetTokenRepository
+import com.yehorsk.medicalplatformbackend.user.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.ExpiredResetCodeException
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidCredentialsException
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidResetCodeException
+import com.yehorsk.medicalplatformbackend.user.exceptions.types.TooManyAttemptsException
+import com.yehorsk.medicalplatformbackend.user.service.dto.request.GetResetTokenRequestDto
+import com.yehorsk.medicalplatformbackend.user.service.dto.request.ResetPasswordRequestDto
+import com.yehorsk.medicalplatformbackend.user.service.dto.request.VerifyResetTokenRequestDto
+import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.security.SecureRandom
+import java.time.Duration
+import java.time.Instant
+
+@Service
+class PasswordResetService(
+    private val passwordEncoder: PasswordEncoder,
+    private val redisTemplate: StringRedisTemplate,
+    private val mailService: MailService,
+    private val userRepository: UserRepository
+    ) {
+
+    companion object {
+        private const val OTP_TTL_MINUTES = 10L
+        private const val MAX_ATTEMPTS = 5
+    }
+
+    private val secureRandom = SecureRandom()
+
+    @Transactional
+    fun requestReset(request: GetResetTokenRequestDto){
+        val user = userRepository.findByEmail(request.email)
+            ?: throw InvalidCredentialsException()
+
+        val otp = (secureRandom.nextInt(900_000) + 100_000).toString()
+        val hashedToken = passwordEncoder.encode(otp)
+
+        val codeKey = "reset:code:${user.id}"
+        val attemptsKey = "reset:attempts:${user.id}"
+
+        redisTemplate.opsForValue().set(codeKey, hashedToken!!, Duration.ofMinutes(OTP_TTL_MINUTES))
+        redisTemplate.delete(attemptsKey)
+
+        mailService.sendPlainText(to = request.email, subject = "OTP", body = otp)
+    }
+
+    @Transactional
+    fun verifyCode(request: VerifyResetTokenRequestDto){
+        val user = userRepository.findByEmail(request.email)
+            ?: throw InvalidCredentialsException()
+
+        val codeKey = "reset:code:${user.id}"
+        val attemptsKey = "reset:attempts:${user.id}"
+
+        val hashedToken = redisTemplate.opsForValue().get(codeKey)
+            ?: throw ExpiredResetCodeException()
+
+        val attempts = redisTemplate.opsForValue().increment(attemptsKey) ?: 1
+        redisTemplate.expire(attemptsKey, Duration.ofMinutes(OTP_TTL_MINUTES))
+
+        if (attempts > MAX_ATTEMPTS) {
+            redisTemplate.delete(listOf(codeKey, attemptsKey))
+            throw TooManyAttemptsException()
+        }
+
+        if (!passwordEncoder.matches(request.code, hashedToken)) {
+            throw InvalidResetCodeException()
+        }
+    }
+
+    @Transactional
+    fun resetPassword(request: ResetPasswordRequestDto){
+        val user = userRepository.findByEmail(request.email)
+            ?: throw InvalidCredentialsException()
+
+
+        val codeKey = "reset:code:${user.id}"
+        val attemptsKey = "reset:attempts:${user.id}"
+
+        val hashedToken = redisTemplate.opsForValue().get(codeKey)
+            ?: throw ExpiredResetCodeException()
+
+        if (!passwordEncoder.matches(request.code, hashedToken)) {
+            throw InvalidResetCodeException()
+        }
+
+        user.hashedPassword = passwordEncoder.encode(request.password)!!
+        userRepository.save(user)
+
+        redisTemplate.delete(listOf(codeKey, attemptsKey))
+    }
+
+}
