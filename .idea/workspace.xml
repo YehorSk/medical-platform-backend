@@ -7,24 +7,11 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="minor updates">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/service/MailService.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/entity/ResetTokenEntity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/repository/ResetTokenRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/PasswordResetService.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/GetResetTokenRequestDto.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/ResetPasswordRequestDto.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/VerifyResetTokenRequestDto.kt" afterDir="false" />
+    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="PasswordResetService">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/MedicalPlatformBackendApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/MedicalPlatformBackendApplication.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/AuthController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/AuthExceptionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/AuthExceptionHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserExceptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserExceptions.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/AuthService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/response/RegisterResponseDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/response/MessageResponseDto.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/ResetPasswordRequestDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/ResetPasswordRequestDto.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +24,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="91" />
+    <option name="cachedIndexableFilesCount" value="94" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -80,61 +67,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.2381594995109857" />
-      <entry key="MS500" value="1.7515862025291935" />
-      <entry key="S2" value="2.1106388803689367" />
-      <entry key="S5" value="2.4751893100130045" />
-      <entry key="S10" value="2.6953159948641012" />
-      <entry key="S30" value="2.891413826612766" />
-      <entry key="S60" value="3.0343007576767604" />
-      <entry key="M2" value="3.4061444589215584" />
-      <entry key="M5" value="4.548238395958201" />
-      <entry key="M10" value="6.982919331618632" />
-      <entry key="M15" value="10.06009324683506" />
-      <entry key="M30" value="20.339155241227225" />
-      <entry key="H1" value="35.93003817446616" />
-      <entry key="H2" value="63.04355386914702" />
-      <entry key="H4" value="129.78395800794485" />
-      <entry key="D1" value="586.2427775465316" />
-      <entry key="W1" value="914.1474743410918" />
+      <entry key="MS100" value="2.1795848809999583E-28" />
+      <entry key="MS500" value="3.3341978462525156E-6" />
+      <entry key="S2" value="0.07002362676692966" />
+      <entry key="S5" value="0.6817842593359252" />
+      <entry key="S10" value="1.781363660898834" />
+      <entry key="S30" value="4.768781717480628" />
+      <entry key="S60" value="6.947839624485299" />
+      <entry key="M2" value="8.646512470696807" />
+      <entry key="M5" value="9.963577873901524" />
+      <entry key="M10" value="10.504845939757242" />
+      <entry key="M15" value="10.964278746750471" />
+      <entry key="M30" value="14.475867755094132" />
+      <entry key="H1" value="26.146720534193197" />
+      <entry key="H2" value="52.010633497682974" />
+      <entry key="H4" value="115.71212946172126" />
+      <entry key="D1" value="576.6569817540216" />
+      <entry key="W1" value="920.4915290487589" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="2.924071369475633E-195" />
-      <entry key="S5" value="1.5371480044608553E-78" />
-      <entry key="S10" value="1.2730776069463002E-39" />
-      <entry key="S30" value="1.432077617222762E-13" />
-      <entry key="S60" value="5.666060521054858E-7" />
-      <entry key="M2" value="0.001240331303069806" />
-      <entry key="M5" value="0.13649565339751707" />
-      <entry key="M10" value="0.8875482676240473" />
-      <entry key="M15" value="2.225030337965205" />
-      <entry key="M30" value="7.530820110440945" />
-      <entry key="H1" value="16.463974075493848" />
-      <entry key="H2" value="35.51059212579021" />
-      <entry key="H4" value="90.61085091631199" />
-      <entry key="D1" value="471.63880885261307" />
-      <entry key="W1" value="722.8967896086515" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000362213730656" />
+      <entry key="S2" value="1.0907670333485076" />
+      <entry key="S5" value="1.5522255498942676" />
+      <entry key="S10" value="2.1605550743003694" />
+      <entry key="S30" value="3.344500852295388" />
+      <entry key="S60" value="3.9933642644253853" />
+      <entry key="M2" value="4.438433383278291" />
+      <entry key="M5" value="4.759133830240182" />
+      <entry key="M10" value="4.881805861792737" />
+      <entry key="M15" value="4.989084797540929" />
+      <entry key="M30" value="6.312821287634904" />
+      <entry key="H1" value="11.961682173541456" />
+      <entry key="H2" value="28.115520123117403" />
+      <entry key="H4" value="78.11737036670668" />
+      <entry key="D1" value="460.0795260050166" />
+      <entry key="W1" value="724.2152336367825" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9910804384862936" />
-      <entry key="MS500" value="1.6114413524794395" />
-      <entry key="S2" value="2.0631399584524406" />
-      <entry key="S5" value="2.4530614503212993" />
-      <entry key="S10" value="2.6833826598763157" />
-      <entry key="S30" value="2.8871631633715333" />
-      <entry key="S60" value="3.0318625893213595" />
-      <entry key="M2" value="3.405518163037335" />
-      <entry key="M5" value="4.680099606862259" />
-      <entry key="M10" value="7.860624089954084" />
-      <entry key="M15" value="12.271779945407763" />
-      <entry key="M30" value="27.85186557081257" />
-      <entry key="H1" value="52.37594785256543" />
-      <entry key="H2" value="98.53674285600273" />
-      <entry key="H4" value="220.3753660979667" />
-      <entry key="D1" value="1057.8660781069175" />
-      <entry key="W1" value="1637.0408779587901" />
+      <entry key="MS100" value="3.155158277923562E-4" />
+      <entry key="MS500" value="0.19944331683974137" />
+      <entry key="S2" value="0.7677348797732061" />
+      <entry key="S5" value="1.837429282909059" />
+      <entry key="S10" value="3.5396862788591785" />
+      <entry key="S30" value="7.802630241579218" />
+      <entry key="S60" value="10.72424231377907" />
+      <entry key="M2" value="12.952994555039275" />
+      <entry key="M5" value="14.662754704322612" />
+      <entry key="M10" value="15.355261583413112" />
+      <entry key="M15" value="15.9317291860049" />
+      <entry key="M30" value="20.774669837836985" />
+      <entry key="H1" value="38.09531968766214" />
+      <entry key="H2" value="80.11209888252985" />
+      <entry key="H4" value="193.81244642901166" />
+      <entry key="D1" value="1036.721316391996" />
+      <entry key="W1" value="1644.7033614230947" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -277,7 +264,8 @@
       <workItem from="1782318212834" duration="2609000" />
       <workItem from="1782404613071" duration="2559000" />
       <workItem from="1782491279346" duration="2493000" />
-      <workItem from="1782550776337" duration="15423000" />
+      <workItem from="1782550776337" duration="15778000" />
+      <workItem from="1782749284559" duration="6921000" />
     </task>
     <task id="LOCAL-00001" summary="Implement basic user authentication">
       <option name="closed" value="true" />
@@ -327,7 +315,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782413623914</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="PasswordResetService">
+      <option name="closed" value="true" />
+      <created>1782669954121</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1782669954121</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -351,6 +347,7 @@
     <MESSAGE value="Approve doctor, add/remove specializations" />
     <MESSAGE value="Introduce patient-doctor access feature" />
     <MESSAGE value="minor updates" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor updates" />
+    <MESSAGE value="PasswordResetService" />
+    <option name="LAST_COMMIT_MESSAGE" value="PasswordResetService" />
   </component>
 </project>

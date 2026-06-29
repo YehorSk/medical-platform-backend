@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.user.service
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
+import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.common.service.MailService
 import com.yehorsk.medicalplatformbackend.common.util.JwtService
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
@@ -37,7 +38,8 @@ class AuthService(
     private val userRepository: UserRepository,
     private val doctorRepository: DoctorRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val refreshTokenRepository: RefreshTokenRepository,
+    private val userProvider: CurrentUserProvider
 ) {
 
     @Transactional
@@ -140,10 +142,9 @@ class AuthService(
     }
 
     @Transactional
-    fun logout(refreshToken: String) {
-        val userId = jwtService.getUserIdFromToken(refreshToken)
-        val hashed = hashToken(refreshToken)
-        refreshTokenRepository.deleteByUserIdAndHashedToken(userId, hashed)
+    fun logout() {
+        val userId = userProvider.getCurrentUserId()
+        refreshTokenRepository.deleteByUserId(userId)
     }
 
     private fun storeRefreshToken(userId: UserId, token: String){

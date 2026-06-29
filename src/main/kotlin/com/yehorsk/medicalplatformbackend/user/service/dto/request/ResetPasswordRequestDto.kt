@@ -1,10 +1,8 @@
 package com.yehorsk.medicalplatformbackend.user.service.dto.request
 
-import com.yehorsk.medicalplatformbackend.user.service.validation.PasswordMatches
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
-@PasswordMatches
 data class ResetPasswordRequestDto(
     @field:NotBlank(message = "Email is required")
     @field:Email

@@ -45,10 +45,9 @@ class AuthController(
     }
 
     @PostMapping("/logout")
-    fun logout(
-        @Valid @RequestBody request: RefreshTokenRequestDto
-    ) {
-        authService.logout(request.refreshToken)
+    fun logout(): MessageResponseDto {
+        authService.logout()
+        return MessageResponseDto("Logged out successfully")
     }
 
     @PostMapping("/forgot-password")
