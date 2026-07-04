@@ -2,8 +2,6 @@ package com.yehorsk.medicalplatformbackend.user.service
 
 import com.yehorsk.medicalplatformbackend.common.service.MailService
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
-import com.yehorsk.medicalplatformbackend.user.database.entity.ResetTokenEntity
-import com.yehorsk.medicalplatformbackend.user.database.repository.ResetTokenRepository
 import com.yehorsk.medicalplatformbackend.user.database.repository.UserRepository
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.ExpiredResetCodeException
 import com.yehorsk.medicalplatformbackend.user.exceptions.types.InvalidCredentialsException

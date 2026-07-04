@@ -23,6 +23,7 @@ import com.yehorsk.medicalplatformbackend.user.service.dto.request.LoginRequestD
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.RegisterRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.response.AuthenticatedUserResponseDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.response.MessageResponseDto
+import com.yehorsk.medicalplatformbackend.user.service.dto.response.UserResponseDto
 import com.yehorsk.medicalplatformbackend.user.service.mappers.toUserResponseDto
 import com.yehorsk.medicalplatformbackend.user.service.mappers.toUserRole
 import jakarta.transaction.Transactional

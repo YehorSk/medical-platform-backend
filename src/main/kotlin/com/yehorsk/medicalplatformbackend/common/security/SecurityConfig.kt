@@ -26,6 +26,7 @@ class SecurityConfig(
                     .authenticated()
                     .requestMatchers("/api/auth/**")
                     .permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,
                         DispatcherType.FORWARD,
