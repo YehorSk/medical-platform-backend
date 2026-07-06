@@ -2,7 +2,7 @@ package com.yehorsk.medicalplatformbackend.doctor.database.entity
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.SpecializationId
-import com.yehorsk.medicalplatformbackend.user.database.entity.UserEntity
+import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

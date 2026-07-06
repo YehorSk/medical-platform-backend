@@ -2,7 +2,7 @@ package com.yehorsk.medicalplatformbackend.patient_doctor_access.service.mappers
 
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.response.PatientHasDoctorResponse
-import com.yehorsk.medicalplatformbackend.user.service.mappers.toUserResponseDto
+import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserResponseDto
 
 fun PatientHasDoctorEntity.toPatientHasDoctorResponse() = PatientHasDoctorResponse(
     id = id!!,

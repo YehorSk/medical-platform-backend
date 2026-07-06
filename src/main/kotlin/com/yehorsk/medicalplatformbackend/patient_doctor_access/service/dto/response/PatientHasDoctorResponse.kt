@@ -2,7 +2,7 @@ package com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.res
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.PatientHasDoctorId
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.AccessStatus
-import com.yehorsk.medicalplatformbackend.user.service.dto.response.UserResponseDto
+import com.yehorsk.medicalplatformbackend.auth.service.dto.response.UserResponseDto
 import java.time.Instant
 
 data class PatientHasDoctorResponse(

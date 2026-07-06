@@ -7,17 +7,43 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="minor">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/UserController.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/UserService.kt" afterDir="false" />
+    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="update profile">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/SecurityConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/SecurityConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/AuthController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/entity/ResetTokenEntity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/repository/ResetTokenRepository.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/AuthService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/PasswordResetService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/PasswordResetService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/CurrentUserProvider.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/security/CurrentUserProvider.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/util/JwtService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/util/JwtService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/DoctorEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/DoctorEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/database/entity/MedicalCardEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/database/entity/MedicalCardEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/entity/PatientHasDoctorEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/entity/PatientHasDoctorEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/repository/PatientHasDoctorRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/repository/PatientHasDoctorRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/PatientHasDoctorService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/PatientHasDoctorService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/dto/response/PatientHasDoctorResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/dto/response/PatientHasDoctorResponse.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/mappers/PatientHasDoctorMappers.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/mappers/PatientHasDoctorMappers.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/AuthController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/UserController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/UserController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/entity/RefreshTokenEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/entity/RefreshTokenEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/entity/UserEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/entity/UserEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/repository/RefreshTokenRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/repository/RefreshTokenRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/repository/UserRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/repository/UserRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/database/seeder/UserSeeder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/seeder/UserSeeder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/AuthExceptionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/exceptions/AuthExceptionHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/exceptions/types/UserExceptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/exceptions/types/UserExceptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/AuthService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/PasswordResetService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/PasswordResetService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/UserService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/UserService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/GetResetTokenRequestDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/request/GetResetTokenRequestDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/LoginRequestDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/request/LoginRequestDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/RefreshTokenRequestDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/request/RefreshTokenRequestDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/RegisterRequestDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/request/RegisterRequestDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/ResetPasswordRequestDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/request/ResetPasswordRequestDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/VerifyResetTokenRequestDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/request/VerifyResetTokenRequestDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/response/AuthenticatedUserResponseDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/response/AuthenticatedUserResponseDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/response/MessageResponseDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/response/MessageResponseDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/response/UserResponseDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/dto/response/UserResponseDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/mappers/UserMappers.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/mappers/UserMappers.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/PasswordMatches.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/validation/PasswordMatches.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/PasswordMatchesValidator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/validation/PasswordMatchesValidator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/RoleMatches.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/validation/RoleMatches.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation/RoleMatchesValidator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/validation/RoleMatchesValidator.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +56,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="92" />
+    <option name="cachedIndexableFilesCount" value="96" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -73,61 +99,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="5.36919464979576E-18" />
-      <entry key="MS500" value="3.515457320592493E-4" />
-      <entry key="S2" value="0.13692900660408475" />
-      <entry key="S5" value="0.4514380725118613" />
-      <entry key="S10" value="0.6718914142442055" />
-      <entry key="S30" value="0.8766774935426437" />
-      <entry key="S60" value="1.0287504362072173" />
-      <entry key="M2" value="2.2209534870268484" />
-      <entry key="M5" value="7.985833349728608" />
-      <entry key="M10" value="13.853124498456163" />
-      <entry key="M15" value="16.92509357210957" />
-      <entry key="M30" value="22.08594102627977" />
-      <entry key="H1" value="31.402412876912063" />
-      <entry key="H2" value="53.94811013473802" />
-      <entry key="H4" value="112.52205189469144" />
-      <entry key="D1" value="575.9851231082081" />
-      <entry key="W1" value="939.5324507409418" />
+      <entry key="MS100" value="1.038740865624213" />
+      <entry key="MS500" value="1.526028095589145" />
+      <entry key="S2" value="2.10259239017621" />
+      <entry key="S5" value="2.5137941432976487" />
+      <entry key="S10" value="2.7274499671015837" />
+      <entry key="S30" value="2.9015769647065994" />
+      <entry key="S60" value="2.949769787173774" />
+      <entry key="M2" value="2.977226967134566" />
+      <entry key="M5" value="3.479893254569963" />
+      <entry key="M10" value="6.269534319518773" />
+      <entry key="M15" value="9.350536245141457" />
+      <entry key="M30" value="15.830672789251208" />
+      <entry key="H1" value="23.748501884760543" />
+      <entry key="H2" value="39.44754167786612" />
+      <entry key="H4" value="83.48169840000749" />
+      <entry key="D1" value="542.256409551268" />
+      <entry key="W1" value="963.7260401289825" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0000000000267464" />
-      <entry key="S30" value="1.000862321740525" />
-      <entry key="S60" value="1.0777865300008598" />
-      <entry key="M2" value="1.889827979881666" />
-      <entry key="M5" value="5.300168019528122" />
-      <entry key="M10" value="8.441355030067953" />
-      <entry key="M15" value="10.009365190167014" />
-      <entry key="M30" value="12.492834595476717" />
-      <entry key="H1" value="16.8628184279156" />
-      <entry key="H2" value="29.71901006579502" />
-      <entry key="H4" value="73.20660508536106" />
-      <entry key="D1" value="453.63082432166556" />
-      <entry key="W1" value="733.5314117255311" />
+      <entry key="MS100" value="1.4676385084926069E-7" />
+      <entry key="MS500" value="0.042986880598237645" />
+      <entry key="S2" value="0.4884240199581287" />
+      <entry key="S5" value="0.9858003727608687" />
+      <entry key="S10" value="1.3601610309855745" />
+      <entry key="S30" value="1.7456356661584753" />
+      <entry key="S60" value="1.8667154206089176" />
+      <entry key="M2" value="1.9320828598867452" />
+      <entry key="M5" value="2.026540267735418" />
+      <entry key="M10" value="2.306585973883884" />
+      <entry key="M15" value="2.582814541955069" />
+      <entry key="M30" value="3.2799979307414278" />
+      <entry key="H1" value="5.1226936079903735" />
+      <entry key="H2" value="11.799357776429009" />
+      <entry key="H4" value="39.402963082955914" />
+      <entry key="D1" value="404.0344876973355" />
+      <entry key="W1" value="728.9698859188763" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="8.371143792498105E-8" />
-      <entry key="MS500" value="0.03842783026575895" />
-      <entry key="S2" value="0.4956885715157205" />
-      <entry key="S5" value="1.0305907560997354" />
-      <entry key="S10" value="1.4052574913982958" />
-      <entry key="S30" value="1.7708694584146316" />
-      <entry key="S60" value="2.0479136619274523" />
-      <entry key="M2" value="4.064608599328019" />
-      <entry key="M5" value="13.235771077156123" />
-      <entry key="M10" value="22.25339021516566" />
-      <entry key="M15" value="26.90150340765888" />
-      <entry key="M30" value="34.55755774622032" />
-      <entry key="H1" value="48.25004674015452" />
-      <entry key="H2" value="83.65331329528682" />
-      <entry key="H4" value="185.71277255331546" />
-      <entry key="D1" value="1029.6009376596871" />
-      <entry key="W1" value="1673.0604126527041" />
+      <entry key="MS100" value="0.3535535373586191" />
+      <entry key="MS500" value="0.861014264125805" />
+      <entry key="S2" value="1.8608995314959595" />
+      <entry key="S5" value="2.9235237171256285" />
+      <entry key="S10" value="3.66392295194609" />
+      <entry key="S30" value="4.45126337740489" />
+      <entry key="S60" value="4.709142183483445" />
+      <entry key="M2" value="4.853023747315138" />
+      <entry key="M5" value="5.481174921831533" />
+      <entry key="M10" value="8.557272842360637" />
+      <entry key="M15" value="11.916195554870663" />
+      <entry key="M30" value="19.09688397763152" />
+      <entry key="H1" value="28.86039918388598" />
+      <entry key="H2" value="51.23733843528961" />
+      <entry key="H4" value="122.87355497479165" />
+      <entry key="D1" value="946.2769944729649" />
+      <entry key="W1" value="1692.6924187317743" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -153,7 +179,7 @@
         <option name="modeId" value="Ask" />
         <option name="model">
           <model>
-            <option name="modelType" value="builtin_family" />
+            <option name="modelType" value="builtin_id" />
             <option name="modelValue" value="auto" />
           </model>
         </option>
@@ -170,8 +196,8 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "707",
-    "RequestMappingsPanelWidth1": "706",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -192,7 +218,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   },
@@ -214,11 +240,11 @@
       <recent name="com.yehorsk.medicalplatformbackend.user.database.repository" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.yehorsk.medicalplatformbackend.user.service" />
+      <recent name="com.yehorsk.medicalplatformbackend.user" />
       <recent name="com.yehorsk.medicalplatformbackend.doctor.database.repository" />
       <recent name="com.yehorsk.medicalplatformbackend.common.util" />
       <recent name="com.yehorsk.medicalplatformbackend.common.security" />
-      <recent name="com.yehorsk.medicalplatformbackend.medical_card.database.entity" />
-      <recent name="com.yehorsk.medicalplatformbackend.user" />
     </key>
   </component>
   <component name="RunManager">
@@ -275,7 +301,9 @@
       <workItem from="1782835103762" duration="3567000" />
       <workItem from="1782921640521" duration="4478000" />
       <workItem from="1783098482717" duration="3107000" />
-      <workItem from="1783166677443" duration="5575000" />
+      <workItem from="1783166677443" duration="11609000" />
+      <workItem from="1783248856630" duration="9071000" />
+      <workItem from="1783360296149" duration="222000" />
     </task>
     <task id="LOCAL-00001" summary="Implement basic user authentication">
       <option name="closed" value="true" />
@@ -341,7 +369,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782757111010</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="&quot;me&quot; endpoint">
+      <option name="closed" value="true" />
+      <created>1783178733343</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1783178733343</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -367,6 +403,8 @@
     <MESSAGE value="minor updates" />
     <MESSAGE value="PasswordResetService" />
     <MESSAGE value="minor" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor" />
+    <MESSAGE value="&quot;me&quot; endpoint" />
+    <MESSAGE value="update profile" />
+    <option name="LAST_COMMIT_MESSAGE" value="update profile" />
   </component>
 </project>

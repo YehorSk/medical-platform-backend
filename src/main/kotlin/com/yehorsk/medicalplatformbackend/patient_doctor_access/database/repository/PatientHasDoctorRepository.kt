@@ -4,7 +4,6 @@ import com.yehorsk.medicalplatformbackend.common.domain.type.PatientHasDoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.AccessStatus
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
-import com.yehorsk.medicalplatformbackend.user.database.entity.UserEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 

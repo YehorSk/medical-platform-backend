@@ -14,8 +14,8 @@ import com.yehorsk.medicalplatformbackend.patient_doctor_access.exceptions.types
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.exceptions.types.RelationDoesNotExistException
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.response.PatientHasDoctorResponse
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.mappers.toPatientHasDoctorResponse
-import com.yehorsk.medicalplatformbackend.user.database.entity.UserRole
-import com.yehorsk.medicalplatformbackend.user.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
+import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service

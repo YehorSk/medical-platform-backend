@@ -1,7 +1,7 @@
 package com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.PatientHasDoctorId
-import com.yehorsk.medicalplatformbackend.user.database.entity.UserEntity
+import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
