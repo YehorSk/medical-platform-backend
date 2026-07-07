@@ -1,7 +1,8 @@
 package com.yehorsk.medicalplatformbackend.user
 
-import com.yehorsk.medicalplatformbackend.auth.service.dto.response.MessageResponseDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.UserResponseDto
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import com.yehorsk.medicalplatformbackend.user.service.UserService
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.ChangePasswordRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.UpdateUserRequestDto
@@ -20,18 +21,18 @@ class UserController(
 ) {
 
     @GetMapping("/me")
-    fun me(): UserResponseDto {
+    fun me(): ApiResponseWithData<UserResponseDto> {
         return userService.me()
     }
 
     @PostMapping("/update")
-    fun updateUserData(@Valid @RequestBody request: UpdateUserRequestDto): UserResponseDto {
+    fun updateUserData(@Valid @RequestBody request: UpdateUserRequestDto): ApiResponseWithData<UserResponseDto> {
         return userService.updateUserData(request)
     }
 
     @PostMapping("/change-password")
-    fun changePassword(@Valid @RequestBody request: ChangePasswordRequestDto): ResponseEntity<MessageResponseDto> {
-        return ResponseEntity.ok(userService.changePassword(request))
+    fun changePassword(@Valid @RequestBody request: ChangePasswordRequestDto): ApiResponse {
+        return userService.changePassword(request)
     }
 
 }

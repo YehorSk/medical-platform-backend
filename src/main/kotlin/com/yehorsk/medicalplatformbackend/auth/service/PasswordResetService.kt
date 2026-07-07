@@ -10,6 +10,7 @@ import com.yehorsk.medicalplatformbackend.auth.exceptions.types.TooManyAttemptsE
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.GetResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.ResetPasswordRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyResetTokenRequestDto
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -32,7 +33,7 @@ class PasswordResetService(
     private val secureRandom = SecureRandom()
 
     @Transactional
-    fun requestReset(request: GetResetTokenRequestDto){
+    fun requestReset(request: GetResetTokenRequestDto): ApiResponse{
         val user = userRepository.findByEmail(request.email)
             ?: throw InvalidCredentialsException()
 
@@ -46,10 +47,11 @@ class PasswordResetService(
         redisTemplate.delete(attemptsKey)
 
         mailService.sendPlainText(to = request.email, subject = "OTP", body = otp)
+        return ApiResponse(message = "If this email exists, a reset code has been sent")
     }
 
     @Transactional
-    fun verifyCode(request: VerifyResetTokenRequestDto){
+    fun verifyCode(request: VerifyResetTokenRequestDto): ApiResponse{
         val user = userRepository.findByEmail(request.email)
             ?: throw InvalidCredentialsException()
 
@@ -70,10 +72,11 @@ class PasswordResetService(
         if (!passwordEncoder.matches(request.code, hashedToken)) {
             throw InvalidResetCodeException()
         }
+        return ApiResponse(message = "Code verified")
     }
 
     @Transactional
-    fun resetPassword(request: ResetPasswordRequestDto){
+    fun resetPassword(request: ResetPasswordRequestDto): ApiResponse{
         val user = userRepository.findByEmail(request.email)
             ?: throw InvalidCredentialsException()
 
@@ -92,6 +95,7 @@ class PasswordResetService(
         userRepository.save(user)
 
         redisTemplate.delete(listOf(codeKey, attemptsKey))
+        return ApiResponse(message = "Password has been reset")
     }
 
 }

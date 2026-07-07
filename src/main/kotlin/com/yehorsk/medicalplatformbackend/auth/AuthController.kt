@@ -9,7 +9,8 @@ import com.yehorsk.medicalplatformbackend.auth.service.dto.request.RegisterReque
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.ResetPasswordRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.AuthenticatedUserResponseDto
-import com.yehorsk.medicalplatformbackend.auth.service.dto.response.MessageResponseDto
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,52 +27,48 @@ class AuthController(
     @PostMapping("/register")
     fun register(
         @Valid @RequestBody request: RegisterRequestDto
-    ): MessageResponseDto {
+    ): ApiResponse {
         return authService.register(request)
     }
 
     @PostMapping("/login")
     fun login(
         @Valid @RequestBody request: LoginRequestDto
-    ): AuthenticatedUserResponseDto {
+    ): ApiResponseWithData<AuthenticatedUserResponseDto> {
         return authService.login(request)
     }
 
     @PostMapping("/refresh")
     fun refresh(
         @Valid @RequestBody request: RefreshTokenRequestDto
-    ): AuthenticatedUserResponseDto {
+    ): ApiResponseWithData<AuthenticatedUserResponseDto> {
         return authService.refresh(request.refreshToken)
     }
 
     @PostMapping("/logout")
-    fun logout(): MessageResponseDto {
-        authService.logout()
-        return MessageResponseDto("Logged out successfully")
+    fun logout(): ApiResponse {
+        return authService.logout()
     }
 
     @PostMapping("/forgot-password")
     fun forgotPassword(
         @Valid @RequestBody request: GetResetTokenRequestDto
-    ): MessageResponseDto {
-        pwdResetService.requestReset(request)
-        return MessageResponseDto("If this email exists, a reset code has been sent")
+    ): ApiResponse {
+        return pwdResetService.requestReset(request)
     }
 
     @PostMapping("/verify-reset-code")
     fun verifyResetCode(
         @Valid @RequestBody request: VerifyResetTokenRequestDto
-    ): MessageResponseDto {
-        pwdResetService.verifyCode(request)
-        return MessageResponseDto("Code verified")
+    ): ApiResponse {
+        return pwdResetService.verifyCode(request)
     }
 
     @PostMapping("/reset-password")
     fun resetPassword(
         @Valid @RequestBody request: ResetPasswordRequestDto
-    ): MessageResponseDto {
-        pwdResetService.resetPassword(request)
-        return MessageResponseDto("Password has been reset")
+    ): ApiResponse {
+        return pwdResetService.resetPassword(request)
     }
 
 }

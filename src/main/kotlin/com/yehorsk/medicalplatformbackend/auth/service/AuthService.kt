@@ -22,9 +22,10 @@ import com.yehorsk.medicalplatformbackend.auth.exceptions.types.UserDoesNotExist
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.LoginRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.RegisterRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.AuthenticatedUserResponseDto
-import com.yehorsk.medicalplatformbackend.auth.service.dto.response.MessageResponseDto
 import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserResponseDto
 import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserRole
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.security.MessageDigest
@@ -43,7 +44,7 @@ class AuthService(
 ) {
 
     @Transactional
-    fun register(request: RegisterRequestDto): MessageResponseDto {
+    fun register(request: RegisterRequestDto): ApiResponse {
 
         if (userRepository.findByEmail(request.email) != null) {
             throw UserAlreadyExistException()
@@ -81,10 +82,12 @@ class AuthService(
 
         userRepository.save(user)
 
-        return MessageResponseDto("Registration successful. Please verify your email.")
+        return ApiResponse(
+            message = "Registration successful. Please verify your email."
+        )
     }
 
-    fun login(request: LoginRequestDto): AuthenticatedUserResponseDto{
+    fun login(request: LoginRequestDto): ApiResponseWithData<AuthenticatedUserResponseDto>{
         val user = userRepository.findByEmail(email = request.email)
             ?: throw InvalidCredentialsException()
 
@@ -96,24 +99,27 @@ class AuthService(
             throw DoctorNotApprovedException()
         }
 
-        return user.id?.let { id ->
-            val accessToken = jwtService.generateAccessToken(id, user.role)
-            val refreshToken = jwtService.generateRefreshToken(id, user.role)
+         return user.id?.let { id ->
+             val accessToken = jwtService.generateAccessToken(id, user.role)
+             val refreshToken = jwtService.generateRefreshToken(id, user.role)
 
-            user.id?.let {
-                storeRefreshToken(it, refreshToken)
-            }
+             user.id?.let {
+                 storeRefreshToken(it, refreshToken)
+             }
 
-            AuthenticatedUserResponseDto(
-                user = user.toUserResponseDto(),
-                accessToken = accessToken,
-                refreshToken = refreshToken
-            )
-        } ?: throw UserDoesNotExistException()
+             ApiResponseWithData(
+                 data = AuthenticatedUserResponseDto(
+                     user = user.toUserResponseDto(),
+                     accessToken = accessToken,
+                     refreshToken = refreshToken
+                 ),
+                 message = "Login successful"
+             )
+         } ?: throw UserDoesNotExistException()
     }
 
     @Transactional
-    fun refresh(token: String): AuthenticatedUserResponseDto{
+    fun refresh(token: String): ApiResponseWithData<AuthenticatedUserResponseDto>{
         if(!jwtService.validateRefreshToken(token)) throw InvalidTokenException()
 
         val userId = jwtService.getUserIdFromToken(token)
@@ -134,17 +140,20 @@ class AuthService(
             storeRefreshToken(it, newRefreshToken)
         }
 
-        return AuthenticatedUserResponseDto(
-            user = user.toUserResponseDto(),
-            accessToken = newAccessToken,
-            refreshToken = newRefreshToken
-        )
+         return ApiResponseWithData(
+             data = AuthenticatedUserResponseDto(
+                 user = user.toUserResponseDto(),
+                 accessToken = newAccessToken,
+                 refreshToken = newRefreshToken
+             )
+         )
     }
 
     @Transactional
-    fun logout() {
+    fun logout(): ApiResponse {
         val userId = userProvider.getCurrentUserId()
         refreshTokenRepository.deleteByUserId(userId)
+        return ApiResponse(message = "Logged out successfully")
     }
 
     private fun storeRefreshToken(userId: UserId, token: String){
