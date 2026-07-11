@@ -39,14 +39,6 @@ class UserService(
         val userId = userProvider.getCurrentUserId()
         val user = userRepository.findUserEntityById(userId)
             ?: throw UserDoesNotExistException()
-
-        logger.info(
-            "Before update: firstName={}, lastName={}, title={}",
-            user.firstName,
-            user.lastName,
-            user.title
-        )
-
         user.firstName = request.firstName
         user.lastName = request.lastName
         request.title?.let { user.title = it }
@@ -55,18 +47,12 @@ class UserService(
         request.emergencyContactName?.let { user.emergencyContactName = it }
         request.emergencyContactPhone?.let { user.emergencyContactPhone = it }
 
-        logger.info("Updating user data for user ID: {} - {} - {}", userId, request.toString(), user.toString())
-
         val newUser = userRepository.save(user)
 
-        logger.info(
-            "After update: firstName={}, lastName={}, title={}",
-            newUser.firstName,
-            newUser.lastName,
-            newUser.title
+        return ApiResponseWithData(
+            data = newUser.toUserResponseDto(),
+            message = "Profile updated successfully"
         )
-
-        return ApiResponseWithData(data = newUser.toUserResponseDto())
     }
 
     @PreAuthorize("isAuthenticated()")

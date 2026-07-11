@@ -7,15 +7,11 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="update profile">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/service/dto/ApiResponse.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/ChangePasswordRequestDto.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/dto/request/UpdateUserRequestDto.kt" afterDir="false" />
+    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="ApiResponse">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/AuthController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/AuthService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/PasswordResetService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/PasswordResetService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/UserController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/UserController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/seeder/UserSeeder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/seeder/UserSeeder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/exceptions/types/UserExceptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/exceptions/types/UserExceptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/mappers/UserMappers.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/mappers/UserMappers.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/UserService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/UserService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,7 +25,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="97" />
+    <option name="cachedIndexableFilesCount" value="98" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -72,61 +68,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000343346256053" />
-      <entry key="MS500" value="1.142314202510918" />
-      <entry key="S2" value="2.060764615576411" />
-      <entry key="S5" value="2.8924485352379286" />
-      <entry key="S10" value="3.362574312638988" />
-      <entry key="S30" value="3.86226912470374" />
-      <entry key="S60" value="4.506469325759161" />
-      <entry key="M2" value="5.755317603020622" />
-      <entry key="M5" value="9.358535250120042" />
-      <entry key="M10" value="14.975254857714903" />
-      <entry key="M15" value="19.50419901658769" />
-      <entry key="M30" value="29.43036244920868" />
-      <entry key="H1" value="42.07694426471829" />
-      <entry key="H2" value="60.95469864766767" />
-      <entry key="H4" value="104.88518271085995" />
-      <entry key="D1" value="562.9671758664252" />
-      <entry key="W1" value="995.8296354421636" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000000159264504" />
+      <entry key="S2" value="1.0112338791628668" />
+      <entry key="S5" value="1.1660396844038905" />
+      <entry key="S10" value="1.4074796736082555" />
+      <entry key="S30" value="1.741370527227562" />
+      <entry key="S60" value="1.8610848310680925" />
+      <entry key="M2" value="1.948973682138067" />
+      <entry key="M5" value="3.0264030095609393" />
+      <entry key="M10" value="7.189087753936306" />
+      <entry key="M15" value="11.843466755735781" />
+      <entry key="M30" value="23.553107935014904" />
+      <entry key="H1" value="38.95288403394221" />
+      <entry key="H2" value="60.14303145235181" />
+      <entry key="H4" value="104.99535646316524" />
+      <entry key="D1" value="563.7123901699889" />
+      <entry key="W1" value="1000.4999074971289" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="4.9E-322" />
-      <entry key="S2" value="4.699091273237139E-81" />
-      <entry key="S5" value="7.606489422609278E-33" />
-      <entry key="S10" value="1.0061314182346431E-16" />
-      <entry key="S30" value="6.859658085940082E-6" />
-      <entry key="S60" value="0.003666320651231883" />
-      <entry key="M2" value="0.0879855678537272" />
-      <entry key="M5" value="0.895342735823814" />
-      <entry key="M10" value="2.885471150805071" />
-      <entry key="M15" value="4.641389505863222" />
-      <entry key="M30" value="8.079086108679592" />
-      <entry key="H1" value="11.896342659025402" />
-      <entry key="H2" value="18.973394855433313" />
-      <entry key="H4" value="44.54560130694508" />
-      <entry key="D1" value="404.72550231001424" />
-      <entry key="W1" value="738.034985854605" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="7.149934117940194E-147" />
+      <entry key="S5" value="3.481134601472989E-59" />
+      <entry key="S10" value="5.9001140679422365E-30" />
+      <entry key="S30" value="1.8069806646216578E-10" />
+      <entry key="S60" value="1.3447825147059848E-5" />
+      <entry key="M2" value="0.0037734409915912933" />
+      <entry key="M5" value="0.16719845497891117" />
+      <entry key="M10" value="1.0795197569188215" />
+      <entry key="M15" value="2.3701385261363335" />
+      <entry key="M30" value="5.852700935933444" />
+      <entry key="H1" value="10.341073555203161" />
+      <entry key="H2" value="17.876189833258397" />
+      <entry key="H4" value="43.076895426592834" />
+      <entry key="D1" value="401.9625563300533" />
+      <entry key="W1" value="738.0517112159686" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.0910069453867394E-4" />
-      <entry key="MS500" value="0.21844294086948843" />
-      <entry key="S2" value="1.3507793762727704" />
-      <entry key="S5" value="2.4217361720725545" />
-      <entry key="S10" value="3.073147629041595" />
-      <entry key="S30" value="3.746856635945915" />
-      <entry key="S60" value="4.4412476699436585" />
-      <entry key="M2" value="5.795982380167605" />
-      <entry key="M5" value="10.214786732097387" />
-      <entry key="M10" value="17.824608409319126" />
-      <entry key="M15" value="24.112699888672118" />
-      <entry key="M30" value="37.48368971807459" />
-      <entry key="H1" value="53.95442183970793" />
-      <entry key="H2" value="79.91389882702802" />
-      <entry key="H4" value="149.4175255930467" />
-      <entry key="D1" value="967.678486687817" />
-      <entry key="W1" value="1733.8610311038726" />
+      <entry key="MS100" value="0.0024721808475982017" />
+      <entry key="MS500" value="0.3010343474653424" />
+      <entry key="S2" value="0.7475352326489939" />
+      <entry key="S5" value="1.0228282447782793" />
+      <entry key="S10" value="1.3104601530229123" />
+      <entry key="S30" value="1.6972670258224363" />
+      <entry key="S60" value="1.8369178708228988" />
+      <entry key="M2" value="1.9398630979006648" />
+      <entry key="M5" value="3.184067061923574" />
+      <entry key="M10" value="8.254005250349202" />
+      <entry key="M15" value="14.195947350638107" />
+      <entry key="M30" value="29.386672027257077" />
+      <entry key="H1" value="49.27735423879352" />
+      <entry key="H2" value="78.00571572857885" />
+      <entry key="H4" value="148.05929385566185" />
+      <entry key="D1" value="965.6608144877231" />
+      <entry key="W1" value="1738.5480229323277" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -277,7 +273,11 @@
       <workItem from="1783166677443" duration="11609000" />
       <workItem from="1783248856630" duration="9071000" />
       <workItem from="1783360296149" duration="2969000" />
-      <workItem from="1783439990021" duration="5752000" />
+      <workItem from="1783439990021" duration="5816000" />
+      <workItem from="1783534523861" duration="673000" />
+      <workItem from="1783707765075" duration="563000" />
+      <workItem from="1783771142789" duration="3714000" />
+      <workItem from="1783792249609" duration="2386000" />
     </task>
     <task id="LOCAL-00001" summary="Implement basic user authentication">
       <option name="closed" value="true" />
@@ -359,7 +359,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783360837154</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="ApiResponse">
+      <option name="closed" value="true" />
+      <created>1783449328366</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1783449328366</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -387,6 +395,7 @@
     <MESSAGE value="minor" />
     <MESSAGE value="&quot;me&quot; endpoint" />
     <MESSAGE value="update profile" />
-    <option name="LAST_COMMIT_MESSAGE" value="update profile" />
+    <MESSAGE value="ApiResponse" />
+    <option name="LAST_COMMIT_MESSAGE" value="ApiResponse" />
   </component>
 </project>

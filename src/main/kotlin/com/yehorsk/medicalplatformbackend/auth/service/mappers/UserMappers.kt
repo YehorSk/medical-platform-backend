@@ -9,7 +9,12 @@ fun UserEntity.toUserResponseDto() = UserResponseDto(
     email = email,
     firstName = firstName,
     lastName = lastName,
-    role = role
+    role = role,
+    phone = phone ?: "",
+    address = address ?: "",
+    title = title ?: "",
+    emergencyContactName = emergencyContactName ?: "",
+    emergencyContactPhone = emergencyContactPhone ?: "",
 )
 
 fun String.toUserRole(): UserRole{

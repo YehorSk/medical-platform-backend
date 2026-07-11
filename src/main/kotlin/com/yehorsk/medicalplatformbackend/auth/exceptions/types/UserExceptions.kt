@@ -7,7 +7,7 @@ class EmailIsTakenException : AppException("EMAIL_TAKEN", HttpStatus.CONFLICT, "
 class InvalidCredentialsException : AppException("INVALID_CREDENTIALS", HttpStatus.UNAUTHORIZED, "Invalid credentials")
 class InvalidTokenException : AppException("INVALID_TOKEN", HttpStatus.UNAUTHORIZED, "Invalid token")
 class UserAlreadyExistException : AppException("USER_EXISTS", HttpStatus.CONFLICT, "User already exists")
-class UserDoesNotExistException : AppException("USER_NOT_FOUND", HttpStatus.NOT_FOUND, "User does not exist")
+class UserDoesNotExistException : AppException("USER_NOT_FOUND", HttpStatus.UNAUTHORIZED, "User does not exist")
 class UserNotAuthenticatedException : AppException("UNAUTHORIZED", HttpStatus.UNAUTHORIZED, "Not authenticated")
 class InvalidResetCodeException : AppException("INVALID_RESET_CODE",HttpStatus.BAD_REQUEST,"The reset code is invalid")
 class ExpiredResetCodeException : AppException("EXPIRED_RESET_CODE",HttpStatus.BAD_REQUEST,"The reset code has expired")

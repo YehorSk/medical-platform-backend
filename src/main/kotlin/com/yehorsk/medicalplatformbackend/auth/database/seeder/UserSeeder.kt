@@ -23,12 +23,12 @@ class UserSeeder(
             return
         }
 
-        val commonPassword = "Test@123456"
+        val commonPassword = "12345678"
         val hashedPassword = passwordEncoder.encode(commonPassword)!!
 
         // Create patient
         val patient = UserEntity(
-            email = "patient@example.com",
+            email = "john.doe@example.com",
             hashedPassword = hashedPassword,
             firstName = "John",
             lastName = "Doe",
