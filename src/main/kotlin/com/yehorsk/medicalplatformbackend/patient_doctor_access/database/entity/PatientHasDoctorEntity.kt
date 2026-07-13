@@ -2,6 +2,7 @@ package com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.PatientHasDoctorId
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
+import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -22,7 +23,7 @@ import java.time.Instant
 @Table(
     name = "patients_has_doctors",
     uniqueConstraints = [
-        UniqueConstraint(columnNames = ["patient_id", "doctor_id"])
+        UniqueConstraint(columnNames = ["medical_card_id", "doctor_id"])
     ]
 )
 class PatientHasDoctorEntity(
@@ -31,8 +32,8 @@ class PatientHasDoctorEntity(
     var id: PatientHasDoctorId? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id")
-    var patient: UserEntity,
+    @JoinColumn(name = "medical_card_id")
+    var medicalCard: MedicalCardEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id")
@@ -61,7 +62,19 @@ class PatientHasDoctorEntity(
         status = AccessStatus.REJECTED
     }
 
+    fun canApprove(): Boolean = status == AccessStatus.PENDING
+
+    fun canReject(): Boolean = status == AccessStatus.PENDING
+
+    fun canRevoke(): Boolean = status == AccessStatus.APPROVED
+
     fun isApproved(): Boolean = status == AccessStatus.APPROVED
+
+    fun isActive(): Boolean = status == AccessStatus.APPROVED
+
+    fun isPending(): Boolean = status == AccessStatus.PENDING
+
+    fun isTerminated(): Boolean = status in setOf(AccessStatus.REJECTED, AccessStatus.REVOKED)
 }
 
 enum class AccessStatus {

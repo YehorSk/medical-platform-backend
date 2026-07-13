@@ -27,38 +27,43 @@ class PatientHasDoctorService(
     private val currentUserProvider: CurrentUserProvider
 ) {
 
-//    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_PATIENT')")
-//    fun findRelation(
-//        relationId: PatientHasDoctorId
-//    ): PatientHasDoctorResponse {
-//
-//    }
-
     @Transactional
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    fun requestAccess(
+    fun patientRequestDoctor(doctorId: UserId) {
+        val patientId = currentUserProvider.getCurrentUserId()
+        createAccessRequest(patientId, doctorId)
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    fun doctorRequestPatient(patientId: UserId) {
+        val doctorId = currentUserProvider.getCurrentUserId()
+        createAccessRequest(patientId, doctorId)
+    }
+
+    private fun createAccessRequest(
         patientId: UserId,
         doctorId: UserId
-    ){
-        val patient = userRepository.findUserEntityById(patientId)
+    ) {
+        val patient = userRepository.findUserEntityById(patientId)?.medicalCard
             ?: throw PatientNotFoundException()
         val doctor = userRepository.findUserEntityById(doctorId)
             ?: throw DoctorNotFoundException()
 
-        if(repository.existsActiveRelation(patientId, doctorId)){
+        if (repository.existsActiveRelation(patientId, doctorId)) {
             throw AccessRequestAlreadyExistsException()
         }
 
         repository.save(
             PatientHasDoctorEntity(
-                patient = patient,
+                medicalCard = patient,
                 doctor = doctor
             )
         )
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun approveAccess(relationId: PatientHasDoctorId){
         val relation = repository.findPatientHasDoctorEntityById(relationId)
             ?: throw RelationDoesNotExistException()
@@ -71,7 +76,7 @@ class PatientHasDoctorService(
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_PATIENT')")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun revokeAccess(relationId: PatientHasDoctorId){
         val relation = repository.findPatientHasDoctorEntityById(relationId)
             ?: throw RelationDoesNotExistException()
@@ -84,7 +89,7 @@ class PatientHasDoctorService(
                 relation.revoke()
             }
             UserRole.PATIENT -> {
-                if (relation.patient.id != user.id) {
+                if (relation.medicalCard.id != user.id) {
                     throw AccessDeniedException()
                 }
                 relation.revoke()
@@ -115,6 +120,24 @@ class PatientHasDoctorService(
             }
             else -> throw AccessDeniedException()
         }.map { it.toPatientHasDoctorResponse() }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    fun getMyDoctors(): List<PatientHasDoctorResponse>{
+        val patientId = currentUserProvider.getCurrentUserId()
+        return repository.findAllByPatientIdAndStatus(
+            patientId = patientId,
+            status = AccessStatus.APPROVED
+        ).map { it.toPatientHasDoctorResponse() }
+    }
+
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    fun getMyPatients(): List<PatientHasDoctorResponse>{
+        val doctorId = currentUserProvider.getCurrentUserId()
+        return repository.findAllByDoctorIdAndStatus(
+            doctorId = doctorId,
+            status = AccessStatus.APPROVED
+        ).map { it.toPatientHasDoctorResponse() }
     }
 
 }

@@ -7,12 +7,17 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="ApiResponse">
+    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="update user bug fix">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/service/dto/ApiResponseWithData.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/service/dto/response/MedicalCardResponseDto.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/service/mappers/MedicalCardMappers.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/seeder/UserSeeder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/seeder/UserSeeder.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/exceptions/types/UserExceptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/exceptions/types/UserExceptions.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/mappers/UserMappers.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/service/mappers/UserMappers.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/UserService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/UserService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/database/entity/MedicalCardEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/database/entity/MedicalCardEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/entity/PatientHasDoctorEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/entity/PatientHasDoctorEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/PatientHasDoctorService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/PatientHasDoctorService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/dto/response/PatientHasDoctorResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/dto/response/PatientHasDoctorResponse.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/mappers/PatientHasDoctorMappers.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/mappers/PatientHasDoctorMappers.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/UserController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/UserController.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +63,9 @@
     &quot;accountId&quot;: &quot;c49bcba1-5ece-4e51-bca5-fefad3c728cc&quot;
   }
 }</component>
+  <component name="HttpClientOnboardingState"><![CDATA[{
+  "isOnboardingCommentShown": true
+}]]></component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -68,61 +76,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000000159264504" />
-      <entry key="S2" value="1.0112338791628668" />
-      <entry key="S5" value="1.1660396844038905" />
-      <entry key="S10" value="1.4074796736082555" />
-      <entry key="S30" value="1.741370527227562" />
-      <entry key="S60" value="1.8610848310680925" />
-      <entry key="M2" value="1.948973682138067" />
-      <entry key="M5" value="3.0264030095609393" />
-      <entry key="M10" value="7.189087753936306" />
-      <entry key="M15" value="11.843466755735781" />
-      <entry key="M30" value="23.553107935014904" />
-      <entry key="H1" value="38.95288403394221" />
-      <entry key="H2" value="60.14303145235181" />
-      <entry key="H4" value="104.99535646316524" />
-      <entry key="D1" value="563.7123901699889" />
-      <entry key="W1" value="1000.4999074971289" />
+      <entry key="MS100" value="1.0000014454999604" />
+      <entry key="MS500" value="1.0680532196753156" />
+      <entry key="S2" value="1.6177528671962587" />
+      <entry key="S5" value="2.176581091023097" />
+      <entry key="S10" value="2.568688799474428" />
+      <entry key="S30" value="3.197917415597073" />
+      <entry key="S60" value="3.545180167738342" />
+      <entry key="M2" value="3.88928656372083" />
+      <entry key="M5" value="4.5024914689793505" />
+      <entry key="M10" value="6.383727169820717" />
+      <entry key="M15" value="9.520572368533985" />
+      <entry key="M30" value="20.91998218597139" />
+      <entry key="H1" value="39.95855552150957" />
+      <entry key="H2" value="66.03084694575443" />
+      <entry key="H4" value="113.53372601097517" />
+      <entry key="D1" value="574.517111543259" />
+      <entry key="W1" value="1020.4161824937631" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="7.149934117940194E-147" />
-      <entry key="S5" value="3.481134601472989E-59" />
-      <entry key="S10" value="5.9001140679422365E-30" />
-      <entry key="S30" value="1.8069806646216578E-10" />
-      <entry key="S60" value="1.3447825147059848E-5" />
-      <entry key="M2" value="0.0037734409915912933" />
-      <entry key="M5" value="0.16719845497891117" />
-      <entry key="M10" value="1.0795197569188215" />
-      <entry key="M15" value="2.3701385261363335" />
-      <entry key="M30" value="5.852700935933444" />
-      <entry key="H1" value="10.341073555203161" />
-      <entry key="H2" value="17.876189833258397" />
-      <entry key="H4" value="43.076895426592834" />
-      <entry key="D1" value="401.9625563300533" />
-      <entry key="W1" value="738.0517112159686" />
+      <entry key="S2" value="7.589999529270873E-226" />
+      <entry key="S5" value="9.275551714961501E-91" />
+      <entry key="S10" value="1.1254000636687237E-45" />
+      <entry key="S30" value="1.5539481580485657E-15" />
+      <entry key="S60" value="5.9226125252580236E-8" />
+      <entry key="M2" value="4.3339154555473055E-4" />
+      <entry key="M5" value="0.1326578611302286" />
+      <entry key="M10" value="1.189843192150324" />
+      <entry key="M15" value="2.748778931042917" />
+      <entry key="M30" value="7.4605784776437964" />
+      <entry key="H1" value="14.198795997445275" />
+      <entry key="H2" value="23.63526238577121" />
+      <entry key="H4" value="48.7495726004798" />
+      <entry key="D1" value="405.29739213586896" />
+      <entry key="W1" value="747.782511753523" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.0024721808475982017" />
-      <entry key="MS500" value="0.3010343474653424" />
-      <entry key="S2" value="0.7475352326489939" />
-      <entry key="S5" value="1.0228282447782793" />
-      <entry key="S10" value="1.3104601530229123" />
-      <entry key="S30" value="1.6972670258224363" />
-      <entry key="S60" value="1.8369178708228988" />
-      <entry key="M2" value="1.9398630979006648" />
-      <entry key="M5" value="3.184067061923574" />
-      <entry key="M10" value="8.254005250349202" />
-      <entry key="M15" value="14.195947350638107" />
-      <entry key="M30" value="29.386672027257077" />
-      <entry key="H1" value="49.27735423879352" />
-      <entry key="H2" value="78.00571572857885" />
-      <entry key="H4" value="148.05929385566185" />
-      <entry key="D1" value="965.6608144877231" />
-      <entry key="W1" value="1738.5480229323277" />
+      <entry key="MS100" value="3.874069914911303E-6" />
+      <entry key="MS500" value="0.11455563727969184" />
+      <entry key="S2" value="1.0608745546755585" />
+      <entry key="S5" value="1.8917118796835972" />
+      <entry key="S10" value="2.405229851297546" />
+      <entry key="S30" value="3.1236035959731887" />
+      <entry key="S60" value="3.5005492805670233" />
+      <entry key="M2" value="3.862401204903206" />
+      <entry key="M5" value="4.619658381427625" />
+      <entry key="M10" value="7.559242772508726" />
+      <entry key="M15" value="12.253314435857812" />
+      <entry key="M30" value="28.361640567027948" />
+      <entry key="H1" value="54.13903005845669" />
+      <entry key="H2" value="89.65066945769553" />
+      <entry key="H4" value="162.26917102247106" />
+      <entry key="D1" value="979.8001796263947" />
+      <entry key="W1" value="1768.1950385196278" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -145,7 +153,7 @@
     </option>
     <option name="panelTemplate">
       <template>
-        <option name="modeId" value="Agent" />
+        <option name="modeId" value="Ask" />
         <option name="model">
           <model>
             <option name="modelType" value="builtin_id" />
@@ -277,7 +285,9 @@
       <workItem from="1783534523861" duration="673000" />
       <workItem from="1783707765075" duration="563000" />
       <workItem from="1783771142789" duration="3714000" />
-      <workItem from="1783792249609" duration="2386000" />
+      <workItem from="1783792249609" duration="3107000" />
+      <workItem from="1783849145402" duration="3426000" />
+      <workItem from="1783964173468" duration="3677000" />
     </task>
     <task id="LOCAL-00001" summary="Implement basic user authentication">
       <option name="closed" value="true" />
@@ -367,7 +377,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783449328366</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="update user bug fix">
+      <option name="closed" value="true" />
+      <created>1783795102857</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1783795102857</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -396,6 +414,7 @@
     <MESSAGE value="&quot;me&quot; endpoint" />
     <MESSAGE value="update profile" />
     <MESSAGE value="ApiResponse" />
-    <option name="LAST_COMMIT_MESSAGE" value="ApiResponse" />
+    <MESSAGE value="update user bug fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="update user bug fix" />
   </component>
 </project>

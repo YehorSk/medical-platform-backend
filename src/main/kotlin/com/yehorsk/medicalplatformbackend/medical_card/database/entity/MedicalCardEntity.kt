@@ -3,6 +3,7 @@ package com.yehorsk.medicalplatformbackend.medical_card.database.entity
 import com.yehorsk.medicalplatformbackend.common.domain.type.AllergenId
 import com.yehorsk.medicalplatformbackend.common.domain.type.MedicalCardId
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -36,11 +37,18 @@ class MedicalCardEntity(
     var user: UserEntity? = null,
 
     @OneToMany(
-        mappedBy = "medicalCard",
+        mappedBy = "medical_card",
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
     var allergens: MutableSet<PatientHasAllergenEntity> = mutableSetOf(),
+
+    @OneToMany(
+        mappedBy = "medical_card",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    var doctors: MutableSet<PatientHasDoctorEntity> = mutableSetOf(),
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
