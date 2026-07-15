@@ -1,5 +1,6 @@
 package com.yehorsk.medicalplatformbackend.patient_doctor_access.database.repository
 
+import com.yehorsk.medicalplatformbackend.common.domain.type.MedicalCardId
 import com.yehorsk.medicalplatformbackend.common.domain.type.PatientHasDoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.AccessStatus
@@ -9,20 +10,20 @@ import org.springframework.data.jpa.repository.Query
 
 interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, PatientHasDoctorId> {
 
-    fun findByPatientIdAndDoctorId(
-        patientId: UserId,
+    fun findByMedicalCardIdAndDoctorId(
+        medicalCardId: MedicalCardId,
         doctorId: UserId
     ): PatientHasDoctorEntity?
 
     @Query("""
     SELECT COUNT(phd) > 0
     FROM PatientHasDoctorEntity phd
-    WHERE phd.patient.id = :patientId
+    WHERE phd.medicalCard.id = :patientId
       AND phd.doctor.id = :doctorId
       AND phd.status IN ('PENDING', 'APPROVED')
     """)
     fun existsActiveRelation(
-        patientId: UserId,
+        patientId: MedicalCardId,
         doctorId: UserId
     ): Boolean
 
@@ -35,16 +36,16 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
         userId: UserId
     ): List<PatientHasDoctorEntity>
 
-    fun findAllByPatientId(
-        userId: UserId
+    fun findAllByMedicalCardId(
+        medicalCardId: MedicalCardId
     ): List<PatientHasDoctorEntity>
 
     fun findAllByDoctorId(
         userId: UserId
     ): List<PatientHasDoctorEntity>
 
-    fun existsByPatientIdAndDoctorId(
-        patientId: UserId,
+    fun existsByMedicalCardIdAndDoctorId(
+        medicalCardId: MedicalCardId,
         doctorId: UserId
     ): Boolean
 
@@ -53,8 +54,8 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
         status: AccessStatus
     ): List<PatientHasDoctorEntity>
 
-    fun findAllByPatientIdAndStatus(
-        patientId: UserId,
+    fun findAllByMedicalCardIdAndStatus(
+        medicalCardId: MedicalCardId,
         status: AccessStatus
     ): List<PatientHasDoctorEntity>
 

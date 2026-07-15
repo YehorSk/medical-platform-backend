@@ -6,6 +6,7 @@ import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepos
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -35,6 +36,9 @@ class UserSeeder(
             role = UserRole.PATIENT,
             hasVerifiedEmail = true
         )
+        val medicalCard = MedicalCardEntity()
+        patient.medicalCard = medicalCard
+        medicalCard.user = patient
         userRepository.save(patient)
 
         // Create doctor

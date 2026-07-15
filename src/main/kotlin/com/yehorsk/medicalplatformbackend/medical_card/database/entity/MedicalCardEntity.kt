@@ -37,14 +37,14 @@ class MedicalCardEntity(
     var user: UserEntity? = null,
 
     @OneToMany(
-        mappedBy = "medical_card",
+        mappedBy = "medicalCard",
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
     var allergens: MutableSet<PatientHasAllergenEntity> = mutableSetOf(),
 
     @OneToMany(
-        mappedBy = "medical_card",
+        mappedBy = "medicalCard",
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
