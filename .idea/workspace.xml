@@ -7,17 +7,14 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="working on PatientHasDoctors functionality">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/dto/request/RelationIdRequest.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/dto/request/UserIdRequest.kt" afterDir="false" />
+    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="minor">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/ClinicEntity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/DoctorScheduleEntity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/WorkplaceEntity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/seeder/UserSeeder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/auth/database/seeder/UserSeeder.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/database/entity/MedicalCardEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/medical_card/database/entity/MedicalCardEntity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/controller/PatientHasDoctorController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/controller/PatientHasDoctorController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/repository/PatientHasDoctorRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/repository/PatientHasDoctorRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/exceptions/PatientHasDoctorExceptionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/exceptions/PatientHasDoctorExceptionHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/PatientHasDoctorService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/service/PatientHasDoctorService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/domain/type/TypeAliases.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/common/domain/type/TypeAliases.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/DoctorEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/entity/DoctorEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/DoctorRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/DoctorRepository.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +27,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="103" />
+    <option name="cachedIndexableFilesCount" value="104" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExternalProjectsData">
@@ -96,58 +93,58 @@
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
       <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0000000001101326" />
-      <entry key="S10" value="1.0000148365530264" />
-      <entry key="S30" value="1.0390031662993935" />
-      <entry key="S60" value="1.2792936414198939" />
-      <entry key="M2" value="1.7475287404775985" />
-      <entry key="M5" value="2.4052516613246593" />
-      <entry key="M10" value="3.115693263348344" />
-      <entry key="M15" value="4.0513061833789275" />
-      <entry key="M30" value="9.458414521026635" />
-      <entry key="H1" value="25.63196184854185" />
-      <entry key="H2" value="55.395572157996234" />
-      <entry key="H4" value="107.01790075563169" />
-      <entry key="D1" value="573.1442127128073" />
-      <entry key="W1" value="1038.6843201254317" />
+      <entry key="S5" value="1.0000000000006108" />
+      <entry key="S10" value="1.0000007815275136" />
+      <entry key="S30" value="1.009211169144638" />
+      <entry key="S60" value="1.0959750961516692" />
+      <entry key="M2" value="1.310498230257966" />
+      <entry key="M5" value="1.730902156532473" />
+      <entry key="M10" value="2.955190898436846" />
+      <entry key="M15" value="5.050379809502848" />
+      <entry key="M30" value="12.425536494405799" />
+      <entry key="H1" value="28.008125594390407" />
+      <entry key="H2" value="58.06818151179377" />
+      <entry key="H4" value="111.38103246838844" />
+      <entry key="D1" value="580.9572788474995" />
+      <entry key="W1" value="1062.1880480179977" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="8.223192306643265E-5" />
-      <entry key="MS500" value="0.17324708182498477" />
-      <entry key="S2" value="1.1643546678397263" />
-      <entry key="S5" value="1.9890599967423217" />
-      <entry key="S10" value="2.42846326471837" />
-      <entry key="S30" value="2.8556162342783304" />
-      <entry key="S60" value="3.3301772577468056" />
-      <entry key="M2" value="4.111652565682214" />
-      <entry key="M5" value="5.5016796202303775" />
-      <entry key="M10" value="7.1330566010198195" />
-      <entry key="M15" value="8.396255433617071" />
-      <entry key="M30" value="11.746987774693288" />
-      <entry key="H1" value="18.38588936921235" />
-      <entry key="H2" value="29.510888651183585" />
-      <entry key="H4" value="54.35881361737597" />
-      <entry key="D1" value="405.94534495283295" />
-      <entry key="W1" value="761.889324371806" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="5.92964915688468E-112" />
+      <entry key="S2" value="1.587007057210895E-28" />
+      <entry key="S5" value="9.158787365908858E-12" />
+      <entry key="S10" value="4.340367616728623E-6" />
+      <entry key="S30" value="0.03191549329225825" />
+      <entry key="S60" value="0.3067330439474139" />
+      <entry key="M2" value="0.9571185537965043" />
+      <entry key="M5" value="1.9024139813886254" />
+      <entry key="M10" value="2.5449584712097435" />
+      <entry key="M15" value="3.21669306930292" />
+      <entry key="M30" value="6.062194840863188" />
+      <entry key="H1" value="12.774212497944847" />
+      <entry key="H2" value="24.97178077520632" />
+      <entry key="H4" value="50.09156890035824" />
+      <entry key="D1" value="398.2869370051994" />
+      <entry key="W1" value="764.9102576175408" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="8.322278471323619E-5" />
-      <entry key="MS500" value="0.21744125595213973" />
-      <entry key="S2" value="1.4449253098617898" />
-      <entry key="S5" value="2.535976449075729" />
-      <entry key="S10" value="3.156189894990148" />
-      <entry key="S30" value="3.7893887340268333" />
-      <entry key="S60" value="4.550245250531407" />
-      <entry key="M2" value="5.824258443741826" />
-      <entry key="M5" value="7.888308673555228" />
-      <entry key="M10" value="10.235840197812761" />
-      <entry key="M15" value="12.436452073180659" />
-      <entry key="M30" value="21.19431529216735" />
-      <entry key="H1" value="44.00470880433714" />
-      <entry key="H2" value="84.89285805093355" />
-      <entry key="H4" value="161.36323060234594" />
-      <entry key="D1" value="979.075347039607" />
-      <entry key="W1" value="1800.5699357261683" />
+      <entry key="MS100" value="0.007921558435859602" />
+      <entry key="MS500" value="0.37998121410037894" />
+      <entry key="S2" value="0.7851281186735725" />
+      <entry key="S5" value="0.9077708079468296" />
+      <entry key="S10" value="0.9527745388986356" />
+      <entry key="S30" value="1.0233856671075998" />
+      <entry key="S60" value="1.3861196759191967" />
+      <entry key="M2" value="2.250097818898233" />
+      <entry key="M5" value="3.6207440614499906" />
+      <entry key="M10" value="5.4908615434556065" />
+      <entry key="M15" value="8.258106086919287" />
+      <entry key="M30" value="18.478002123625657" />
+      <entry key="H1" value="40.771044130261984" />
+      <entry key="H2" value="83.02754940419916" />
+      <entry key="H4" value="161.4597287130347" />
+      <entry key="D1" value="979.2301390663906" />
+      <entry key="W1" value="1827.0945615524492" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -184,44 +181,44 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build medical-platform-backend.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.MedicalPlatformBackendApplication.executor&quot;: &quot;Run&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/projects/DiplomaProject/medical-platform-backend/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.completions.CompletionsConfigurable&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build medical-platform-backend.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.MedicalPlatformBackendApplication.executor": "Run",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/projects/DiplomaProject/medical-platform-backend/src/main/kotlin/com/yehorsk/medicalplatformbackend/user/service/validation",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\projects\DiplomaProject\medical-platform-backend\src\main\kotlin\com\yehorsk\medicalplatformbackend\user\service\validation" />
@@ -307,7 +304,8 @@
       <workItem from="1783964173468" duration="3926000" />
       <workItem from="1784045527333" duration="5803000" />
       <workItem from="1784130746673" duration="1251000" />
-      <workItem from="1784136795870" duration="821000" />
+      <workItem from="1784136795870" duration="2240000" />
+      <workItem from="1784215857175" duration="5360000" />
     </task>
     <task id="LOCAL-00001" summary="Implement basic user authentication">
       <option name="closed" value="true" />
@@ -413,7 +411,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783968110574</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="minor">
+      <option name="closed" value="true" />
+      <created>1784139094761</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1784139094762</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -438,12 +444,16 @@
     <MESSAGE value="Introduce patient-doctor access feature" />
     <MESSAGE value="minor updates" />
     <MESSAGE value="PasswordResetService" />
-    <MESSAGE value="minor" />
     <MESSAGE value="&quot;me&quot; endpoint" />
     <MESSAGE value="update profile" />
     <MESSAGE value="ApiResponse" />
     <MESSAGE value="update user bug fix" />
     <MESSAGE value="working on PatientHasDoctors functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="working on PatientHasDoctors functionality" />
+    <MESSAGE value="minor" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

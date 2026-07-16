@@ -15,6 +15,8 @@ interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId> {
 
     fun findByLicenseNumber(number: String): DoctorEntity?
 
+    fun findByLicenseNumberStartingWith(prefix: String): DoctorEntity?
+
     fun findAllByApprovedTrue(): List<DoctorEntity>
 
     fun findAllByApprovedFalse(): List<DoctorEntity>

@@ -44,12 +44,29 @@ class DoctorEntity(
     @Column(nullable = false)
     var approved: Boolean = false,
 
+    @Column(name = "description", columnDefinition = "TEXT")
+    val description: String = "",
+
     @OneToMany(
         mappedBy = "doctor",
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
     var specializations: MutableSet<DoctorHasSpecializationsEntity> = mutableSetOf(),
+
+    @OneToMany(
+        mappedBy = "doctor",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    var schedules: MutableSet<DoctorScheduleEntity> = mutableSetOf(),
+
+    @OneToOne(
+        mappedBy = "doctor",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
+    var workplace: WorkplaceEntity? = null,
 
     @UpdateTimestamp
     @Column(name = "updated_at")
