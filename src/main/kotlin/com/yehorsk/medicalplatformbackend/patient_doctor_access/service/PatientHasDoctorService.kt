@@ -16,6 +16,7 @@ import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.resp
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.mappers.toPatientHasDoctorResponse
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
 import com.yehorsk.medicalplatformbackend.user.service.UserService
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service
 @Service
 class PatientHasDoctorService(
     private val repository: PatientHasDoctorRepository,
+    private val medicalCardRepository: MedicalCardRepository,
     private val userRepository: UserRepository,
     private val currentUserProvider: CurrentUserProvider
 ) {
@@ -51,7 +53,7 @@ class PatientHasDoctorService(
         patientId: UserId,
         doctorId: UserId
     ) {
-        val medicalCard = userRepository.findUserEntityById(patientId)?.medicalCard
+        val medicalCard = medicalCardRepository.findMedicalCardEntityByUserId(patientId)
             ?: throw PatientNotFoundException()
         val doctor = userRepository.findUserEntityById(doctorId)
             ?: throw DoctorNotFoundException()

@@ -3,8 +3,10 @@ package com.yehorsk.medicalplatformbackend.doctor.database.seeder
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.SpecializationEntity
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.SpecializationRepository
 import org.springframework.boot.CommandLineRunner
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
+@Order(6)
 @Component
 class SpecializationSeeder(
     private val specializationRepository: SpecializationRepository

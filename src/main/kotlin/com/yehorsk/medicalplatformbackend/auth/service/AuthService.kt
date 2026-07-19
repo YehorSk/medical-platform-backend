@@ -26,6 +26,7 @@ import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserResponseDto
 import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserRole
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
+import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.security.MessageDigest
@@ -38,6 +39,7 @@ class AuthService(
     private val mailService: MailService,
     private val userRepository: UserRepository,
     private val doctorRepository: DoctorRepository,
+    private val medicalCardRepository: MedicalCardRepository,
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val userProvider: CurrentUserProvider
@@ -77,10 +79,9 @@ class AuthService(
         }
 
         val medicalCard = MedicalCardEntity()
-        medicalCard.user = user
-        user.medicalCard = medicalCard
-
         userRepository.save(user)
+        medicalCard.user = user
+        medicalCardRepository.save(medicalCard)
 
         return ApiResponse(
             message = "Registration successful. Please verify your email."

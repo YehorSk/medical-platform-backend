@@ -45,14 +45,11 @@ class DoctorEntity(
     var approved: Boolean = false,
 
     @Column(name = "description", columnDefinition = "TEXT")
-    val description: String = "",
+    var description: String = "",
 
-    @OneToMany(
-        mappedBy = "doctor",
-        cascade = [CascadeType.ALL],
-        orphanRemoval = true
-    )
-    var specializations: MutableSet<DoctorHasSpecializationsEntity> = mutableSetOf(),
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "specialization_id", nullable = true)
+    var specialization: SpecializationEntity? = null,
 
     @OneToMany(
         mappedBy = "doctor",
@@ -75,24 +72,6 @@ class DoctorEntity(
     @Column(name = "approved_at")
     var approvedAt: Instant? = null,
 ){
-
-    fun addSpecialization(specialization: SpecializationEntity){
-        if(specializations.any { it.specialization.id == specialization.id }){
-            return
-        }
-        specializations.add(
-            DoctorHasSpecializationsEntity(
-                doctor = this,
-                specialization = specialization
-            )
-        )
-    }
-
-    fun removeSpecialization(specializationId: SpecializationId) {
-        specializations.removeIf {
-            it.specialization.id == specializationId
-        }
-    }
 
     fun changeApprovalStatus(byUser: UserEntity, status: Boolean) {
         this.approved = status

@@ -7,6 +7,7 @@ import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
 import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
+import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component
 @Component
 class UserSeeder(
     private val userRepository: UserRepository,
-    private val doctorRepository: DoctorRepository,
+    private val medicalCardRepository: MedicalCardRepository,
     private val passwordEncoder: PasswordEncoder
 ) : CommandLineRunner {
 
@@ -37,30 +38,9 @@ class UserSeeder(
             hasVerifiedEmail = true
         )
         val medicalCard = MedicalCardEntity()
-        patient.medicalCard = medicalCard
-        medicalCard.user = patient
         userRepository.save(patient)
-
-        // Create doctor
-        val doctorUser = UserEntity(
-            email = "doctor@example.com",
-            hashedPassword = hashedPassword,
-            firstName = "Jane",
-            lastName = "Smith",
-            role = UserRole.DOCTOR,
-            title = "Dr.",
-            hasVerifiedEmail = true
-        )
-        userRepository.save(doctorUser)
-
-        val doctor = DoctorEntity(
-            licenseNumber = "LIC-001-${System.currentTimeMillis()}",
-            user = doctorUser,
-            approved = true,
-            approvedBy = null,
-            approvedAt = java.time.Instant.now()
-        )
-        doctorRepository.save(doctor)
+        medicalCard.user = patient
+        medicalCardRepository.save(medicalCard)
 
         // Create admin
         val admin = UserEntity(

@@ -1,13 +1,26 @@
 package com.yehorsk.medicalplatformbackend.doctor.service
 
+import com.yehorsk.medicalplatformbackend.auth.service.dto.response.PagedResponseDto
 import com.yehorsk.medicalplatformbackend.common.domain.type.SpecializationId
-import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
+import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.WorkplaceResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.ClinicResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.SpecializationResponseDto
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
+import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.SpecializationRepository
+import com.yehorsk.medicalplatformbackend.doctor.database.repository.specification.DoctorSpecification
 import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.*
+import com.yehorsk.medicalplatformbackend.doctor.mappers.toDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.ChangeDoctorApprovalStatusDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.GetDoctorsWithFilterDto
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 
@@ -19,27 +32,42 @@ class DoctorService(
 ) {
 
     @Transactional
+    @PreAuthorize("isAuthenticated()")
+    fun getAllDoctors(request: GetDoctorsWithFilterDto, pageable: Pageable): ApiResponseWithData<PagedResponseDto<DoctorResponseDto>> {
+        val specs = DoctorSpecification.buildDynamicSpecification(request)
+        val pagedResponse = doctorRepository.findAll(specs, pageable)
+
+        return ApiResponseWithData(
+            data = PagedResponseDto(
+                content = pagedResponse.content.map { it.toDoctorResponseDto() },
+                page = pagedResponse.number,
+                size = pagedResponse.size,
+                hasNext = pagedResponse.hasNext(),
+                totalElements = pagedResponse.totalElements,
+                totalPages = pagedResponse.totalPages
+            )
+        )
+    }
+
+    @Transactional
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    fun addSpecialization(specializationId: SpecializationId){
+    fun setSpecialization(specializationId: SpecializationId){
         val specialization = specializationRepository.findSpecializationEntitiesById(specializationId)
             ?: throw SpecializationDoesNotExist()
 
         val doctor = currentUserProvider.getCurrentUserEntity().doctor
             ?: throw DoctorDoesNotExistException()
 
-        doctor.addSpecialization(specialization)
+        doctor.specialization = specialization
     }
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    fun removeSpecialization(specializationId: SpecializationId){
-        specializationRepository.findSpecializationEntitiesById(specializationId)
-            ?: throw SpecializationDoesNotExist()
-
+    fun removeSpecialization(){
         val doctor = currentUserProvider.getCurrentUserEntity().doctor
             ?: throw DoctorDoesNotExistException()
 
-        doctor.removeSpecialization(specializationId)
+//        doctor.setSpecialization(null)
     }
 
     @Transactional
