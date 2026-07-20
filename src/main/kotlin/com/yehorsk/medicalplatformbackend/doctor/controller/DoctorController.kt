@@ -32,7 +32,7 @@ class DoctorController(
     fun getAllDoctors(
         @RequestBody request: GetDoctorsWithFilterDto,
         @PageableDefault(size = 10) pageable: Pageable
-    ): ApiResponseWithData<PagedResponseDto<DoctorResponseDto>> {
+    ): PagedResponseDto<DoctorResponseDto> {
         return doctorService.getAllDoctors(request, pageable)
     }
 
