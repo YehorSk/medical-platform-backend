@@ -15,6 +15,7 @@ data class DoctorResponseDto(
     val specialization: SpecializationResponseDto? = null,
     val workplace: WorkplaceResponseDto? = null,
     val updatedAt: Instant? = null,
-    val approvedAt: Instant? = null
+    val approvedAt: Instant? = null,
+    val currentPatientHasDoctor: Boolean = false
 )
 

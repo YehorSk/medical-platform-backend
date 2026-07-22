@@ -2,6 +2,7 @@ package com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.PatientHasDoctorId
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
+import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -41,6 +42,9 @@ class PatientHasDoctorEntity(
 
     @Enumerated(EnumType.STRING)
     var status: AccessStatus = AccessStatus.PENDING,
+
+    @Enumerated(EnumType.STRING)
+    var initiatedBy: UserRole,
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

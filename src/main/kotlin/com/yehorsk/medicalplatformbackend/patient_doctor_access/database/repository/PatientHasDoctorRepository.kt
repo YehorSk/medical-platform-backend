@@ -7,6 +7,7 @@ import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, PatientHasDoctorId> {
 
@@ -23,9 +24,21 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
       AND phd.status IN ('PENDING', 'APPROVED')
     """)
     fun existsActiveRelation(
-        patientId: MedicalCardId,
-        doctorId: UserId
+        @Param("patientId") patientId: MedicalCardId,
+        @Param("doctorId") doctorId: UserId
     ): Boolean
+
+    @Query("""
+    SELECT phd
+    FROM PatientHasDoctorEntity phd
+    WHERE phd.medicalCard.id = :patientId
+      AND phd.doctor.id = :doctorId
+      AND phd.status IN ('PENDING', 'APPROVED')
+    """)
+    fun getActiveRelation(
+        @Param("patientId") patientId: MedicalCardId,
+        @Param("doctorId") doctorId: UserId
+    ): PatientHasDoctorEntity?
 
     fun findPatientHasDoctorEntityById(
         patientHasDoctorId: PatientHasDoctorId

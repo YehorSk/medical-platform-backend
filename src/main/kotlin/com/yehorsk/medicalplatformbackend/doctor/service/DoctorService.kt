@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.doctor.service
 
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.PagedResponseDto
+import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.SpecializationId
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorResponseDto
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
@@ -10,8 +11,11 @@ import com.yehorsk.medicalplatformbackend.doctor.database.repository.Specializat
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.specification.DoctorSpecification
 import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.*
 import com.yehorsk.medicalplatformbackend.doctor.mappers.toDoctorResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.mappers.toPatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.ChangeDoctorApprovalStatusDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.GetDoctorsWithFilterDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorDetailsResponseDto
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.repository.PatientHasDoctorRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -21,8 +25,23 @@ import org.springframework.stereotype.Service
 class DoctorService(
     private val doctorRepository: DoctorRepository,
     private val specializationRepository: SpecializationRepository,
+    private val patientHasDoctorRepository: PatientHasDoctorRepository,
     private val currentUserProvider: CurrentUserProvider
 ) {
+
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    fun getDoctor(doctorId: DoctorId): DoctorDetailsResponseDto {
+        val doctor = doctorRepository.findDoctorEntityById(doctorId)
+            ?: throw DoctorDoesNotExistException()
+        val patientId = currentUserProvider.getCurrentUserId()
+        val patientHasDoctor = patientHasDoctorRepository.getActiveRelation(patientId, doctorId)
+
+        return DoctorDetailsResponseDto(
+            doctor = doctor.toDoctorResponseDto(),
+            access = patientHasDoctor?.toPatientHasDoctorResponseDto()
+        )
+    }
 
     @Transactional
     @PreAuthorize("isAuthenticated()")
@@ -64,7 +83,7 @@ class DoctorService(
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun changeDoctorApprovalStatus(request: ChangeDoctorApprovalStatusDto){
-        val doctor = doctorRepository.findDoctorEntityBy(request.doctorId)
+        val doctor = doctorRepository.findDoctorEntityById(request.doctorId)
             ?: throw DoctorDoesNotExistException()
 
         val user = currentUserProvider.getCurrentUserEntity()

@@ -14,11 +14,10 @@ import org.springframework.data.repository.query.Param
 
 interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId>, JpaSpecificationExecutor<DoctorEntity> {
 
-    fun findDoctorEntityBy(doctorId: DoctorId): DoctorEntity?
+    @EntityGraph(attributePaths = ["user", "specialization", "workplace", "workplace.clinic"])
+    fun findDoctorEntityById(doctorId: DoctorId): DoctorEntity?
 
     fun existsByLicenseNumber(number: String): Boolean
-
-    fun findByLicenseNumber(number: String): DoctorEntity?
 
     fun findByLicenseNumberStartingWith(prefix: String): DoctorEntity?
 

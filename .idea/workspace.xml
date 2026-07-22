@@ -7,10 +7,17 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="Doctor with Specialization one to many, search doctors with filters and pagination">
+    <list default="true" id="34e20241-fa19-4f69-aea9-c2529efc2016" name="Changes" comment="modified getAllDoctors endpoint">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/dto/response/DoctorDetailsResponseDto.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/dto/response/PatientHasDoctorResponseDto.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/controller/DoctorController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/controller/DoctorController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/DoctorRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/database/repository/DoctorRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/mappers/DoctorMappers.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/mappers/DoctorMappers.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/DoctorService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/DoctorService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/dto/response/DoctorResponseDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/doctor/service/dto/response/DoctorResponseDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/entity/PatientHasDoctorEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/entity/PatientHasDoctorEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/repository/PatientHasDoctorRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/yehorsk/medicalplatformbackend/patient_doctor_access/database/repository/PatientHasDoctorRepository.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,61 +93,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0017416810152902" />
-      <entry key="MS500" value="1.5491810059497793" />
-      <entry key="S2" value="4.2336175967200385" />
-      <entry key="S5" value="7.5446815247779995" />
-      <entry key="S10" value="11.422975587268352" />
-      <entry key="S30" value="20.779001174307073" />
-      <entry key="S60" value="26.33442287153191" />
-      <entry key="M2" value="30.220557205974384" />
-      <entry key="M5" value="34.08205955313023" />
-      <entry key="M10" value="38.544316849735395" />
-      <entry key="M15" value="42.294387403129406" />
-      <entry key="M30" value="50.51796754688717" />
-      <entry key="H1" value="63.52619492751946" />
-      <entry key="H2" value="86.35183205188729" />
-      <entry key="H4" value="130.54710137907747" />
-      <entry key="D1" value="592.9809172786006" />
-      <entry key="W1" value="1177.129078131042" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0000000000013582" />
+      <entry key="S5" value="1.0000182096897963" />
+      <entry key="S10" value="1.0049868976196596" />
+      <entry key="S30" value="1.343302167025865" />
+      <entry key="S60" value="2.284007372947311" />
+      <entry key="M2" value="3.9782976740895397" />
+      <entry key="M5" value="6.776791091549982" />
+      <entry key="M10" value="8.593259671482734" />
+      <entry key="M15" value="10.080401386890859" />
+      <entry key="M30" value="19.277166140283086" />
+      <entry key="H1" value="44.22522064504801" />
+      <entry key="H2" value="84.2115150754845" />
+      <entry key="H4" value="142.51655079541817" />
+      <entry key="D1" value="619.6102291534281" />
+      <entry key="W1" value="1227.064719002893" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="7.96610763794018E-113" />
-      <entry key="S5" value="1.450441110626267E-45" />
-      <entry key="S10" value="4.043034152268035E-23" />
-      <entry key="S30" value="5.442447988302196E-8" />
-      <entry key="S60" value="3.8766004850288607E-4" />
-      <entry key="M2" value="0.03565257341899475" />
-      <entry key="M5" value="0.7353650344962254" />
-      <entry key="M10" value="2.7093732102810306" />
-      <entry key="M15" value="4.5881802755566" />
-      <entry key="M30" value="8.484456675502381" />
-      <entry key="H1" value="12.973418920567013" />
-      <entry key="H2" value="19.126006660236847" />
-      <entry key="H4" value="33.52004581985999" />
-      <entry key="D1" value="337.79374757341105" />
-      <entry key="W1" value="768.9624649868769" />
+      <entry key="MS100" value="6.703580183216193E-293" />
+      <entry key="MS500" value="3.6750340027624097E-59" />
+      <entry key="S2" value="2.4621547212791422E-15" />
+      <entry key="S5" value="1.4339739600372546E-6" />
+      <entry key="S10" value="0.0012051214627798695" />
+      <entry key="S30" value="0.1347826643379269" />
+      <entry key="S60" value="0.5869272603781278" />
+      <entry key="M2" value="1.4209786467594248" />
+      <entry key="M5" value="2.5906376902717274" />
+      <entry key="M10" value="3.229507738865805" />
+      <entry key="M15" value="3.6331168086560734" />
+      <entry key="M30" value="5.566963298221573" />
+      <entry key="H1" value="10.784836352955057" />
+      <entry key="H2" value="19.53389136670395" />
+      <entry key="H4" value="35.43216506701208" />
+      <entry key="D1" value="333.241167661883" />
+      <entry key="W1" value="776.1978297992589" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9282337615943891" />
-      <entry key="MS500" value="1.5264489808519557" />
-      <entry key="S2" value="4.185113752966358" />
-      <entry key="S5" value="7.460370087637883" />
-      <entry key="S10" value="11.326831543213759" />
-      <entry key="S30" value="20.706982547329755" />
-      <entry key="S60" value="26.288304586108204" />
-      <entry key="M2" value="30.228799529435914" />
-      <entry key="M5" value="34.79901498206727" />
-      <entry key="M10" value="41.23449049563092" />
-      <entry key="M15" value="46.863418695169834" />
-      <entry key="M30" value="58.985941676227895" />
-      <entry key="H1" value="76.48637726368266" />
-      <entry key="H2" value="105.46704927046353" />
-      <entry key="H4" value="164.05730830255305" />
-      <entry key="D1" value="930.76208699802" />
-      <entry key="W1" value="1946.0876734975795" />
+      <entry key="MS100" value="0.016746460352129573" />
+      <entry key="MS500" value="0.4413514981453274" />
+      <entry key="S2" value="0.8150723324028376" />
+      <entry key="S5" value="0.9214742585575152" />
+      <entry key="S10" value="0.964702668204706" />
+      <entry key="S30" value="1.438319233117944" />
+      <entry key="S60" value="2.8196633814559133" />
+      <entry key="M2" value="5.348061980502057" />
+      <entry key="M5" value="9.332413463113873" />
+      <entry key="M10" value="11.80105566205287" />
+      <entry key="M15" value="13.696947208935494" />
+      <entry key="M30" value="24.83000986026247" />
+      <entry key="H1" value="54.99525588080553" />
+      <entry key="H2" value="103.73161074754552" />
+      <entry key="H4" value="177.9365652292705" />
+      <entry key="D1" value="952.8384635883466" />
+      <entry key="W1" value="2003.2585610978458" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -456,7 +463,8 @@
     <MESSAGE value="minor" />
     <MESSAGE value="Workplace, Clinic, DoctorSchedule entities" />
     <MESSAGE value="Doctor with Specialization one to many, search doctors with filters and pagination" />
-    <option name="LAST_COMMIT_MESSAGE" value="Doctor with Specialization one to many, search doctors with filters and pagination" />
+    <MESSAGE value="modified getAllDoctors endpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="modified getAllDoctors endpoint" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

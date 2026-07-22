@@ -38,7 +38,7 @@ class PatientHasDoctorService(
     fun patientRequestDoctor(doctorId: UserId) {
         val patientId = currentUserProvider.getCurrentUserId()
         logger.debug("*** patientRequestDoctor => patientId: {}, doctorId: {}", patientId, doctorId)
-        createAccessRequest(patientId, doctorId)
+        createAccessRequest(patientId, doctorId, UserRole.PATIENT)
     }
 
     @Transactional
@@ -46,12 +46,13 @@ class PatientHasDoctorService(
     fun doctorRequestPatient(patientId: UserId) {
         val doctorId = currentUserProvider.getCurrentUserId()
         logger.debug("*** doctorRequestPatient => patientId: {}, doctorId: {}", patientId, doctorId)
-        createAccessRequest(patientId, doctorId)
+        createAccessRequest(patientId, doctorId, UserRole.DOCTOR)
     }
 
     private fun createAccessRequest(
         patientId: UserId,
-        doctorId: UserId
+        doctorId: UserId,
+        userRole: UserRole
     ) {
         val medicalCard = medicalCardRepository.findMedicalCardEntityByUserId(patientId)
             ?: throw PatientNotFoundException()
@@ -65,7 +66,8 @@ class PatientHasDoctorService(
         repository.save(
             PatientHasDoctorEntity(
                 medicalCard = medicalCard,
-                doctor = doctor
+                doctor = doctor,
+                initiatedBy = userRole
             )
         )
     }
