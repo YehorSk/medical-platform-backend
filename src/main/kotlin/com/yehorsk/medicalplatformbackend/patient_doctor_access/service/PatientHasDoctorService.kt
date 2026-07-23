@@ -16,6 +16,9 @@ import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.resp
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.mappers.toPatientHasDoctorResponse
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
+import com.yehorsk.medicalplatformbackend.doctor.mappers.toPatientHasDoctorResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
 import com.yehorsk.medicalplatformbackend.user.service.UserService
 import jakarta.transaction.Transactional
@@ -35,25 +38,34 @@ class PatientHasDoctorService(
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    fun patientRequestDoctor(doctorId: UserId) {
+    fun patientRequestDoctor(doctorId: UserId) : PatientHasDoctorResponseDto {
         val patientId = currentUserProvider.getCurrentUserId()
         logger.debug("*** patientRequestDoctor => patientId: {}, doctorId: {}", patientId, doctorId)
-        createAccessRequest(patientId, doctorId, UserRole.PATIENT)
+        return createAccessRequest(patientId, doctorId, UserRole.PATIENT)
     }
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    fun doctorRequestPatient(patientId: UserId) {
+    fun doctorRequestPatient(patientId: UserId) : PatientHasDoctorResponseDto {
         val doctorId = currentUserProvider.getCurrentUserId()
         logger.debug("*** doctorRequestPatient => patientId: {}, doctorId: {}", patientId, doctorId)
-        createAccessRequest(patientId, doctorId, UserRole.DOCTOR)
+        return createAccessRequest(patientId, doctorId, UserRole.DOCTOR)
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    fun patientGiveAccessToDoctor(doctorId: UserId) : PatientHasDoctorResponseDto {
+        val patientId = currentUserProvider.getCurrentUserId()
+        logger.debug("*** patientGiveAccessToDoctor => patientId: {}, doctorId: {}", patientId, doctorId)
+        return createAccessRequest(patientId, doctorId, UserRole.PATIENT, AccessStatus.APPROVED)
     }
 
     private fun createAccessRequest(
         patientId: UserId,
         doctorId: UserId,
-        userRole: UserRole
-    ) {
+        userRole: UserRole,
+        status: AccessStatus = AccessStatus.PENDING
+    ): PatientHasDoctorResponseDto {
         val medicalCard = medicalCardRepository.findMedicalCardEntityByUserId(patientId)
             ?: throw PatientNotFoundException()
         val doctor = userRepository.findUserEntityById(doctorId)
@@ -62,19 +74,19 @@ class PatientHasDoctorService(
         if (repository.existsActiveRelation(patientId, doctorId)) {
             throw AccessRequestAlreadyExistsException()
         }
-
-        repository.save(
+        return repository.save(
             PatientHasDoctorEntity(
                 medicalCard = medicalCard,
                 doctor = doctor,
-                initiatedBy = userRole
+                initiatedBy = userRole,
+                status = status
             )
-        )
+        ).toPatientHasDoctorResponseDto()
     }
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    fun approveAccess(relationId: PatientHasDoctorId){
+    fun approveAccess(relationId: PatientHasDoctorId) : PatientHasDoctorResponseDto{
         val userId = currentUserProvider.getCurrentUserId()
         val relation = repository.findPatientHasDoctorEntityById(relationId)
             ?: throw RelationDoesNotExistException()
@@ -84,11 +96,12 @@ class PatientHasDoctorService(
         }
 
         relation.approve()
+        return relation.toPatientHasDoctorResponseDto()
     }
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    fun revokeAccess(relationId: PatientHasDoctorId){
+    fun revokeAccess(relationId: PatientHasDoctorId) : PatientHasDoctorResponseDto{
         val relation = repository.findPatientHasDoctorEntityById(relationId)
             ?: throw RelationDoesNotExistException()
         val user = currentUserProvider.getCurrentUserEntity()
@@ -107,6 +120,7 @@ class PatientHasDoctorService(
             }
             else -> throw AccessDeniedException()
         }
+        return relation.toPatientHasDoctorResponseDto()
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")

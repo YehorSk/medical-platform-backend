@@ -35,7 +35,9 @@ class DoctorService(
         val doctor = doctorRepository.findDoctorEntityById(doctorId)
             ?: throw DoctorDoesNotExistException()
         val patientId = currentUserProvider.getCurrentUserId()
-        val patientHasDoctor = patientHasDoctorRepository.getActiveRelation(patientId, doctorId)
+        val patientHasDoctor = doctor.user?.let {
+            patientHasDoctorRepository.getActiveRelation(patientId, it.id!!)
+        }
 
         return DoctorDetailsResponseDto(
             doctor = doctor.toDoctorResponseDto(),

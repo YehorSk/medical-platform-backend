@@ -2,6 +2,7 @@ package com.yehorsk.medicalplatformbackend.patient_doctor_access.controller
 
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.PatientHasDoctorService
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.response.PatientHasDoctorResponse
 import org.springframework.security.access.prepost.PreAuthorize
@@ -23,36 +24,45 @@ class PatientHasDoctorController(
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun patientRequestDoctor(
         @RequestBody request: UserIdRequest
-    ): ApiResponse {
-        service.patientRequestDoctor(request.userId)
-        return ApiResponse(message = "Access request sent to doctor")
+    ): ApiResponseWithData<PatientHasDoctorResponseDto> {
+        val response = service.patientRequestDoctor(request.userId)
+        return ApiResponseWithData(data = response, message = "Access request sent to doctor")
     }
 
     @PostMapping("/request/patient")
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     fun doctorRequestPatient(
         @RequestBody request: UserIdRequest
-    ): ApiResponse {
-        service.doctorRequestPatient(request.userId)
-        return ApiResponse(message = "Access request sent to patient")
+    ): ApiResponseWithData<PatientHasDoctorResponseDto> {
+        val response = service.doctorRequestPatient(request.userId)
+        return ApiResponseWithData(data = response, message = "Access request sent to patient")
+    }
+
+    @PostMapping("/give-access")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    fun patientGiveAccessToDoctor(
+        @RequestBody request: UserIdRequest
+    ): ApiResponseWithData<PatientHasDoctorResponseDto> {
+        val response = service.patientGiveAccessToDoctor(request.userId)
+        return ApiResponseWithData(data = response, message = "Access given to doctor")
     }
 
     @PostMapping("/approve")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun approveAccess(
         @RequestBody request: RelationIdRequest
-    ): ApiResponse {
-        service.approveAccess(request.relationId)
-        return ApiResponse(message = "Access approved successfully")
+    ): ApiResponseWithData<PatientHasDoctorResponseDto> {
+        val response = service.approveAccess(request.relationId)
+        return ApiResponseWithData(data = response, message = "Access approved successfully")
     }
 
     @PostMapping("/revoke")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun revokeAccess(
         @RequestBody request: RelationIdRequest
-    ): ApiResponse {
-        service.revokeAccess(request.relationId)
-        return ApiResponse(message = "Access revoked successfully")
+    ): ApiResponseWithData<PatientHasDoctorResponseDto> {
+        val response = service.revokeAccess(request.relationId)
+        return ApiResponseWithData(data = response, message = "Access revoked successfully")
     }
 
     @GetMapping("/pending")

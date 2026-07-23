@@ -4,14 +4,11 @@ import com.yehorsk.medicalplatformbackend.auth.service.dto.response.PagedRespons
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.SpecializationId
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
-import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
-import com.yehorsk.medicalplatformbackend.doctor.mappers.toDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.DoctorService
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.ChangeDoctorApprovalStatusDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.GetDoctorsWithFilterDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorDetailsResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorResponseDto
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
@@ -35,8 +32,10 @@ class DoctorController(
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun getDoctor(
         @RequestParam(name = "doctorId") doctorId: DoctorId
-    ): DoctorDetailsResponseDto {
-        return doctorService.getDoctor(doctorId)
+    ): ApiResponseWithData<DoctorDetailsResponseDto> {
+        return ApiResponseWithData(
+            data = doctorService.getDoctor(doctorId)
+        )
     }
 
     @PostMapping("/search")
