@@ -19,24 +19,24 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
     @Query("""
     SELECT COUNT(phd) > 0
     FROM PatientHasDoctorEntity phd
-    WHERE phd.medicalCard.id = :patientId
+    WHERE phd.medicalCard.user.id = :patientId
       AND phd.doctor.id = :doctorId
       AND phd.status IN ('PENDING', 'APPROVED')
     """)
     fun existsActiveRelation(
-        @Param("patientId") patientId: MedicalCardId,
+        @Param("patientId") patientId: UserId,
         @Param("doctorId") doctorId: UserId
     ): Boolean
 
     @Query("""
     SELECT phd
     FROM PatientHasDoctorEntity phd
-    WHERE phd.medicalCard.id = :patientId
+    WHERE phd.medicalCard.user.id = :patientId
       AND phd.doctor.id = :doctorId
       AND phd.status IN ('PENDING', 'APPROVED')
     """)
     fun getActiveRelation(
-        @Param("patientId") patientId: MedicalCardId,
+        @Param("patientId") patientId: UserId,
         @Param("doctorId") doctorId: UserId
     ): PatientHasDoctorEntity?
 
