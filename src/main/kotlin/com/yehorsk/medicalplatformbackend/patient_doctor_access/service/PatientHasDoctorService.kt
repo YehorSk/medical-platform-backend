@@ -20,6 +20,7 @@ import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import com.yehorsk.medicalplatformbackend.doctor.mappers.toPatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.exceptions.types.AccessAlreadyRejectedException
 import com.yehorsk.medicalplatformbackend.user.service.UserService
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
@@ -71,24 +72,42 @@ class PatientHasDoctorService(
         val doctor = userRepository.findUserEntityById(doctorId)
             ?: throw DoctorNotFoundException()
 
-        if (repository.existsActiveRelation(patientId, doctorId)) {
-            throw AccessRequestAlreadyExistsException()
-        }
-        return repository.save(
-            PatientHasDoctorEntity(
-                medicalCard = medicalCard,
-                doctor = doctor,
-                initiatedBy = userRole,
-                status = status
+        val existing = repository.getRelation(patientId, doctorId)
+
+        val saved = if(existing != null) {
+            when (existing.status) {
+                AccessStatus.PENDING -> {
+                    throw AccessRequestAlreadyExistsException()
+                }
+                AccessStatus.APPROVED -> {
+                    throw AccessAlreadyApprovedException()
+                }
+                AccessStatus.REJECTED,
+                AccessStatus.REVOKED -> {
+                    existing.status = status
+                    existing.initiatedBy = userRole
+                    repository.save(existing)
+                }
+            }
+        }else{
+            repository.save(
+                PatientHasDoctorEntity(
+                    medicalCard = medicalCard,
+                    doctor = doctor,
+                    initiatedBy = userRole,
+                    status = status
+                )
             )
-        ).toPatientHasDoctorResponseDto()
+        }
+
+        return saved.toPatientHasDoctorResponseDto()
     }
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun approveAccess(relationId: PatientHasDoctorId) : PatientHasDoctorResponseDto{
         val userId = currentUserProvider.getCurrentUserId()
-        val relation = repository.findPatientHasDoctorEntityById(relationId)
+        val relation = repository.findRelationByIdAndPatientId(patientHasDoctorId = relationId, patientId = userId)
             ?: throw RelationDoesNotExistException()
 
         if(relation.status == AccessStatus.APPROVED) {
@@ -101,8 +120,24 @@ class PatientHasDoctorService(
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_PATIENT')")
+    fun rejectAccess(relationId: PatientHasDoctorId) : PatientHasDoctorResponseDto{
+        val userId = currentUserProvider.getCurrentUserId()
+        val relation = repository.findRelationByIdAndPatientId(patientHasDoctorId = relationId, patientId = userId)
+            ?: throw RelationDoesNotExistException()
+
+        if(relation.status == AccessStatus.REJECTED) {
+            throw AccessAlreadyRejectedException()
+        }
+
+        relation.reject()
+        return relation.toPatientHasDoctorResponseDto()
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun revokeAccess(relationId: PatientHasDoctorId) : PatientHasDoctorResponseDto{
-        val relation = repository.findPatientHasDoctorEntityById(relationId)
+        val userId = currentUserProvider.getCurrentUserId()
+        val relation = repository.findRelationByIdAndPatientId(patientHasDoctorId = relationId, patientId = userId)
             ?: throw RelationDoesNotExistException()
         val user = currentUserProvider.getCurrentUserEntity()
         when (user.role) {
@@ -113,7 +148,7 @@ class PatientHasDoctorService(
                 relation.revoke()
             }
             UserRole.PATIENT -> {
-                if (relation.medicalCard.id != user.id) {
+                if (relation.medicalCard.user!!.id != user.id) {
                     throw AccessDeniedException()
                 }
                 relation.revoke()

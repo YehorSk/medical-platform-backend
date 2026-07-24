@@ -2,7 +2,7 @@ package com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.req
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 
-data class UserIdRequest(
-    val userId: UserId
+data class UserOrResIdRequest(
+    val id: UserId
 )
 

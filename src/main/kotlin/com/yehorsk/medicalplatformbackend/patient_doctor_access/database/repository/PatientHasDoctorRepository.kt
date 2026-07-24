@@ -40,8 +40,26 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
         @Param("doctorId") doctorId: UserId
     ): PatientHasDoctorEntity?
 
-    fun findPatientHasDoctorEntityById(
-        patientHasDoctorId: PatientHasDoctorId
+    @Query("""
+    SELECT phd
+    FROM PatientHasDoctorEntity phd
+    WHERE phd.medicalCard.user.id = :patientId
+      AND phd.doctor.id = :doctorId
+    """)
+    fun getRelation(
+        @Param("patientId") patientId: UserId,
+        @Param("doctorId") doctorId: UserId
+    ): PatientHasDoctorEntity?
+
+    @Query("""
+    SELECT phd
+    FROM PatientHasDoctorEntity phd
+    WHERE phd.medicalCard.user.id = :patientId
+      AND phd.id = :patientHasDoctorId
+    """)
+    fun findRelationByIdAndPatientId(
+        @Param("patientId") patientId: UserId,
+        @Param("patientHasDoctorId") patientHasDoctorId: PatientHasDoctorId
     ): PatientHasDoctorEntity?
 
     fun findAllByStatusAndDoctorId(
