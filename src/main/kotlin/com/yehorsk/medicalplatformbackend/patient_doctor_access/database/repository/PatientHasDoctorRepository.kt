@@ -11,11 +11,6 @@ import org.springframework.data.repository.query.Param
 
 interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, PatientHasDoctorId> {
 
-    fun findByMedicalCardIdAndDoctorId(
-        medicalCardId: MedicalCardId,
-        doctorId: UserId
-    ): PatientHasDoctorEntity?
-
     @Query("""
     SELECT COUNT(phd) > 0
     FROM PatientHasDoctorEntity phd
@@ -27,6 +22,16 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
         @Param("patientId") patientId: UserId,
         @Param("doctorId") doctorId: UserId
     ): Boolean
+
+    @Query("""
+    SELECT phd
+    FROM PatientHasDoctorEntity phd
+    WHERE phd.medicalCard.user.id = :patientId
+      AND phd.status = 'APPROVED'
+    """)
+    fun findAllActiveRelations(
+        @Param("patientId") patientId: UserId
+    ): List<PatientHasDoctorEntity>
 
     @Query("""
     SELECT phd
@@ -82,11 +87,6 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
 
     fun findAllByDoctorIdAndStatus(
         doctorId: UserId,
-        status: AccessStatus
-    ): List<PatientHasDoctorEntity>
-
-    fun findAllByMedicalCardIdAndStatus(
-        medicalCardId: MedicalCardId,
         status: AccessStatus
     ): List<PatientHasDoctorEntity>
 

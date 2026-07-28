@@ -1,12 +1,15 @@
 package com.yehorsk.medicalplatformbackend.auth
 
 import com.yehorsk.medicalplatformbackend.auth.service.AuthService
+import com.yehorsk.medicalplatformbackend.auth.service.EmailVerificationService
 import com.yehorsk.medicalplatformbackend.auth.service.PasswordResetService
+import com.yehorsk.medicalplatformbackend.auth.service.dto.request.EmailRequest
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.GetResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.LoginRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.RefreshTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.RegisterRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.ResetPasswordRequestDto
+import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyEmailRequest
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.AuthenticatedUserResponseDto
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
@@ -21,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/auth")
 class AuthController(
     private val authService: AuthService,
-    private val pwdResetService: PasswordResetService
+    private val pwdResetService: PasswordResetService,
+    private val emailVerificationService: EmailVerificationService
 ) {
 
     @PostMapping("/register")
@@ -69,6 +73,26 @@ class AuthController(
         @Valid @RequestBody request: ResetPasswordRequestDto
     ): ApiResponse {
         return pwdResetService.resetPassword(request)
+    }
+
+    @PostMapping("/resend")
+    fun resendEmailVerification(
+        @Valid @RequestBody request: EmailRequest
+    ): ApiResponse {
+        val response = emailVerificationService
+            .resendEmailVerification(request.email)
+
+        return response
+    }
+
+    @PostMapping("/verify")
+    fun verifyEmail(
+        @Valid @RequestBody request: VerifyEmailRequest
+    ): ApiResponse {
+        val response = emailVerificationService
+            .verifyEmail(request.token)
+
+        return response
     }
 
 }

@@ -42,7 +42,8 @@ class AuthService(
     private val medicalCardRepository: MedicalCardRepository,
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenRepository: RefreshTokenRepository,
-    private val userProvider: CurrentUserProvider
+    private val userProvider: CurrentUserProvider,
+    private val emailVerificationService: EmailVerificationService
 ) {
 
     @Transactional
@@ -83,6 +84,8 @@ class AuthService(
         medicalCard.user = user
         medicalCardRepository.save(medicalCard)
 
+        emailVerificationService.sendEmailVerification(user.email)
+
         return ApiResponse(
             message = "Registration successful. Please verify your email."
         )
@@ -100,23 +103,23 @@ class AuthService(
             throw DoctorNotApprovedException()
         }
 
-         return user.id?.let { id ->
-             val accessToken = jwtService.generateAccessToken(id, user.role)
-             val refreshToken = jwtService.generateRefreshToken(id, user.role)
+        return user.id?.let { id ->
+            val accessToken = jwtService.generateAccessToken(id, user.role)
+            val refreshToken = jwtService.generateRefreshToken(id, user.role)
 
-             user.id?.let {
-                 storeRefreshToken(it, refreshToken)
-             }
+            user.id?.let {
+                storeRefreshToken(it, refreshToken)
+            }
 
-             ApiResponseWithData(
-                 data = AuthenticatedUserResponseDto(
-                     user = user.toUserResponseDto(),
-                     accessToken = accessToken,
-                     refreshToken = refreshToken
-                 ),
-                 message = "Login successful"
-             )
-         } ?: throw UserDoesNotExistException()
+            ApiResponseWithData(
+                data = AuthenticatedUserResponseDto(
+                    user = user.toUserResponseDto(),
+                    accessToken = accessToken,
+                    refreshToken = refreshToken
+                ),
+                message = "Login successful"
+            )
+        } ?: throw UserDoesNotExistException()
     }
 
     @Transactional
@@ -141,13 +144,13 @@ class AuthService(
             storeRefreshToken(it, newRefreshToken)
         }
 
-         return ApiResponseWithData(
-             data = AuthenticatedUserResponseDto(
-                 user = user.toUserResponseDto(),
-                 accessToken = newAccessToken,
-                 refreshToken = newRefreshToken
-             )
-         )
+        return ApiResponseWithData(
+            data = AuthenticatedUserResponseDto(
+                user = user.toUserResponseDto(),
+                accessToken = newAccessToken,
+                refreshToken = newRefreshToken
+            )
+        )
     }
 
     @Transactional

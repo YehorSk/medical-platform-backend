@@ -41,4 +41,8 @@ class AuthExceptionHandler {
     fun onTooManyAttempts(e: TooManyAttemptsException, request: HttpServletRequest) =
         e.toResponse(request)
 
+    @ExceptionHandler(TooManyRequestsException::class)
+    fun onTooManyRequests(e: TooManyRequestsException, request: HttpServletRequest) =
+        e.toResponse(request)
+
 }

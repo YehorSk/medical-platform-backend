@@ -185,9 +185,8 @@ class PatientHasDoctorService(
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun getMyDoctors(): List<PatientHasDoctorResponse>{
         val patientId = currentUserProvider.getCurrentUserId()
-        return repository.findAllByMedicalCardIdAndStatus(
-            medicalCardId = patientId,
-            status = AccessStatus.APPROVED
+        return repository.findAllActiveRelations(
+            patientId = patientId
         ).map { it.toPatientHasDoctorResponse() }
     }
 
