@@ -49,15 +49,13 @@ class DoctorService(
     @PreAuthorize("isAuthenticated()")
     fun getAllDoctors(request: GetDoctorsWithFilterDto, pageable: Pageable): PagedResponseDto<DoctorResponseDto> {
         val specs = DoctorSpecification.buildDynamicSpecification(request)
-        val pagedResponse = doctorRepository.findAll(specs, pageable)
+        val pagedResponse = doctorRepository.findAllSliced(specs, pageable)
 
         return PagedResponseDto(
                 content = pagedResponse.content.map { it.toDoctorResponseDto() },
                 page = pagedResponse.number,
                 size = pagedResponse.size,
-                hasNext = pagedResponse.hasNext(),
-                totalElements = pagedResponse.totalElements,
-                totalPages = pagedResponse.totalPages
+                hasNext = pagedResponse.hasNext()
             )
     }
 
