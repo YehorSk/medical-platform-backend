@@ -1,12 +1,16 @@
 package com.yehorsk.medicalplatformbackend.doctor.database.repository.specification
 
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
+import com.yehorsk.medicalplatformbackend.common.domain.type.PatientHasDoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.SpecializationId
+import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.ClinicEntity
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.SpecializationEntity
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.WorkplaceEntity
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.GetDoctorsWithFilterDto
+import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
 import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.CriteriaQuery
 import jakarta.persistence.criteria.Predicate
@@ -48,7 +52,23 @@ object DoctorSpecification {
         }
     }
 
-    fun buildDynamicSpecification(request: GetDoctorsWithFilterDto): Specification<DoctorEntity> {
+    fun hasPatient(patientId: UserId?): Specification<DoctorEntity>? {
+        if (patientId == null) return null
+        return Specification { root, query, cb ->
+            val subquery = query.subquery(PatientHasDoctorId::class.java)
+            val subRoot = subquery.from(PatientHasDoctorEntity::class.java)
+
+            subquery.select(subRoot.get("id"))
+            subquery.where(
+                cb.equal(subRoot.get<UserEntity>("doctor").get<UserId>("id"), root.get<UserEntity>("user").get<UserId>("id")),
+                cb.equal(subRoot.get<MedicalCardEntity>("medicalCard").get<UserEntity>("user").get<UserId>("id"), patientId)
+            )
+
+            cb.exists(subquery)
+        }
+    }
+
+    fun buildDynamicSpecification(request: GetDoctorsWithFilterDto, patientId: UserId?): Specification<DoctorEntity> {
         val specifications = mutableListOf<Specification<DoctorEntity>>()
 
         request.specializations?.let { specializationIds ->
@@ -61,6 +81,10 @@ object DoctorSpecification {
 
         request.city?.let { city ->
             inCity(city)?.let { specifications.add(it) }
+        }
+
+        if(request.getPatientDoctors) {
+            hasPatient(patientId)?.let { specifications.add(it) }
         }
 
         return if(specifications.isEmpty()) {

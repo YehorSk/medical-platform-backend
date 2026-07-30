@@ -31,4 +31,7 @@ interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId>, JpaSpecificat
 
     override fun findAllSliced(spec: Specification<DoctorEntity>, pageable: Pageable): Slice<DoctorEntity>
 
+    @EntityGraph(attributePaths = ["user", "specialization", "workplace", "workplace.clinic"])
+    override fun findAll(spec: Specification<DoctorEntity>): List<DoctorEntity>
+
 }
