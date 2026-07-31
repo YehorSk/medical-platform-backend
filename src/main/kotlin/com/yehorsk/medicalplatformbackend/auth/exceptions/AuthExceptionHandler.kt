@@ -45,4 +45,8 @@ class AuthExceptionHandler {
     fun onTooManyRequests(e: TooManyRequestsException, request: HttpServletRequest) =
         e.toResponse(request)
 
+    @ExceptionHandler(EmailNotVerifiedException::class)
+    fun onEmailNotVerified(e: EmailNotVerifiedException, request: HttpServletRequest) =
+        e.toResponse(request)
+
 }

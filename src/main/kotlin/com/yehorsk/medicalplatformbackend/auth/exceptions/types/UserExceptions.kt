@@ -13,3 +13,4 @@ class InvalidResetCodeException : AppException("INVALID_RESET_CODE",HttpStatus.B
 class ExpiredResetCodeException : AppException("EXPIRED_RESET_CODE",HttpStatus.BAD_REQUEST,"The reset code has expired")
 class TooManyAttemptsException : AppException("TOO_MANY_ATTEMPTS",HttpStatus.TOO_MANY_REQUESTS,"Too many failed attempts, please request a new code")
 class TooManyRequestsException : AppException("TOO_MANY_REQUESTS",HttpStatus.TOO_MANY_REQUESTS,"Too many requests, please try again later")
+class EmailNotVerifiedException : AppException("EMAIL_NOT_VERIFIED",HttpStatus.FORBIDDEN,"Email is not verified")

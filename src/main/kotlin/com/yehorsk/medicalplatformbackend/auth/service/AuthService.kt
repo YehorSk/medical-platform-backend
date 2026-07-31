@@ -15,6 +15,7 @@ import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.RefreshTokenRepository
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.auth.exceptions.types.EmailNotVerifiedException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidCredentialsException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidTokenException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.UserAlreadyExistException
@@ -97,6 +98,10 @@ class AuthService(
 
         if(!passwordEncoder.matches(request.password, user.hashedPassword)){
             throw InvalidCredentialsException()
+        }
+
+        if(!user.hasVerifiedEmail){
+            throw EmailNotVerifiedException()
         }
 
         if(user.role == UserRole.DOCTOR && user.doctor?.approved != true){

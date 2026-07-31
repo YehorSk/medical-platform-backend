@@ -27,10 +27,11 @@ interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, Pati
     SELECT phd
     FROM PatientHasDoctorEntity phd
     WHERE phd.medicalCard.user.id = :patientId
-      AND phd.status = 'APPROVED'
+      AND phd.status = :status
     """)
-    fun findAllActiveRelations(
-        @Param("patientId") patientId: UserId
+    fun findAllRelationWithStatus(
+        @Param("patientId") patientId: UserId,
+        @Param("status") status: AccessStatus
     ): List<PatientHasDoctorEntity>
 
     @Query("""

@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.common.exceptions
 
 import com.yehorsk.medicalplatformbackend.common.domain.domain.response.ErrorResponse
+import com.yehorsk.medicalplatformbackend.common.exceptions.types.RateLimitException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -38,6 +39,22 @@ class GlobalExceptionHandler {
                 message = "Validation failed",
                 path = request.requestURI,
                 errors = errors
+            )
+        )
+    }
+
+    @ExceptionHandler(RateLimitException::class)
+    fun onRateLimitException(
+        e: RateLimitException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
+            ErrorResponse(
+                status = 429,
+                errorCode = "RATE_LIMIT_EXCEEDED",
+                message = "Rate limit exceeded",
+                path = request.requestURI,
+                errors = emptyList()
             )
         )
     }

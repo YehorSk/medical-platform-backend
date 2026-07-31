@@ -16,7 +16,6 @@ import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.resp
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.mappers.toPatientHasDoctorResponse
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
-import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import com.yehorsk.medicalplatformbackend.doctor.mappers.toPatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
@@ -185,8 +184,18 @@ class PatientHasDoctorService(
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun getMyDoctors(): List<PatientHasDoctorResponse>{
         val patientId = currentUserProvider.getCurrentUserId()
-        return repository.findAllActiveRelations(
-            patientId = patientId
+        return repository.findAllRelationWithStatus(
+            patientId = patientId,
+            status = AccessStatus.APPROVED
+        ).map { it.toPatientHasDoctorResponse() }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    fun getPendingDoctors(): List<PatientHasDoctorResponse>{
+        val patientId = currentUserProvider.getCurrentUserId()
+        return repository.findAllRelationWithStatus(
+            patientId = patientId,
+            status = AccessStatus.PENDING
         ).map { it.toPatientHasDoctorResponse() }
     }
 

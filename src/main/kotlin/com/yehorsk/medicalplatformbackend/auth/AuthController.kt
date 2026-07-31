@@ -12,6 +12,7 @@ import com.yehorsk.medicalplatformbackend.auth.service.dto.request.ResetPassword
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyEmailRequest
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.AuthenticatedUserResponseDto
+import com.yehorsk.medicalplatformbackend.common.api.config.IpRateLimit
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import jakarta.validation.Valid
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.concurrent.TimeUnit
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,6 +31,11 @@ class AuthController(
 ) {
 
     @PostMapping("/register")
+    @IpRateLimit(
+        requests = 10,
+        duration = 1L,
+        unit = TimeUnit.HOURS
+    )
     fun register(
         @Valid @RequestBody request: RegisterRequestDto
     ): ApiResponse {
@@ -36,6 +43,11 @@ class AuthController(
     }
 
     @PostMapping("/login")
+    @IpRateLimit(
+        requests = 10,
+        duration = 15L,
+        unit = TimeUnit.MINUTES
+    )
     fun login(
         @Valid @RequestBody request: LoginRequestDto
     ): ApiResponseWithData<AuthenticatedUserResponseDto> {
@@ -43,6 +55,11 @@ class AuthController(
     }
 
     @PostMapping("/refresh")
+    @IpRateLimit(
+        requests = 10,
+        duration = 1L,
+        unit = TimeUnit.HOURS
+    )
     fun refresh(
         @Valid @RequestBody request: RefreshTokenRequestDto
     ): ApiResponseWithData<AuthenticatedUserResponseDto> {
@@ -55,6 +72,11 @@ class AuthController(
     }
 
     @PostMapping("/forgot-password")
+    @IpRateLimit(
+        requests = 10,
+        duration = 1L,
+        unit = TimeUnit.HOURS
+    )
     fun forgotPassword(
         @Valid @RequestBody request: GetResetTokenRequestDto
     ): ApiResponse {
@@ -62,6 +84,11 @@ class AuthController(
     }
 
     @PostMapping("/verify-reset-code")
+    @IpRateLimit(
+        requests = 10,
+        duration = 1L,
+        unit = TimeUnit.HOURS
+    )
     fun verifyResetCode(
         @Valid @RequestBody request: VerifyResetTokenRequestDto
     ): ApiResponse {
@@ -69,6 +96,11 @@ class AuthController(
     }
 
     @PostMapping("/reset-password")
+    @IpRateLimit(
+        requests = 10,
+        duration = 1L,
+        unit = TimeUnit.HOURS
+    )
     fun resetPassword(
         @Valid @RequestBody request: ResetPasswordRequestDto
     ): ApiResponse {
@@ -76,6 +108,11 @@ class AuthController(
     }
 
     @PostMapping("/resend")
+    @IpRateLimit(
+        requests = 10,
+        duration = 1L,
+        unit = TimeUnit.HOURS
+    )
     fun resendEmailVerification(
         @Valid @RequestBody request: EmailRequest
     ): ApiResponse {
@@ -86,6 +123,11 @@ class AuthController(
     }
 
     @PostMapping("/verify")
+    @IpRateLimit(
+        requests = 10,
+        duration = 1L,
+        unit = TimeUnit.HOURS
+    )
     fun verifyEmail(
         @Valid @RequestBody request: VerifyEmailRequest
     ): ApiResponse {
