@@ -12,6 +12,7 @@ import com.yehorsk.medicalplatformbackend.auth.service.dto.request.ResetPassword
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyEmailRequest
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.AuthenticatedUserResponseDto
+import com.yehorsk.medicalplatformbackend.common.api.config.EmailRateLimiter
 import com.yehorsk.medicalplatformbackend.common.api.config.IpRateLimit
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
@@ -27,7 +28,8 @@ import java.util.concurrent.TimeUnit
 class AuthController(
     private val authService: AuthService,
     private val pwdResetService: PasswordResetService,
-    private val emailVerificationService: EmailVerificationService
+    private val emailVerificationService: EmailVerificationService,
+    private val emailRateLimiter: EmailRateLimiter
 ) {
 
     @PostMapping("/register")
@@ -116,10 +118,14 @@ class AuthController(
     fun resendEmailVerification(
         @Valid @RequestBody request: EmailRequest
     ): ApiResponse {
-        val response = emailVerificationService
-            .resendEmailVerification(request.email)
-
-        return response
+        emailRateLimiter.withRateLimit(
+            email = request.email,
+            actionKey = "resend_verification"
+        ) {
+            emailVerificationService
+                .resendEmailVerification(request.email)
+        }
+        return ApiResponse("If this email exists and is not verified, a verification link has been sent")
     }
 
     @PostMapping("/verify")

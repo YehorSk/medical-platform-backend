@@ -29,7 +29,7 @@ class EmailVerificationService(
     }
 
     @Transactional
-    fun resendEmailVerification(email: String): ApiResponse {
+    fun resendEmailVerification(email: String) {
 
         val user = userRepository.findByEmail(email)
 
@@ -64,8 +64,6 @@ class EmailVerificationService(
                 body = "Click here: $verificationLink"
             )
         }
-
-        return ApiResponse(message = "If this email exists and is not verified, a verification link has been sent")
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.doctor.controller
 
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.PagedResponseDto
+import com.yehorsk.medicalplatformbackend.common.api.config.IpRateLimit
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.SpecializationId
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.concurrent.TimeUnit
 
 @RestController
 @RequestMapping("/api/doctors")
@@ -40,6 +42,11 @@ class DoctorController(
 
     @PostMapping("/search")
     @PreAuthorize("isAuthenticated()")
+    @IpRateLimit(
+        requests = 60,
+        duration = 1L,
+        unit = TimeUnit.MINUTES
+    )
     fun getAllDoctors(
         @RequestBody request: GetDoctorsWithFilterDto,
         @PageableDefault(size = 10) pageable: Pageable
