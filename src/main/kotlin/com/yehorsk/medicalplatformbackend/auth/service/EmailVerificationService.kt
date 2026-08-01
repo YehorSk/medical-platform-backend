@@ -30,22 +30,10 @@ class EmailVerificationService(
 
     @Transactional
     fun resendEmailVerification(email: String) {
-
         val user = userRepository.findByEmail(email)
 
         if (user != null && !user.hasVerifiedEmail) {
             val token = generateSecureToken()
-
-            val rateLimitKey = "email_verify:resend_limit:$email"
-
-            val attempts = redisTemplate.opsForValue().increment(rateLimitKey) ?: 1
-            if (attempts == 1L) {
-                redisTemplate.expire(rateLimitKey, Duration.ofHours(1))
-            }
-
-            if (attempts > MAX_RESEND_PER_HOUR) {
-                throw TooManyRequestsException()
-            }
 
             redisTemplate.opsForValue().set("verification_token:$token", user.id.toString(), Duration.ofHours(24))
 

@@ -110,11 +110,6 @@ class AuthController(
     }
 
     @PostMapping("/resend")
-    @IpRateLimit(
-        requests = 10,
-        duration = 1L,
-        unit = TimeUnit.HOURS
-    )
     fun resendEmailVerification(
         @Valid @RequestBody request: EmailRequest
     ): ApiResponse {

@@ -17,7 +17,7 @@ class EmailRateLimiter(
         private const val EMAIL_ATTEMPT_COUNT_PREFIX = "email_attempt_count"
     }
 
-    @Value("classpath:scripts/email_rate_limit.lua")
+    @Value("classpath:scripts/email_rate_limiter.lua")
     lateinit var rateLimitResource: Resource
 
     private val rateLimitScript by lazy {
