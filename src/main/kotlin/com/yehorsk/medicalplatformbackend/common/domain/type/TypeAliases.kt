@@ -14,3 +14,4 @@ typealias PatientHasDoctorId = UUID
 typealias DoctorScheduleId = UUID
 typealias WorkplaceId = UUID
 typealias ClinicId = UUID
+typealias AppointmentId = UUID

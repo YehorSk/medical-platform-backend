@@ -3,7 +3,7 @@ package com.yehorsk.medicalplatformbackend.doctor.database.repository
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.SpecializationId
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
-import org.springframework.data.domain.Page
+import com.yehorsk.medicalplatformbackend.doctor.database.repository.unused.DoctorRepositoryCustom
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.domain.Specification
@@ -13,7 +13,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId>, JpaSpecificationExecutor<DoctorEntity>, DoctorRepositoryCustom {
+interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId>, JpaSpecificationExecutor<DoctorEntity>,
+    DoctorRepositoryCustom {
 
     @EntityGraph(attributePaths = ["user", "specialization", "workplace", "workplace.clinic"])
     fun findDoctorEntityById(doctorId: DoctorId): DoctorEntity?
@@ -31,7 +32,7 @@ interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId>, JpaSpecificat
 
     override fun findAllSliced(spec: Specification<DoctorEntity>, pageable: Pageable): Slice<DoctorEntity>
 
-    @EntityGraph(attributePaths = ["user", "specialization", "workplace", "workplace.clinic"])
+    @EntityGraph(attributePaths = ["user", "specialization", "workplace", "workplace.clinic", "schedules"])
     override fun findAll(spec: Specification<DoctorEntity>): List<DoctorEntity>
 
 }

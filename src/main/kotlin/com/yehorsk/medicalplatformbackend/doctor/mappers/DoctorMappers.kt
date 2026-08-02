@@ -7,6 +7,7 @@ import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorResp
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.SpecializationResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.WorkplaceResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.mappers.toDayScheduleResponseDto
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
 
 fun DoctorEntity.toDoctorResponseDto(): DoctorResponseDto {
@@ -36,6 +37,7 @@ fun DoctorEntity.toDoctorResponseDto(): DoctorResponseDto {
                 )
             )
         },
+        schedules = this.schedules.map { it.toDayScheduleResponseDto() },
         updatedAt = this.updatedAt,
         approvedAt = this.approvedAt
     )

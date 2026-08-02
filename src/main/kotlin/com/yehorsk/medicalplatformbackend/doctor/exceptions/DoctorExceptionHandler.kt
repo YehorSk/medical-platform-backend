@@ -21,5 +21,10 @@ class DoctorExceptionHandler {
     fun onDoctorDoeNotExist(e: DoctorDoesNotExistException, request: HttpServletRequest) =
         e.toResponse(request)
 
+    @ExceptionHandler(InvalidScheduleException::class)
+    fun onInvalidSchedule(e: InvalidScheduleException, request: HttpServletRequest) =
+        e.toResponse(request)
+
+
 }
 

@@ -12,11 +12,17 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import java.time.LocalTime
 
 @Entity
-@Table(name = "doctor_schedules")
-data class DoctorScheduleEntity(
+@Table(
+    name = "doctor_schedules",
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["doctors_id", "week_day"])
+    ]
+)
+class DoctorScheduleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: DoctorScheduleId? = null,
@@ -38,6 +44,9 @@ data class DoctorScheduleEntity(
 
     @Column(name = "lunch_start")
     var lunchStart: LocalTime? = null,
+
+    @Column("is_working_day")
+    var isWorkingDay: Boolean = false,
 
     @Column(name = "lunch_end")
     var lunchEnd: LocalTime? = null,

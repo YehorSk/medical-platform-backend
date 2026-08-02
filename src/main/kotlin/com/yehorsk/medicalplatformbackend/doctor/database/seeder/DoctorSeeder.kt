@@ -70,7 +70,7 @@ class DoctorSeeder(
                 approved = true,
                 approvedBy = null,
                 approvedAt = Instant.now(),
-                description = "Experienced ${firstName} ${lastName} providing quality patient care."
+                description = "Experienced $firstName $lastName providing quality patient care."
             )
 
             if (specializations.isNotEmpty()) {

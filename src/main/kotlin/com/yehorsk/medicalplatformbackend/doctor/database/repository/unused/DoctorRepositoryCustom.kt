@@ -1,4 +1,4 @@
-package com.yehorsk.medicalplatformbackend.doctor.database.repository
+package com.yehorsk.medicalplatformbackend.doctor.database.repository.unused
 
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
 import org.springframework.data.domain.Pageable
