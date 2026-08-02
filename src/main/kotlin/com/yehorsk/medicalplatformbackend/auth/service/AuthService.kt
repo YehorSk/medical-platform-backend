@@ -25,6 +25,8 @@ import com.yehorsk.medicalplatformbackend.auth.service.dto.request.RegisterReque
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.AuthenticatedUserResponseDto
 import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserResponseDto
 import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserRole
+import com.yehorsk.medicalplatformbackend.common.domain.events.user.UserEvent
+import com.yehorsk.medicalplatformbackend.common.infra.EventPublisher
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
@@ -44,7 +46,8 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val userProvider: CurrentUserProvider,
-    private val emailVerificationService: EmailVerificationService
+    private val emailVerificationService: EmailVerificationService,
+    private val eventPublisher: EventPublisher
 ) {
 
     @Transactional
@@ -85,7 +88,16 @@ class AuthService(
         medicalCard.user = user
         medicalCardRepository.save(medicalCard)
 
-        emailVerificationService.sendEmailVerification(user.email)
+        val (token, _) = emailVerificationService.generateVerificationToken(user.email)
+
+        eventPublisher.publish(
+            event = UserEvent.Created(
+                userId = user.id!!,
+                email = user.email,
+                username = "${user.firstName} ${user.lastName}",
+                verificationToken = token
+            )
+        )
 
         return ApiResponse(
             message = "Registration successful. Please verify your email."

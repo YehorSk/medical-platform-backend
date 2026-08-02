@@ -10,6 +10,8 @@ import com.yehorsk.medicalplatformbackend.auth.exceptions.types.TooManyAttemptsE
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.GetResetTokenRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.ResetPasswordRequestDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyResetTokenRequestDto
+import com.yehorsk.medicalplatformbackend.common.domain.events.user.UserEvent
+import com.yehorsk.medicalplatformbackend.common.infra.EventPublisher
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
@@ -21,8 +23,8 @@ import java.time.Duration
 class PasswordResetService(
     private val passwordEncoder: PasswordEncoder,
     private val redisTemplate: StringRedisTemplate,
-    private val mailService: MailService,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val eventPublisher: EventPublisher
     ) {
 
     companion object {
@@ -46,8 +48,17 @@ class PasswordResetService(
         redisTemplate.opsForValue().set(codeKey, hashedToken!!, Duration.ofMinutes(OTP_TTL_MINUTES))
         redisTemplate.delete(attemptsKey)
 
-        mailService.sendPlainText(to = request.email, subject = "OTP", body = otp)
-        return ApiResponse(message = "If this email exists, a reset code has been sent")
+        eventPublisher.publish(
+            event = UserEvent.RequestResetPassword(
+                userId = user.id!!,
+                email = user.email,
+                username = "${user.firstName} ${user.lastName}",
+                passwordResetToken = otp,
+                expiresInMinutes = OTP_TTL_MINUTES
+            )
+        )
+
+        return ApiResponse(message = "A reset code has been sent to your email")
     }
 
     @Transactional

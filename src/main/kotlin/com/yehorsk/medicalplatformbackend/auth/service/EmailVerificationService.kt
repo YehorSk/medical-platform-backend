@@ -1,9 +1,13 @@
 package com.yehorsk.medicalplatformbackend.auth.service
 
+import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidCredentialsException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidTokenException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.TooManyRequestsException
+import com.yehorsk.medicalplatformbackend.auth.exceptions.types.UserDoesNotExistException
+import com.yehorsk.medicalplatformbackend.common.domain.events.user.UserEvent
+import com.yehorsk.medicalplatformbackend.common.infra.EventPublisher
 import com.yehorsk.medicalplatformbackend.common.service.MailService
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import jakarta.transaction.Transactional
@@ -19,7 +23,8 @@ import java.util.UUID
 class EmailVerificationService(
     private val redisTemplate: StringRedisTemplate,
     private val mailService: MailService,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val eventPublisher: EventPublisher
 ) {
 
     private val secureRandom = SecureRandom()
@@ -28,51 +33,32 @@ class EmailVerificationService(
         private const val MAX_RESEND_PER_HOUR = 5L
     }
 
-    @Transactional
-    fun resendEmailVerification(email: String) {
+    fun generateVerificationToken(email: String): Pair<String, UserEntity> {
         val user = userRepository.findByEmail(email)
+            ?: throw UserDoesNotExistException()
 
-        if (user != null && !user.hasVerifiedEmail) {
-            val token = generateSecureToken()
+        val token = generateSecureToken()
 
-            redisTemplate.opsForValue().set("verification_token:$token", user.id.toString(), Duration.ofHours(24))
-
-            val verificationLink = UriComponentsBuilder
-                .newInstance()
-                .scheme("medicalplatform")
-                .host("app")
-                .path("/verify-email")
-                .queryParam("token", token)
-                .build()
-                .toUriString()
-
-            mailService.sendPlainText(
-                to = email,
-                subject = "Verify your email",
-                body = "Click here: $verificationLink"
-            )
-        }
+        redisTemplate.opsForValue().set("verification_token:$token", user.id.toString(), Duration.ofHours(24))
+        return Pair(token, user)
     }
 
     @Transactional
-    fun sendEmailVerification(email: String): ApiResponse {
-        val user = userRepository.findByEmail(email)
-            ?: throw InvalidCredentialsException()
+    fun resendEmailVerification(email: String) {
+        val (token, user) = generateVerificationToken(email)
 
-        val otp = generateSecureToken()
-        redisTemplate.opsForValue().set("verification_token:$otp", user.id.toString(), Duration.ofHours(24))
+        if(user.hasVerifiedEmail) {
+            return
+        }
 
-        val verificationLink = UriComponentsBuilder
-            .newInstance()
-            .scheme("medicalplatform")
-            .host("app")
-            .path("/verify-email")
-            .queryParam("token", otp)
-            .build()
-            .toUriString()
-
-        mailService.sendPlainText(to = email, subject = "Verify your email", body = "Click here: $verificationLink")
-        return ApiResponse(message = "Verification token sent successfully")
+        eventPublisher.publish(
+            event = UserEvent.RequestResendVerification(
+                userId = user.id!!,
+                email = user.email,
+                username = "${user.firstName} ${user.lastName}",
+                verificationToken = token
+            )
+        )
     }
 
     @Transactional

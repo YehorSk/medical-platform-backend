@@ -68,7 +68,7 @@ services:
       - "5540:5540"
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:4-management
     container_name: rabbitmq-medical-platform
     networks:
       - medical_platform_network
