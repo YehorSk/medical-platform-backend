@@ -17,11 +17,17 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import jakarta.persistence.UniqueConstraint
 import java.time.Instant
 
 @Entity
-@Table(name = "appointments")
-data class AppointmentEntity (
+@Table(
+    name = "appointments",
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["doctor_id", "date_time"])
+    ]
+)
+class AppointmentEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: AppointmentId? = null,

@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class DoctorScheduleService(
-    private val doctorRepository: DoctorRepository,
     private val doctorScheduleRepository: DoctorScheduleRepository,
     private val currentUserProvider: CurrentUserProvider
 ) {

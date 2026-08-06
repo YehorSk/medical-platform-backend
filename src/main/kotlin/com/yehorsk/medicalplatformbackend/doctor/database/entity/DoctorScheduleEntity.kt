@@ -45,7 +45,7 @@ class DoctorScheduleEntity(
     @Column(name = "lunch_start")
     var lunchStart: LocalTime? = null,
 
-    @Column("is_working_day")
+    @Column(name = "is_working_day")
     var isWorkingDay: Boolean = false,
 
     @Column(name = "lunch_end")
