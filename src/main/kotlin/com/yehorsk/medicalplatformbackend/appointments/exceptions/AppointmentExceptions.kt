@@ -15,3 +15,5 @@ class InvalidAppointmentStatusTransitionException(from: String, to: String) :
     AppException("INVALID_STATUS_TRANSITION", HttpStatus.BAD_REQUEST, "Cannot transition appointment status from $from to $to")
 
 class SlotAlreadyBookedException: AppException("SLOT_ALREADY_BOOKED", HttpStatus.CONFLICT, "This time slot is already booked")
+
+class SlotNotAvailableException: AppException("SLOT_NOT_AVAILABLE", HttpStatus.BAD_REQUEST, "This time slot is not available")

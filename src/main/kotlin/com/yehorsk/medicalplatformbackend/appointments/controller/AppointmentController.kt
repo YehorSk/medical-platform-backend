@@ -9,6 +9,7 @@ import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import org.springframework.http.ResponseEntity
+import jakarta.validation.Valid
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,7 +34,7 @@ class AppointmentController(
         unit = TimeUnit.MINUTES
     )
     fun createAppointment(
-        @RequestBody request: CreateAppointmentRequestDto
+        @RequestBody @Valid request: CreateAppointmentRequestDto
     ): ApiResponseWithData<AppointmentResponseDto> {
         return ApiResponseWithData(
             data = appointmentService.createAppointment(request),

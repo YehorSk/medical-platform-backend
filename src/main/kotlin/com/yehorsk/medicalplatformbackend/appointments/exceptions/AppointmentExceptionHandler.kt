@@ -32,5 +32,9 @@ class AppointmentExceptionHandler {
     fun onSlotAlreadyBooked(e: SlotAlreadyBookedException, request: HttpServletRequest) =
         e.toResponse(request)
 
+    @ExceptionHandler(SlotNotAvailableException::class)
+    fun onSlotNotAvailable(e: SlotNotAvailableException, request: HttpServletRequest) =
+        e.toResponse(request)
+
 }
 

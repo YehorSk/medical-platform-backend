@@ -3,7 +3,12 @@ package com.yehorsk.medicalplatformbackend.doctor.service
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorScheduleEntity
-import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
+import com.yehorsk.medicalplatformbackend.appointments.database.repository.AppointmentRepository
+import com.yehorsk.medicalplatformbackend.appointments.exceptions.SlotNotAvailableException
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorScheduleRepository
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
@@ -21,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional
 class DoctorScheduleService(
     private val doctorScheduleRepository: DoctorScheduleRepository,
     private val currentUserProvider: CurrentUserProvider
+    ,
+    private val appointmentRepository: AppointmentRepository
 ) {
 
     @Transactional
@@ -107,6 +114,61 @@ class DoctorScheduleService(
         if (duplicateWeekdays.isNotEmpty()) {
             throw InvalidScheduleException("Duplicate schedule entries for: ${duplicateWeekdays.keys.joinToString()}")
         }
+    }
+
+    @Transactional
+    fun getAvailableWorkingDaysForMonth(doctorId: DoctorId, month: Int): ApiResponseWithData<List<DayScheduleResponseDto>> {
+        if (month !in 1..12) {
+            throw InvalidScheduleException("Invalid month: $month")
+        }
+
+        val schedules = doctorScheduleRepository.findAllByDoctorId(doctorId)
+        val working = schedules.filter { it.isWorkingDay }
+
+        return ApiResponseWithData(
+            data = working.map { it.toDayScheduleResponseDto() }
+        )
+    }
+
+    @Transactional
+    fun getAvailableTimesForDay(doctorId: DoctorId, date: LocalDate): ApiResponseWithData<List<String>> {
+        val weekDay = date.dayOfWeek.name.let { com.yehorsk.medicalplatformbackend.doctor.database.entity.WeekDay.valueOf(it) }
+
+        val schedule = doctorScheduleRepository.findByDoctorIdAndWeekDay(doctorId, weekDay)
+            ?: throw SlotNotAvailableException()
+
+        if (!schedule.isWorkingDay) {
+            throw SlotNotAvailableException()
+        }
+
+        val slots = mutableListOf<LocalTime>()
+        var time = schedule.startTime!!
+        val slotDuration = schedule.slotDurationMinutes
+        val breakBetween = schedule.breakBetweenMinutes
+
+        while (!time.plusMinutes(slotDuration.toLong()).isAfter(schedule.endTime)) {
+            val slotEnd = time.plusMinutes(slotDuration.toLong())
+
+            val overlapsLunch = schedule.lunchStart != null && schedule.lunchEnd != null &&
+                    time.isBefore(schedule.lunchEnd) && slotEnd.isAfter(schedule.lunchStart)
+
+            if (!overlapsLunch) {
+                slots.add(time)
+            }
+
+            time = slotEnd.plusMinutes(breakBetween.toLong())
+        }
+
+        val startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant()
+        val endOfDay = date.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
+
+        val appointments = appointmentRepository.findAppointmentsByDoctorAndDateRange(doctorId, startOfDay, endOfDay)
+        val takenTimes = appointments.map { it.dateTime.atZone(ZoneId.systemDefault()).toLocalTime() }.toSet()
+
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val available = slots.filter { it !in takenTimes }.map { it.format(formatter) }
+
+        return ApiResponseWithData(data = available)
     }
 
 }
