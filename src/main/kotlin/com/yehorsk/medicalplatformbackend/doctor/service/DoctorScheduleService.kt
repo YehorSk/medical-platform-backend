@@ -12,11 +12,14 @@ import java.time.format.DateTimeFormatter
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorScheduleRepository
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
+import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.DayScheduleDto
 import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.DoctorDoesNotExistException
 import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.InvalidScheduleException
+import com.yehorsk.medicalplatformbackend.doctor.mappers.toDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.UpdateScheduleRequestDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DayScheduleResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorScheduleResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.mappers.toDayScheduleResponseDto
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
@@ -25,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class DoctorScheduleService(
     private val doctorScheduleRepository: DoctorScheduleRepository,
-    private val currentUserProvider: CurrentUserProvider
-    ,
-    private val appointmentRepository: AppointmentRepository
+    private val currentUserProvider: CurrentUserProvider,
+    private val appointmentRepository: AppointmentRepository,
+    private val doctorRepository: DoctorRepository
 ) {
 
     @Transactional
@@ -62,17 +65,18 @@ class DoctorScheduleService(
     }
 
     @Transactional
-    fun getSchedule(doctorId: DoctorId): ApiResponseWithData<List<DayScheduleResponseDto>> {
+    fun getSchedule(doctorId: DoctorId): ApiResponseWithData<DoctorScheduleResponseDto> {
+        val doctor = doctorRepository.findDoctorEntityById(doctorId) ?: throw DoctorDoesNotExistException()
         val schedules = doctorScheduleRepository.findAllByDoctorId(doctorId)
 
         return ApiResponseWithData(
-            data = schedules.map { it.toDayScheduleResponseDto() }
+            data = DoctorScheduleResponseDto(doctor.toDoctorResponseDto(), schedules.map { it.toDayScheduleResponseDto() })
         )
     }
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    fun getMySchedule(): ApiResponseWithData<List<DayScheduleResponseDto>> {
+    fun getMySchedule(): ApiResponseWithData<DoctorScheduleResponseDto> {
         val doctor = currentUserProvider.getCurrentUserEntity().doctor
             ?: throw DoctorDoesNotExistException()
         return getSchedule(doctor.id!!)

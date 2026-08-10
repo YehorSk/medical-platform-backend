@@ -24,13 +24,11 @@ class DoctorScheduleSeeder(
         val doctors = doctorRepository.findAll()
 
         val workingDays = listOf(
-            WeekDay.SUNDAY,
             WeekDay.MONDAY,
             WeekDay.TUESDAY,
             WeekDay.WEDNESDAY,
             WeekDay.THURSDAY,
             WeekDay.FRIDAY,
-            WeekDay.SATURDAY
         )
 
         val schedules = mutableListOf<DoctorScheduleEntity>()

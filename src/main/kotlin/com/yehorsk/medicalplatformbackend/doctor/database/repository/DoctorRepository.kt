@@ -16,7 +16,7 @@ import org.springframework.data.repository.query.Param
 interface DoctorRepository: JpaRepository<DoctorEntity, DoctorId>, JpaSpecificationExecutor<DoctorEntity>,
     DoctorRepositoryCustom {
 
-    @EntityGraph(attributePaths = ["user", "specialization", "workplace", "workplace.clinic"])
+    @EntityGraph(attributePaths = ["user", "specialization", "workplace", "workplace.clinic", "schedules"])
     fun findDoctorEntityById(doctorId: DoctorId): DoctorEntity?
 
     fun existsByLicenseNumber(number: String): Boolean

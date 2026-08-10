@@ -7,6 +7,7 @@ import com.yehorsk.medicalplatformbackend.doctor.service.DoctorScheduleService
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.UpdateScheduleRequestDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DayScheduleResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.AvailableTimesResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DoctorScheduleResponseDto
 import jakarta.validation.Valid
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -34,7 +35,7 @@ class DoctorScheduleController(
 
     @GetMapping("/me")
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    fun getMySchedule(): ApiResponseWithData<List<DayScheduleResponseDto>> {
+    fun getMySchedule(): ApiResponseWithData<DoctorScheduleResponseDto> {
         return doctorScheduleService.getMySchedule()
     }
 
@@ -42,7 +43,7 @@ class DoctorScheduleController(
     @PreAuthorize("isAuthenticated()")
     fun getDoctorSchedule(
         @PathVariable doctorId: DoctorId
-    ): ApiResponseWithData<List<DayScheduleResponseDto>> {
+    ): ApiResponseWithData<DoctorScheduleResponseDto> {
         return doctorScheduleService.getSchedule(doctorId)
     }
 
