@@ -19,6 +19,8 @@ interface AppointmentRepository : JpaRepository<AppointmentEntity, AppointmentId
 
     fun existsByDoctorIdAndDateTime(doctorId: UserId, dateTime: Instant): Boolean
 
+    fun findByDoctorIdAndId(doctorId: UserId, appointmentId: AppointmentId): AppointmentEntity?
+
     fun findAllByDoctorIdAndStatus(doctorId: UserId, status: AppointmentStatus): List<AppointmentEntity>
 
     fun findAllByPatientIdAndStatus(patientId: UserId, status: AppointmentStatus): List<AppointmentEntity>

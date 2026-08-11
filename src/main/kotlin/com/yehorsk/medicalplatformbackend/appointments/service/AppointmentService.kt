@@ -68,13 +68,13 @@ class AppointmentService(
         )
 
         try {
-            appointmentRepository.save(appointment)
+            appointmentRepository.saveAndFlush(appointment)
         } catch (_: DataIntegrityViolationException) {
             logger.warn("Slot already booked for doctorId={}, dateTime={}", request.doctorId, dateTime)
             throw SlotAlreadyBookedException()
         }
 
-        return appointment.toAppointmentResponseDto()
+        return appointment.toAppointmentResponseDto(currentUser.role)
     }
 
     @Transactional
@@ -101,13 +101,10 @@ class AppointmentService(
     @Transactional
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     fun updateAppointmentStatus(request: UpdateAppointmentStatusRequestDto): AppointmentResponseDto {
-        val appointment = appointmentRepository.findById(request.appointmentId)
-            .orElseThrow { AppointmentNotFoundException() }
-
         val currentUser = currentUserProvider.getCurrentUserEntity()
-        if (appointment.doctor.id != currentUser.id) {
-            throw UnauthorizedException()
-        }
+
+        val appointment = appointmentRepository.findByDoctorIdAndId(currentUser.id!!, request.appointmentId)
+            ?: throw AppointmentNotFoundException()
 
         validateStatusTransition(appointment.status, request.status)
 
@@ -116,15 +113,15 @@ class AppointmentService(
             appointment.note = request.note
         }
 
-        return appointmentRepository.save(appointment).toAppointmentResponseDto()
+        return appointmentRepository.save(appointment).toAppointmentResponseDto(currentUser.role)
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated()")
     fun getMyAppointments(): List<AppointmentResponseDto> {
-        val currentUserId = currentUserProvider.getCurrentUserId()
-        return appointmentRepository.findAllByPatientId(currentUserId)
-            .map { it.toAppointmentResponseDto() }
+        val currentUser = currentUserProvider.getCurrentUserEntity()
+        return appointmentRepository.findAllByPatientId(currentUser.id!!)
+            .map { it.toAppointmentResponseDto(currentUser.role) }
     }
 
     @Transactional
@@ -141,15 +138,15 @@ class AppointmentService(
             throw UnauthorizedException()
         }
 
-        return appointment.toAppointmentResponseDto()
+        return appointment.toAppointmentResponseDto(currentUser.role)
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    @PreAuthorize("isAuthenticated()")
     fun getUpcomingAppointments(): List<AppointmentResponseDto> {
-        val currentUserId = currentUserProvider.getCurrentUserId()
-        return appointmentRepository.findUpcomingAppointmentsByPatientId(currentUserId, Instant.now())
-            .map { it.toAppointmentResponseDto() }
+        val currentUser = currentUserProvider.getCurrentUserEntity()
+        return appointmentRepository.findUpcomingAppointmentsByPatientId(currentUser.id!!, Instant.now())
+            .map { it.toAppointmentResponseDto(currentUser.role) }
     }
 
     private fun validateStatusTransition(currentStatus: AppointmentStatus, newStatus: AppointmentStatus) {
