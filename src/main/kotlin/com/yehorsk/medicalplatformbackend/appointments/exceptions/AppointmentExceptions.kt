@@ -7,6 +7,12 @@ class AppointmentNotFoundException : AppException("APPOINTMENT_NOT_FOUND", HttpS
 
 class AppointmentAlreadyExistsException : AppException("APPOINTMENT_ALREADY_EXISTS", HttpStatus.CONFLICT, "Appointment at this time already exists")
 
+class AppointmentAlreadyCancelledException : AppException("APPOINTMENT_ALREADY_CANCELLED", HttpStatus.BAD_REQUEST, "Appointment is already cancelled")
+
+class CannotCancelCompletedAppointmentException : AppException("CANNOT_CANCEL_COMPLETED_APPOINTMENT", HttpStatus.BAD_REQUEST, "Cannot cancel a completed appointment")
+
+class InvalidAppointmentStatusException : AppException("INVALID_APPOINTMENT_STATUS", HttpStatus.BAD_REQUEST, "Invalid appointment status")
+
 class InvalidAppointmentDateTimeException : AppException("INVALID_APPOINTMENT_DATE_TIME", HttpStatus.BAD_REQUEST, "Appointment date and time must be in the future")
 
 class UnauthorizedException : AppException("UNAUTHORIZED", HttpStatus.FORBIDDEN, "You are not authorized to perform this action")

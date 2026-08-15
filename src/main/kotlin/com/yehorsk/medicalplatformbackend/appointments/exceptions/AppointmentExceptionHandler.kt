@@ -36,5 +36,16 @@ class AppointmentExceptionHandler {
     fun onSlotNotAvailable(e: SlotNotAvailableException, request: HttpServletRequest) =
         e.toResponse(request)
 
+    @ExceptionHandler(AppointmentAlreadyCancelledException::class)
+    fun onAppointmentAlreadyCancelled(e: AppointmentAlreadyCancelledException, request: HttpServletRequest) =
+        e.toResponse(request)
+
+    @ExceptionHandler(CannotCancelCompletedAppointmentException::class)
+    fun onCannotCancelCompletedAppointment(e: CannotCancelCompletedAppointmentException, request: HttpServletRequest) =
+        e.toResponse(request)
+
+    @ExceptionHandler(InvalidAppointmentStatusException::class)
+    fun onInvalidAppointmentStatus(e: InvalidAppointmentStatusException, request: HttpServletRequest) =
+        e.toResponse(request)
 }
 

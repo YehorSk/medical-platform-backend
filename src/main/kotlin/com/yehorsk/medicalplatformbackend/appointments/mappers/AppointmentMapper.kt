@@ -29,6 +29,7 @@ fun AppointmentEntity.toAppointmentResponseDto(role: UserRole): AppointmentRespo
             AppointmentResponseDto(
                 id = this.id!!,
                 doctor = this.doctor.toUserResponseDto(),
+                specialization = this.doctor.doctor?.specialization?.name ?: "",
                 status = this.status,
                 note = this.note,
                 date = zonedDateTime.toLocalDate(),
@@ -42,6 +43,7 @@ fun AppointmentEntity.toAppointmentResponseDto(role: UserRole): AppointmentRespo
                 id = this.id!!,
                 doctor = this.doctor.toUserResponseDto(),
                 patient = this.patient.toUserResponseDto(),
+                specialization = this.doctor.doctor?.specialization?.name ?: "",
                 status = this.status,
                 note = this.note,
                 date = zonedDateTime.toLocalDate(),

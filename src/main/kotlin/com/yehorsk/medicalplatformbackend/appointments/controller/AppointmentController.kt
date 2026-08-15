@@ -44,11 +44,14 @@ class AppointmentController(
 
     @DeleteMapping("/{appointmentId}")
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_PATIENT')")
-    fun deleteAppointment(
+    fun cancelAppointment(
         @PathVariable appointmentId: AppointmentId
-    ): ResponseEntity<ApiResponse> {
-        appointmentService.deleteAppointment(appointmentId)
-        return ResponseEntity.ok(ApiResponse("Appointment deleted successfully"))
+    ): ResponseEntity<ApiResponseWithData<AppointmentResponseDto>> {
+        val appointment = appointmentService.cancelAppointment(appointmentId)
+        return ResponseEntity.ok(ApiResponseWithData(
+            data = appointment,
+            message = "Appointment cancelled successfully"
+        ))
     }
 
     @PostMapping("/{appointmentId}/status")

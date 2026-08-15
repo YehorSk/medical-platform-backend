@@ -56,8 +56,30 @@ class AppointmentEntity (
     @Column(name = "updated_at")
     var updatedAt: Instant = Instant.now(),
 
-    )
+    ){
+    fun confirm() {
+        check(status == AppointmentStatus.PENDING) { "Only pending appointments can be confirmed" }
+        status = AppointmentStatus.CONFIRMED
+    }
+
+    fun reject() {
+        check(status == AppointmentStatus.PENDING) { "Only pending appointments can be rejected" }
+        status = AppointmentStatus.REJECTED
+    }
+
+    fun cancel() {
+        check(status == AppointmentStatus.PENDING || status == AppointmentStatus.CONFIRMED) {
+            "Only pending or confirmed appointments can be cancelled"
+        }
+        status = AppointmentStatus.CANCELLED
+    }
+
+    fun complete() {
+        check(status == AppointmentStatus.CONFIRMED) { "Only confirmed appointments can be completed" }
+        status = AppointmentStatus.COMPLETED
+    }
+}
 
 enum class AppointmentStatus {
-    PENDING, CONFIRMED, REJECTED, CANCELLED
+    PENDING, CONFIRMED, REJECTED, CANCELLED, COMPLETED
 }

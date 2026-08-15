@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorScheduleRepository
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
+import com.yehorsk.medicalplatformbackend.doctor.database.entity.WeekDay
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.DayScheduleDto
 import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.DoctorDoesNotExistException
@@ -136,9 +137,12 @@ class DoctorScheduleService(
 
     @Transactional
     fun getAvailableTimesForDay(doctorId: DoctorId, date: LocalDate): ApiResponseWithData<List<String>> {
-        val weekDay = date.dayOfWeek.name.let { com.yehorsk.medicalplatformbackend.doctor.database.entity.WeekDay.valueOf(it) }
+        val doctor = doctorRepository.findDoctorEntityById(doctorId)
+            ?: throw DoctorDoesNotExistException()
 
-        val schedule = doctorScheduleRepository.findByDoctorIdAndWeekDay(doctorId, weekDay)
+        val weekDay = date.dayOfWeek.name.let { WeekDay.valueOf(it) }
+
+        val schedule = doctorScheduleRepository.findByDoctorIdAndWeekDay(doctor.id!!, weekDay)
             ?: throw SlotNotAvailableException()
 
         if (!schedule.isWorkingDay) {
@@ -166,7 +170,7 @@ class DoctorScheduleService(
         val startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant()
         val endOfDay = date.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
 
-        val appointments = appointmentRepository.findAppointmentsByDoctorAndDateRange(doctorId, startOfDay, endOfDay)
+        val appointments = appointmentRepository.findAppointmentsByDoctorAndDateRange(doctor.id!!, startOfDay, endOfDay)
         val takenTimes = appointments.map { it.dateTime.atZone(ZoneId.systemDefault()).toLocalTime() }.toSet()
 
         val formatter = DateTimeFormatter.ofPattern("HH:mm")

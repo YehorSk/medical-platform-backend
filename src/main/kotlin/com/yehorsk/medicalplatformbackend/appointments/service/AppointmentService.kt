@@ -3,8 +3,11 @@ package com.yehorsk.medicalplatformbackend.appointments.service
 import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentEntity
 import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentStatus
 import com.yehorsk.medicalplatformbackend.appointments.database.repository.AppointmentRepository
+import com.yehorsk.medicalplatformbackend.appointments.exceptions.AppointmentAlreadyCancelledException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.AppointmentNotFoundException
+import com.yehorsk.medicalplatformbackend.appointments.exceptions.CannotCancelCompletedAppointmentException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentDateTimeException
+import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentStatusException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentStatusTransitionException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.SlotAlreadyBookedException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.SlotNotAvailableException
@@ -14,8 +17,6 @@ import com.yehorsk.medicalplatformbackend.appointments.mappers.toInstantAtTime
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.CreateAppointmentRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.UpdateAppointmentStatusRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.AppointmentResponseDto
-import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
-import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
 import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
@@ -79,11 +80,12 @@ class AppointmentService(
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_PATIENT')")
-    fun deleteAppointment(appointmentId: AppointmentId) {
+    fun cancelAppointment(appointmentId: AppointmentId): AppointmentResponseDto {
+        val currentUser = currentUserProvider.getCurrentUserEntity()
+
         val appointment = appointmentRepository.findById(appointmentId)
             .orElseThrow { AppointmentNotFoundException() }
 
-        val currentUser = currentUserProvider.getCurrentUserEntity()
         val isDoctor = appointment.doctor.id == currentUser.id
         val isPatient = appointment.patient.id == currentUser.id
 
@@ -91,11 +93,15 @@ class AppointmentService(
             throw UnauthorizedException()
         }
 
-        if (appointment.status != AppointmentStatus.PENDING) {
-            appointment.status = AppointmentStatus.CANCELLED
-        } else {
-            appointmentRepository.delete(appointment)
+        try {
+            appointment.cancel()
+        } catch (e: IllegalStateException) {
+            throw InvalidAppointmentStatusException()
         }
+
+        appointmentRepository.save(appointment)
+
+        return appointment.toAppointmentResponseDto(currentUser.role)
     }
 
     @Transactional

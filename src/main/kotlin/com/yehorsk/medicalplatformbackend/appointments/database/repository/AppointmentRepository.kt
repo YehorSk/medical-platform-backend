@@ -3,6 +3,7 @@ package com.yehorsk.medicalplatformbackend.appointments.database.repository
 import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentEntity
 import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentStatus
 import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
+import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -44,7 +45,7 @@ interface AppointmentRepository : JpaRepository<AppointmentEntity, AppointmentId
         ORDER BY a.dateTime ASC
     """)
     fun findAppointmentsByDoctorAndDateRange(
-        @Param("doctorId") doctorId: UserId,
+        @Param("doctorId") doctorId: DoctorId,
         @Param("startDate") startDate: Instant,
         @Param("endDate") endDate: Instant
     ): List<AppointmentEntity>
