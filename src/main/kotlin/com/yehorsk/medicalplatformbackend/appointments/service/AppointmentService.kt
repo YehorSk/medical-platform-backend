@@ -3,20 +3,21 @@ package com.yehorsk.medicalplatformbackend.appointments.service
 import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentEntity
 import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentStatus
 import com.yehorsk.medicalplatformbackend.appointments.database.repository.AppointmentRepository
-import com.yehorsk.medicalplatformbackend.appointments.exceptions.AppointmentAlreadyCancelledException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.AppointmentNotFoundException
-import com.yehorsk.medicalplatformbackend.appointments.exceptions.CannotCancelCompletedAppointmentException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentDateTimeException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentStatusException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentStatusTransitionException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.SlotAlreadyBookedException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.SlotNotAvailableException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.UnauthorizedException
-import com.yehorsk.medicalplatformbackend.appointments.mappers.toAppointmentResponseDto
+import com.yehorsk.medicalplatformbackend.appointments.mappers.toAdminAppointmentResponseDto
+import com.yehorsk.medicalplatformbackend.appointments.mappers.toDoctorAppointmentResponseDto
 import com.yehorsk.medicalplatformbackend.appointments.mappers.toInstantAtTime
-import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.CreateAppointmentRequestDto
+import com.yehorsk.medicalplatformbackend.appointments.mappers.toPatientAppointmentResponseDto
+import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.CreateRescheduleAppointmentRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.UpdateAppointmentStatusRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.AppointmentResponseDto
+import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
@@ -46,7 +47,7 @@ class AppointmentService(
 
     @Transactional
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    fun createAppointment(request: CreateAppointmentRequestDto): AppointmentResponseDto {
+    fun createOrRescheduleAppointment(request: CreateRescheduleAppointmentRequestDto): AppointmentResponseDto {
         val currentUser = currentUserProvider.getCurrentUserEntity()
 
         val doctor = doctorRepository.findDoctorEntityById(request.doctorId)
@@ -75,7 +76,7 @@ class AppointmentService(
             throw SlotAlreadyBookedException()
         }
 
-        return appointment.toAppointmentResponseDto(currentUser.role)
+        return appointment.toPatientAppointmentResponseDto()
     }
 
     @Transactional
@@ -101,7 +102,14 @@ class AppointmentService(
 
         appointmentRepository.save(appointment)
 
-        return appointment.toAppointmentResponseDto(currentUser.role)
+        return when (currentUser.role) {
+
+            UserRole.DOCTOR -> appointment.toDoctorAppointmentResponseDto()
+
+            UserRole.PATIENT -> appointment.toPatientAppointmentResponseDto()
+
+            UserRole.ADMIN -> appointment.toAdminAppointmentResponseDto()
+        }
     }
 
     @Transactional
@@ -119,15 +127,32 @@ class AppointmentService(
             appointment.note = request.note
         }
 
-        return appointmentRepository.save(appointment).toAppointmentResponseDto(currentUser.role)
+        return appointmentRepository.save(appointment).toDoctorAppointmentResponseDto()
     }
 
-    @Transactional
+    @Transactional()
     @PreAuthorize("isAuthenticated()")
     fun getMyAppointments(): List<AppointmentResponseDto> {
+
         val currentUser = currentUserProvider.getCurrentUserEntity()
-        return appointmentRepository.findAllByPatientId(currentUser.id!!)
-            .map { it.toAppointmentResponseDto(currentUser.role) }
+
+        return when (currentUser.role) {
+
+            UserRole.DOCTOR ->
+                appointmentRepository
+                    .findAllByDoctorId(currentUser.id!!)
+                    .map { it.toDoctorAppointmentResponseDto() }
+
+            UserRole.PATIENT ->
+                appointmentRepository
+                    .findAllByPatientId(currentUser.id!!)
+                    .map { it.toPatientAppointmentResponseDto() }
+
+            UserRole.ADMIN ->
+                appointmentRepository
+                    .findAll()
+                    .map { it.toAdminAppointmentResponseDto() }
+        }
     }
 
     @Transactional
@@ -144,15 +169,23 @@ class AppointmentService(
             throw UnauthorizedException()
         }
 
-        return appointment.toAppointmentResponseDto(currentUser.role)
+        return when (currentUser.role) {
+
+            UserRole.DOCTOR -> appointment.toDoctorAppointmentResponseDto()
+
+            UserRole.PATIENT -> appointment.toPatientAppointmentResponseDto()
+
+            UserRole.ADMIN -> appointment.toAdminAppointmentResponseDto()
+        }
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated()")
     fun getUpcomingAppointments(): List<AppointmentResponseDto> {
         val currentUser = currentUserProvider.getCurrentUserEntity()
-        return appointmentRepository.findUpcomingAppointmentsByPatientId(currentUser.id!!, Instant.now())
-            .map { it.toAppointmentResponseDto(currentUser.role) }
+        return appointmentRepository
+            .findUpcomingAppointmentsByPatientId(currentUser.id!!, Instant.now())
+            .map { it.toDoctorAppointmentResponseDto() }
     }
 
     private fun validateStatusTransition(currentStatus: AppointmentStatus, newStatus: AppointmentStatus) {

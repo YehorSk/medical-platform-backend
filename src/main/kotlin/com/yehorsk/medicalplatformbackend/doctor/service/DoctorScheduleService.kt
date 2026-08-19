@@ -123,6 +123,8 @@ class DoctorScheduleService(
 
     @Transactional
     fun getAvailableWorkingDaysForMonth(doctorId: DoctorId, month: Int): ApiResponseWithData<List<DayScheduleResponseDto>> {
+        doctorRepository.findDoctorEntityById(doctorId) ?: throw DoctorDoesNotExistException()
+
         if (month !in 1..12) {
             throw InvalidScheduleException("Invalid month: $month")
         }

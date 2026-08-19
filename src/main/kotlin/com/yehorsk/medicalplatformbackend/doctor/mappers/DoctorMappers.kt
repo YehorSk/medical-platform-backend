@@ -10,12 +10,12 @@ import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.WorkplaceR
 import com.yehorsk.medicalplatformbackend.doctor.service.mappers.toDayScheduleResponseDto
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
 
-fun DoctorEntity.toDoctorResponseDto(): DoctorResponseDto {
+fun DoctorEntity.toDoctorResponseDto(getUser: Boolean = true): DoctorResponseDto {
     return DoctorResponseDto(
         id = this.id,
         licenseNumber = this.licenseNumber,
         createdAt = this.createdAt,
-        user = this.user?.toUserResponseDto(),
+        user = if (getUser) this.user?.toUserResponseDto() else null,
         approved = this.approved,
         description = this.description,
         specialization = this.specialization?.let { spec ->

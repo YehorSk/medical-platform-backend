@@ -3,10 +3,12 @@ package com.yehorsk.medicalplatformbackend.auth.service.mappers
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.UserResponseDto
+import com.yehorsk.medicalplatformbackend.doctor.mappers.toDoctorResponseDto
 
-fun UserEntity.toUserResponseDto() = UserResponseDto(
+fun UserEntity.toUserResponseDto(getDoctor: Boolean = false) = UserResponseDto(
     id = id!!,
     email = email,
+    doctor = if (getDoctor) this.doctor?.toDoctorResponseDto(getUser = false) else null,
     firstName = firstName,
     lastName = lastName,
     role = role,

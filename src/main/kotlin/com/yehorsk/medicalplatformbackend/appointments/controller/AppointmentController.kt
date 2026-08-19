@@ -1,12 +1,11 @@
 package com.yehorsk.medicalplatformbackend.appointments.controller
 
 import com.yehorsk.medicalplatformbackend.appointments.service.AppointmentService
-import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.CreateAppointmentRequestDto
+import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.CreateRescheduleAppointmentRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.UpdateAppointmentStatusRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.AppointmentResponseDto
 import com.yehorsk.medicalplatformbackend.common.api.config.IpRateLimit
 import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
-import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import org.springframework.http.ResponseEntity
 import jakarta.validation.Valid
@@ -33,11 +32,11 @@ class AppointmentController(
         duration = 1L,
         unit = TimeUnit.MINUTES
     )
-    fun createAppointment(
-        @RequestBody @Valid request: CreateAppointmentRequestDto
+    fun createOrRescheduleAppointment(
+        @RequestBody @Valid request: CreateRescheduleAppointmentRequestDto
     ): ApiResponseWithData<AppointmentResponseDto> {
         return ApiResponseWithData(
-            data = appointmentService.createAppointment(request),
+            data = appointmentService.createOrRescheduleAppointment(request),
             message = "Appointment created successfully"
         )
     }
