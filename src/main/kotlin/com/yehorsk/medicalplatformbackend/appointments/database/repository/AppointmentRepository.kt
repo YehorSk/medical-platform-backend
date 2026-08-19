@@ -39,7 +39,7 @@ interface AppointmentRepository : JpaRepository<AppointmentEntity, AppointmentId
 
     @Query("""
         SELECT a FROM AppointmentEntity a
-        WHERE a.doctor.id = :doctorId
+        WHERE a.doctor.doctor.id = :doctorId
         AND a.dateTime >= :startDate
         AND a.dateTime <= :endDate
         ORDER BY a.dateTime ASC
