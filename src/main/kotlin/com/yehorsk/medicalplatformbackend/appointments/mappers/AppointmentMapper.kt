@@ -29,7 +29,7 @@ fun UserEntity.toAppointmentPatientDto() = AppointmentPatientDto(
 )
 
 fun UserEntity.toAppointmentDoctorDto() = AppointmentDoctorDto(
-    id = id!!,
+    id = doctor!!.id!!,
     firstName = firstName,
     lastName = lastName,
     title = title ?: "",
@@ -41,6 +41,7 @@ fun AppointmentEntity.toDoctorAppointmentResponseDto(): DoctorAppointmentRespons
 
     return DoctorAppointmentResponseDto(
         id = id!!,
+        doctor = doctor.toAppointmentDoctorDto(),
         patient = patient.toAppointmentPatientDto(),
         status = status,
         note = note,

@@ -8,6 +8,7 @@ import java.time.LocalTime
 
 data class DoctorAppointmentResponseDto(
     val id: AppointmentId,
+    val doctor: AppointmentDoctorDto,
     val patient: AppointmentPatientDto,
     val status: AppointmentStatus,
     val note: String,

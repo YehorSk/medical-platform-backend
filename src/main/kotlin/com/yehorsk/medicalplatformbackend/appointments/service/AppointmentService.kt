@@ -49,7 +49,6 @@ class AppointmentService(
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun createOrRescheduleAppointment(request: CreateRescheduleAppointmentRequestDto): AppointmentResponseDto {
         val currentUser = currentUserProvider.getCurrentUserEntity()
-
         val doctor = doctorRepository.findDoctorEntityById(request.doctorId)
             ?: throw DoctorNotFoundException()
 
@@ -61,7 +60,32 @@ class AppointmentService(
 
         validateSlotIsWithinSchedule(request.doctorId, request.date, request.time)
 
-        val appointment = AppointmentEntity(
+        if (request.appointmentId != null) {
+            val appointment = appointmentRepository.findById(request.appointmentId)
+                .orElseThrow { AppointmentNotFoundException() }
+
+            if (appointment.patient.id != currentUser.id) {
+                throw UnauthorizedException()
+            }
+
+            if (appointment.status == AppointmentStatus.CANCELLED || appointment.status == AppointmentStatus.REJECTED) {
+                throw InvalidAppointmentStatusException()
+            }
+
+            appointment.doctor = doctor.user!!
+            appointment.dateTime = dateTime
+            appointment.note = request.note
+            appointment.status = AppointmentStatus.PENDING
+
+            try {
+                return appointmentRepository.saveAndFlush(appointment).toPatientAppointmentResponseDto()
+            } catch (_: DataIntegrityViolationException) {
+                logger.warn("Slot already booked for doctorId={}, dateTime={}", request.doctorId, dateTime)
+                throw SlotAlreadyBookedException()
+            }
+        }
+
+        val newAppointment = AppointmentEntity(
             doctor = doctor.user!!,
             patient = currentUser,
             status = AppointmentStatus.PENDING,
@@ -70,13 +94,13 @@ class AppointmentService(
         )
 
         try {
-            appointmentRepository.saveAndFlush(appointment)
+            appointmentRepository.saveAndFlush(newAppointment)
         } catch (_: DataIntegrityViolationException) {
             logger.warn("Slot already booked for doctorId={}, dateTime={}", request.doctorId, dateTime)
             throw SlotAlreadyBookedException()
         }
 
-        return appointment.toPatientAppointmentResponseDto()
+        return newAppointment.toPatientAppointmentResponseDto()
     }
 
     @Transactional
@@ -96,7 +120,7 @@ class AppointmentService(
 
         try {
             appointment.cancel()
-        } catch (e: IllegalStateException) {
+        } catch (_: IllegalStateException) {
             throw InvalidAppointmentStatusException()
         }
 
