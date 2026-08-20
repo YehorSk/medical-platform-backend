@@ -15,3 +15,5 @@ typealias DoctorScheduleId = UUID
 typealias WorkplaceId = UUID
 typealias ClinicId = UUID
 typealias AppointmentId = UUID
+typealias ConversationId = UUID
+typealias MessageId = UUID
