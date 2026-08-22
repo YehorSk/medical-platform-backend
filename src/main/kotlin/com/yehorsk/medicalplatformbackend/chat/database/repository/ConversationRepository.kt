@@ -16,4 +16,15 @@ interface ConversationRepository : JpaRepository<ConversationEntity, Conversatio
     """)
     fun findAllByParticipantId(userId: UserId): List<ConversationEntity>
 
+    @Query("""
+        SELECT c 
+        FROM ConversationEntity c
+        WHERE (c.patient.id = :userId OR c.doctor.id = :userId)
+        AND c.id = :conversationId
+    """)
+    fun findConversationEntityByParticipantId(
+        conversationId: ConversationId,
+        userId: UserId
+    ): ConversationEntity?
+
 }

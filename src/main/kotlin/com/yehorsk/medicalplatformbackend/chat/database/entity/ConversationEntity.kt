@@ -2,6 +2,7 @@ package com.yehorsk.medicalplatformbackend.chat.database.entity
 
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.common.domain.type.ConversationId
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
@@ -41,6 +42,9 @@ class ConversationEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false, updatable = false)
     var patient: UserEntity,
+
+    @Column(nullable = false)
+    var isActive: Boolean = true,
 
     @CreationTimestamp
     var createdAt: Instant = Instant.now(),
