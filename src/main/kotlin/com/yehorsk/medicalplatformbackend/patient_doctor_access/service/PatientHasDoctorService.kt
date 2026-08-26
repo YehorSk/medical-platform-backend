@@ -16,6 +16,8 @@ import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.resp
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.mappers.toPatientHasDoctorResponse
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.chat.database.entity.ConversationEntity
+import com.yehorsk.medicalplatformbackend.chat.database.repository.ConversationRepository
 import com.yehorsk.medicalplatformbackend.doctor.mappers.toPatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
@@ -31,7 +33,8 @@ class PatientHasDoctorService(
     private val repository: PatientHasDoctorRepository,
     private val medicalCardRepository: MedicalCardRepository,
     private val userRepository: UserRepository,
-    private val currentUserProvider: CurrentUserProvider
+    private val currentUserProvider: CurrentUserProvider,
+    private val conversationRepository: ConversationRepository
 ) {
 
     private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -68,6 +71,8 @@ class PatientHasDoctorService(
     ): PatientHasDoctorResponseDto {
         val medicalCard = medicalCardRepository.findMedicalCardEntityByUserId(patientId)
             ?: throw PatientNotFoundException()
+        val patient = userRepository.findUserEntityById(patientId)
+            ?: throw PatientNotFoundException()
         val doctor = userRepository.findUserEntityById(doctorId)
             ?: throw DoctorNotFoundException()
 
@@ -89,6 +94,12 @@ class PatientHasDoctorService(
                 }
             }
         }else{
+            conversationRepository.saveAndFlush(
+                ConversationEntity(
+                    doctor = doctor,
+                    patient = patient
+                )
+            )
             repository.save(
                 PatientHasDoctorEntity(
                     medicalCard = medicalCard,

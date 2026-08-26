@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.common.infra
 
 import com.yehorsk.medicalplatformbackend.common.domain.events.MedConnectEvent
+import com.yehorsk.medicalplatformbackend.common.domain.events.conversation.ConversationEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.user.UserEventConstants
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
@@ -59,10 +60,34 @@ class RabbitMqConfig {
     )
 
     @Bean
+    fun conversationExchange() = TopicExchange(
+        ConversationEventConstants.CONVERSATION_EXCHANGE,
+        true,
+        false
+    )
+
+    @Bean
     fun notificationUserEventsQueue() = Queue(
         MessageQueues.NOTIFICATION_USER_EVENTS,
         true
     )
+
+    @Bean
+    fun notificationConversationEventsQueue() = Queue(
+        MessageQueues.NOTIFICATION_CONVERSATION_EVENTS,
+        true
+    )
+
+    @Bean
+    fun notificationConversationEventsBinding(
+        notificationConversationEventsQueue: Queue,
+        conversationExchange: TopicExchange,
+    ): Binding {
+        return BindingBuilder
+            .bind(notificationConversationEventsQueue)
+            .to(conversationExchange)
+            .with(ConversationEventConstants.CONVERSATION_NEW_MESSAGE)
+    }
 
     @Bean
     fun notificationUserEventsBinding(
