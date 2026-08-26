@@ -42,7 +42,7 @@ class ConversationService(
         val conversation = conversationRepository.findConversationEntityByParticipantId(
             conversationId = conversationId,
             userId = userId
-        ) ?: throw ConversationNotFoundException()
+        ) ?: throw ConversationNotFoundException ()
 
         return conversation
     }
