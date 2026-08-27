@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.request.UserOrResIdRequest
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.request.RelationIdRequest
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.response.PatientHasDoctorWithoutDoctorResponse
 
 @RestController
 @RequestMapping("/api/patient-doctor-access")
@@ -102,7 +103,7 @@ class PatientHasDoctorController(
 
     @GetMapping("/my-patients")
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    fun getMyPatients(): ApiResponseWithData<List<PatientHasDoctorResponse>> {
+    fun getMyPatients(): ApiResponseWithData<List<PatientHasDoctorWithoutDoctorResponse>> {
         return ApiResponseWithData(
             data = service.getMyPatients(),
             message = "Your patients retrieved successfully"

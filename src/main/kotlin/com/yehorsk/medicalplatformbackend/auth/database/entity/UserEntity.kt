@@ -73,13 +73,13 @@ class UserEntity(
     )
     var doctor: DoctorEntity? = null,
 
-//    @OneToOne(
-//        fetch = FetchType.LAZY,
-//        mappedBy = "user",
-//        cascade = [CascadeType.ALL],
-//        orphanRemoval = true
-//    )
-//    var medicalCard: MedicalCardEntity? = null,
+    @OneToOne(
+        fetch = FetchType.LAZY,
+        mappedBy = "user",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    var medicalCard: MedicalCardEntity? = null,
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

@@ -22,6 +22,8 @@ import com.yehorsk.medicalplatformbackend.doctor.mappers.toPatientHasDoctorRespo
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.exceptions.types.AccessAlreadyRejectedException
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.dto.response.PatientHasDoctorWithoutDoctorResponse
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.service.mappers.toPatientHasDoctorWithoutDoctorResponse
 import com.yehorsk.medicalplatformbackend.user.service.UserService
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
@@ -211,12 +213,12 @@ class PatientHasDoctorService(
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    fun getMyPatients(): List<PatientHasDoctorResponse>{
+    fun getMyPatients(): List<PatientHasDoctorWithoutDoctorResponse>{
         val doctorId = currentUserProvider.getCurrentUserId()
         return repository.findAllByDoctorIdAndStatus(
             doctorId = doctorId,
             status = AccessStatus.APPROVED
-        ).map { it.toPatientHasDoctorResponse() }
+        ).map { it.toPatientHasDoctorWithoutDoctorResponse() }
     }
 
 }
