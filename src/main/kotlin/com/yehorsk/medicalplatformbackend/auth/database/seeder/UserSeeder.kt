@@ -1,8 +1,6 @@
 package com.yehorsk.medicalplatformbackend.auth.database.seeder
 
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
-import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorEntity
-import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
@@ -39,7 +37,7 @@ class UserSeeder(
         )
         val medicalCard = MedicalCardEntity()
         userRepository.save(patient)
-        medicalCard.user = patient
+        medicalCard.patient = patient
         medicalCardRepository.save(medicalCard)
 
         // Create admin

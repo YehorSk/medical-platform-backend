@@ -64,8 +64,18 @@ class AppointmentService(
             val appointment = appointmentRepository.findById(request.appointmentId)
                 .orElseThrow { AppointmentNotFoundException() }
 
-            if (appointment.patient.id != currentUser.id) {
-                throw UnauthorizedException()
+            when(currentUser.role){
+                UserRole.PATIENT -> {
+                    if (appointment.patient.id != currentUser.id) {
+                        throw UnauthorizedException()
+                    }
+                }
+                UserRole.DOCTOR -> {
+                    if (appointment.doctor.id != currentUser.id) {
+                        throw UnauthorizedException()
+                    }
+                }
+                UserRole.ADMIN -> {}
             }
 
             if (appointment.status == AppointmentStatus.CANCELLED || appointment.status == AppointmentStatus.REJECTED) {

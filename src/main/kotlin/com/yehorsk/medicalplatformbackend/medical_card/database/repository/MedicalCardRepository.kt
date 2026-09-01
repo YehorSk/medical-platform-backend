@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface MedicalCardRepository: JpaRepository<MedicalCardEntity, MedicalCardId> {
 
-    fun findMedicalCardEntityByUserId(patientId: UserId): MedicalCardEntity?
+    fun findMedicalCardEntityByPatientId(patientId: UserId): MedicalCardEntity?
 
 }

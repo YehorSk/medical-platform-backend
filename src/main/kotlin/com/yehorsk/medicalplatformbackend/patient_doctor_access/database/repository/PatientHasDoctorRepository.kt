@@ -11,58 +11,68 @@ import org.springframework.data.repository.query.Param
 
 interface PatientHasDoctorRepository: JpaRepository<PatientHasDoctorEntity, PatientHasDoctorId> {
 
-    @Query("""
+    @Query(
+        """
     SELECT COUNT(phd) > 0
     FROM PatientHasDoctorEntity phd
-    WHERE phd.medicalCard.user.id = :patientId
+    WHERE phd.medicalCard.patient.id = :patientId
       AND phd.doctor.id = :doctorId
       AND phd.status IN ('PENDING', 'APPROVED')
-    """)
+    """
+    )
     fun existsActiveRelation(
         @Param("patientId") patientId: UserId,
         @Param("doctorId") doctorId: UserId
     ): Boolean
 
-    @Query("""
+    @Query(
+        """
     SELECT phd
     FROM PatientHasDoctorEntity phd
-    WHERE phd.medicalCard.user.id = :patientId
+    WHERE phd.medicalCard.patient.id = :patientId
       AND phd.status = :status
-    """)
+    """
+    )
     fun findAllRelationWithStatus(
         @Param("patientId") patientId: UserId,
         @Param("status") status: AccessStatus
     ): List<PatientHasDoctorEntity>
 
-    @Query("""
+    @Query(
+        """
     SELECT phd
     FROM PatientHasDoctorEntity phd
-    WHERE phd.medicalCard.user.id = :patientId
+    WHERE phd.medicalCard.patient.id = :patientId
       AND phd.doctor.id = :doctorId
       AND phd.status IN ('PENDING', 'APPROVED')
-    """)
+    """
+    )
     fun getActiveRelation(
         @Param("patientId") patientId: UserId,
         @Param("doctorId") doctorId: UserId
     ): PatientHasDoctorEntity?
 
-    @Query("""
+    @Query(
+        """
     SELECT phd
     FROM PatientHasDoctorEntity phd
-    WHERE phd.medicalCard.user.id = :patientId
+    WHERE phd.medicalCard.patient.id = :patientId
       AND phd.doctor.id = :doctorId
-    """)
+    """
+    )
     fun getRelation(
         @Param("patientId") patientId: UserId,
         @Param("doctorId") doctorId: UserId
     ): PatientHasDoctorEntity?
 
-    @Query("""
+    @Query(
+        """
     SELECT phd
     FROM PatientHasDoctorEntity phd
-    WHERE phd.medicalCard.user.id = :patientId
+    WHERE phd.medicalCard.patient.id = :patientId
       AND phd.id = :patientHasDoctorId
-    """)
+    """
+    )
     fun findRelationByIdAndPatientId(
         @Param("patientId") patientId: UserId,
         @Param("patientHasDoctorId") patientHasDoctorId: PatientHasDoctorId

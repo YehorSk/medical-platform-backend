@@ -85,7 +85,7 @@ class AuthService(
 
         val medicalCard = MedicalCardEntity()
         userRepository.save(user)
-        medicalCard.user = user
+        medicalCard.patient = user
         medicalCardRepository.save(medicalCard)
 
         val (token, _) = emailVerificationService.generateVerificationToken(user.email)

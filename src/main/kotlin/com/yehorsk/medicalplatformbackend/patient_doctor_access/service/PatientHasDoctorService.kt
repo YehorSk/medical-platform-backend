@@ -71,7 +71,7 @@ class PatientHasDoctorService(
         userRole: UserRole,
         status: AccessStatus = AccessStatus.PENDING
     ): PatientHasDoctorResponseDto {
-        val medicalCard = medicalCardRepository.findMedicalCardEntityByUserId(patientId)
+        val medicalCard = medicalCardRepository.findMedicalCardEntityByPatientId(patientId)
             ?: throw PatientNotFoundException()
         val patient = userRepository.findUserEntityById(patientId)
             ?: throw PatientNotFoundException()
@@ -160,7 +160,7 @@ class PatientHasDoctorService(
                 relation.revoke()
             }
             UserRole.PATIENT -> {
-                if (relation.medicalCard.user!!.id != user.id) {
+                if (relation.medicalCard.patient!!.id != user.id) {
                     throw AccessDeniedException()
                 }
                 relation.revoke()
