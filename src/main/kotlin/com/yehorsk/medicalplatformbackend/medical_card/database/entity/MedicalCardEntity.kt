@@ -40,6 +40,10 @@ class MedicalCardEntity(
     @Column(name = "blood_type")
     var bloodType: BloodType? = null,
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "insurance_company")
+    var insuranceCompany: InsuranceCompany? = null,
+
     @Column(name = "insurance_number", length = 255)
     var insuranceNumber: String? = null,
 
@@ -82,7 +86,7 @@ class MedicalCardEntity(
         )
     }
 
-    fun removerAllergen(allergenId: AllergenId){
+    fun removeAllergen(allergenId: AllergenId){
         allergens.removeIf {
             it.allergen.id == allergenId
         }
@@ -106,6 +110,12 @@ enum class Gender {
     FEMALE,
     OTHER,
     PREFER_NOT_TO_SAY
+}
+
+enum class InsuranceCompany {
+    VSZP,
+    DOVERA,
+    UNION
 }
 
 fun UserEntity.toMedicalCardPatientDto() = MedicalCardPatientDto(

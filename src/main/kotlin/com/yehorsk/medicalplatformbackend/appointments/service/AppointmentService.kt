@@ -43,6 +43,10 @@ class AppointmentService(
     private val doctorScheduleRepository: DoctorScheduleRepository
 ) {
 
+    object AppointmentConstants {
+        val BOOKING_BUFFER: Duration = Duration.ofMinutes(5)
+    }
+
     private val logger = LoggerFactory.getLogger(AppointmentService::class.java)
 
     @Transactional
@@ -54,7 +58,7 @@ class AppointmentService(
 
         val dateTime = request.date.toInstantAtTime(request.time)
 
-        if (dateTime <= Instant.now()) {
+        if (dateTime <= Instant.now().plus(AppointmentConstants.BOOKING_BUFFER)) {
             throw InvalidAppointmentDateTimeException()
         }
 

@@ -5,6 +5,7 @@ import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorScheduleEntity
 import com.yehorsk.medicalplatformbackend.appointments.database.repository.AppointmentRepository
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.SlotNotAvailableException
+import com.yehorsk.medicalplatformbackend.appointments.service.AppointmentService
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -25,6 +26,7 @@ import com.yehorsk.medicalplatformbackend.doctor.service.mappers.toDayScheduleRe
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class DoctorScheduleService(
@@ -175,8 +177,16 @@ class DoctorScheduleService(
         val appointments = appointmentRepository.findAppointmentsByDoctorAndDateRange(doctor.id!!, startOfDay, endOfDay)
         val takenTimes = appointments.map { it.dateTime.atZone(ZoneId.systemDefault()).toLocalTime() }.toSet()
 
+        val cutoffInstant = Instant.now().plus(AppointmentService.AppointmentConstants.BOOKING_BUFFER)
+
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
-        val available = slots.filter { it !in takenTimes }.map { it.format(formatter) }
+        val available = slots
+            .filter { it !in takenTimes }
+            .filter { slot ->
+                val slotInstant = date.atTime(slot).atZone(ZoneId.systemDefault()).toInstant()
+                slotInstant > cutoffInstant
+            }
+            .map { it.format(formatter) }
 
         return ApiResponseWithData(data = available)
     }

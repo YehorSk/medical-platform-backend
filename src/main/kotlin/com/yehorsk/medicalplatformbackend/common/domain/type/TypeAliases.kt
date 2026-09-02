@@ -17,3 +17,4 @@ typealias ClinicId = UUID
 typealias AppointmentId = UUID
 typealias ConversationId = UUID
 typealias MessageId = UUID
+typealias AuditLogId = UUID
