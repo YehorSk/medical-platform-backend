@@ -11,10 +11,6 @@ import com.yehorsk.medicalplatformbackend.doctor.database.entity.WorkplaceEntity
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.GetDoctorsWithFilterDto
 import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.PatientHasDoctorEntity
-import jakarta.persistence.criteria.CriteriaBuilder
-import jakarta.persistence.criteria.CriteriaQuery
-import jakarta.persistence.criteria.Predicate
-import jakarta.persistence.criteria.Root
 import org.springframework.data.jpa.domain.Specification
 
 object DoctorSpecification {
@@ -61,7 +57,7 @@ object DoctorSpecification {
             subquery.select(subRoot.get("id"))
             subquery.where(
                 cb.equal(subRoot.get<UserEntity>("doctor").get<UserId>("id"), root.get<UserEntity>("user").get<UserId>("id")),
-                cb.equal(subRoot.get<MedicalCardEntity>("medicalCard").get<UserEntity>("user").get<UserId>("id"), patientId)
+                cb.equal(subRoot.get<MedicalCardEntity>("medicalCard").get<UserEntity>("patient").get<UserId>("id"), patientId)
             )
 
             cb.exists(subquery)
