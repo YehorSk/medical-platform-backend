@@ -34,11 +34,11 @@ class MedicalCardEntity(
     var dateOfBirth: LocalDate? = null,
 
     @Enumerated(EnumType.STRING)
-    var gender: Gender? = null,
+    var gender: Gender = Gender.UNKNOWN,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "blood_type")
-    var bloodType: BloodType? = null,
+    var bloodType: BloodType = BloodType.UNKNOWN,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "insurance_company")
@@ -102,14 +102,14 @@ enum class BloodType {
     AB_POSITIVE,
     AB_NEGATIVE,
     O_POSITIVE,
-    O_NEGATIVE
+    O_NEGATIVE,
+    UNKNOWN
 }
 
 enum class Gender {
     MALE,
     FEMALE,
-    OTHER,
-    PREFER_NOT_TO_SAY
+    UNKNOWN
 }
 
 enum class InsuranceCompany {

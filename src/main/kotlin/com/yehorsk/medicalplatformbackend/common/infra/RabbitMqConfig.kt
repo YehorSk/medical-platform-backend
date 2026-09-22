@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.common.infra
 
 import com.yehorsk.medicalplatformbackend.common.domain.events.MedConnectEvent
+import com.yehorsk.medicalplatformbackend.common.domain.events.audit.AuditLogEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.conversation.ConversationEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.user.UserEventConstants
 import org.springframework.amqp.core.Binding
@@ -60,6 +61,13 @@ class RabbitMqConfig {
     )
 
     @Bean
+    fun auditLogExchange() = TopicExchange(
+        AuditLogEventConstants.AUDIT_LOG_EXCHANGE,
+        true,
+        false
+    )
+
+    @Bean
     fun conversationExchange() = TopicExchange(
         ConversationEventConstants.CONVERSATION_EXCHANGE,
         true,
@@ -69,6 +77,12 @@ class RabbitMqConfig {
     @Bean
     fun notificationUserEventsQueue() = Queue(
         MessageQueues.NOTIFICATION_USER_EVENTS,
+        true
+    )
+
+    @Bean
+    fun notificationAuditLogEventsQueue() = Queue(
+        MessageQueues.NOTIFICATION_AUDIT_LOG_EVENTS,
         true
     )
 
@@ -98,6 +112,17 @@ class RabbitMqConfig {
             .bind(notificationUserEventsQueue)
             .to(userExchange)
             .with("user.*")
+    }
+
+    @Bean
+    fun notificationAuditLogEventsBinding(
+        notificationAuditLogEventsQueue: Queue,
+        auditLogExchange: TopicExchange,
+    ): Binding {
+        return BindingBuilder
+            .bind(notificationAuditLogEventsQueue)
+            .to(auditLogExchange)
+            .with("audit.*")
     }
 
 

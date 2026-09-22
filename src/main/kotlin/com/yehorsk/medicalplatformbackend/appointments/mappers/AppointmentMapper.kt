@@ -8,6 +8,9 @@ import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.Appo
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.DoctorAppointmentResponseDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.PatientAppointmentResponseDto
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
+import com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity
+import com.yehorsk.medicalplatformbackend.medical_card.database.entity.BloodType
+import com.yehorsk.medicalplatformbackend.medical_card.database.entity.Gender
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.service.mappers.toUserResponseDto
 import java.time.Instant
@@ -21,11 +24,14 @@ fun LocalDate.toInstantAtTime(time: LocalTime): Instant {
         .toInstant()
 }
 
-fun UserEntity.toAppointmentPatientDto() = AppointmentPatientDto(
+fun UserEntity.toAppointmentPatientDto(medicalCard: MedicalCardEntity? = null) = AppointmentPatientDto(
     id = id!!,
     firstName = firstName,
     lastName = lastName,
-    title = title ?: ""
+    title = title ?: "",
+    dateOfBirth = medicalCard?.dateOfBirth?.toString() ?: "",
+    gender = medicalCard?.gender,
+    bloodType = medicalCard?.bloodType
 )
 
 fun UserEntity.toAppointmentDoctorDto() = AppointmentDoctorDto(
@@ -36,13 +42,13 @@ fun UserEntity.toAppointmentDoctorDto() = AppointmentDoctorDto(
     specialization = doctor?.specialization?.name ?: ""
 )
 
-fun AppointmentEntity.toDoctorAppointmentResponseDto(): DoctorAppointmentResponseDto {
+fun AppointmentEntity.toDoctorAppointmentResponseDto(medicalCard: MedicalCardEntity? = null): DoctorAppointmentResponseDto {
     val zonedDateTime = dateTime.atZone(ZoneId.systemDefault())
 
     return DoctorAppointmentResponseDto(
         id = id!!,
         doctor = doctor.toAppointmentDoctorDto(),
-        patient = patient.toAppointmentPatientDto(),
+        patient = patient.toAppointmentPatientDto(medicalCard),
         status = status,
         note = note,
         date = zonedDateTime.toLocalDate(),

@@ -10,19 +10,19 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
-@Entity
-@Table(name = "medical_record_has_body_parts")
-class MedicalRecordHasBodyPartEntity(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: MedicalRecordHasBodyPartId? = null,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medical_record_id")
-    var medicalRecord: MedicalRecordEntity,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "body_part_id")
-    var bodyPart: BodyPartEntity
-)
-
+//@Entity
+//@Table(name = "medical_record_has_body_parts")
+//class MedicalRecordHasBodyPartEntity(
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.UUID)
+//    var id: MedicalRecordHasBodyPartId? = null,
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "medical_record_id")
+//    var medicalRecord: MedicalRecordEntity,
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "body_part_id")
+//    var bodyPart: BodyPartEntity
+//)
+//

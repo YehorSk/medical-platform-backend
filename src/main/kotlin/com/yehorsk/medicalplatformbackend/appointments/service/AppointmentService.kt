@@ -23,6 +23,9 @@ import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.WeekDay
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
+import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.repository.PatientHasDoctorRepository
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.entity.AccessStatus
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorScheduleRepository
 import com.yehorsk.medicalplatformbackend.patient_doctor_access.exceptions.types.DoctorNotFoundException
 import jakarta.transaction.Transactional
@@ -40,7 +43,9 @@ class AppointmentService(
     private val appointmentRepository: AppointmentRepository,
     private val doctorRepository: DoctorRepository,
     private val currentUserProvider: CurrentUserProvider,
-    private val doctorScheduleRepository: DoctorScheduleRepository
+    private val doctorScheduleRepository: DoctorScheduleRepository,
+    private val medicalCardRepository: MedicalCardRepository,
+    private val patientHasDoctorRepository: PatientHasDoctorRepository
 ) {
 
     object AppointmentConstants {
@@ -142,7 +147,10 @@ class AppointmentService(
 
         return when (currentUser.role) {
 
-            UserRole.DOCTOR -> appointment.toDoctorAppointmentResponseDto()
+            UserRole.DOCTOR -> {
+                val med = getMedicalCardForDoctorView(appointment.patient.id!!, currentUser.id!!)
+                appointment.toDoctorAppointmentResponseDto(med)
+            }
 
             UserRole.PATIENT -> appointment.toPatientAppointmentResponseDto()
 
@@ -165,7 +173,9 @@ class AppointmentService(
             appointment.note = request.note
         }
 
-        return appointmentRepository.save(appointment).toDoctorAppointmentResponseDto()
+        val saved = appointmentRepository.save(appointment)
+        val med = getMedicalCardForDoctorView(saved.patient.id!!, currentUser.id!!)
+        return saved.toDoctorAppointmentResponseDto(med)
     }
 
     @Transactional()
@@ -179,7 +189,10 @@ class AppointmentService(
             UserRole.DOCTOR ->
                 appointmentRepository
                     .findAllByDoctorId(currentUser.id!!)
-                    .map { it.toDoctorAppointmentResponseDto() }
+                    .map { ap ->
+                        val med = getMedicalCardForDoctorView(ap.patient.id!!, currentUser.id!!)
+                        ap.toDoctorAppointmentResponseDto(med)
+                    }
 
             UserRole.PATIENT ->
                 appointmentRepository
@@ -209,7 +222,10 @@ class AppointmentService(
 
         return when (currentUser.role) {
 
-            UserRole.DOCTOR -> appointment.toDoctorAppointmentResponseDto()
+            UserRole.DOCTOR -> {
+                val med = getMedicalCardForDoctorView(appointment.patient.id!!, currentUser.id!!)
+                appointment.toDoctorAppointmentResponseDto(med)
+            }
 
             UserRole.PATIENT -> appointment.toPatientAppointmentResponseDto()
 
@@ -223,7 +239,19 @@ class AppointmentService(
         val currentUser = currentUserProvider.getCurrentUserEntity()
         return appointmentRepository
             .findUpcomingAppointmentsByPatientId(currentUser.id!!, Instant.now())
-            .map { it.toDoctorAppointmentResponseDto() }
+            .map { ap ->
+                val med = getMedicalCardForDoctorView(ap.patient.id!!, currentUser.id!!)
+                ap.toDoctorAppointmentResponseDto(med)
+            }
+    }
+
+    private fun getMedicalCardForDoctorView(patientId: com.yehorsk.medicalplatformbackend.common.domain.type.UserId, doctorId: com.yehorsk.medicalplatformbackend.common.domain.type.UserId): com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity? {
+        val medicalCard = medicalCardRepository.findMedicalCardEntityByPatientId(patientId) ?: return null
+
+        val relation = patientHasDoctorRepository.getRelation(patientId, doctorId) ?: return null
+        if (relation.status != AccessStatus.APPROVED) return null
+
+        return medicalCard
     }
 
     private fun validateStatusTransition(currentStatus: AppointmentStatus, newStatus: AppointmentStatus) {

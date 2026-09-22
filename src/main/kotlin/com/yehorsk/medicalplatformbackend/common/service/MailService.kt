@@ -22,7 +22,7 @@ class MailService(
         userId: UserId,
         token: String,
         expiresIn: Duration
-    ){
+    ) {
         sendPlainText(
             to = email,
             subject = "Reset your password",
@@ -35,7 +35,7 @@ class MailService(
         username: String,
         userId: UserId,
         token: String
-    ){
+    ) {
         val verificationLink = UriComponentsBuilder
             .newInstance()
             .scheme("medicalplatform")
@@ -71,5 +71,18 @@ class MailService(
         helper.setText(body, true)
         mailSender.send(message)
     }
+
+    fun sendMedicalCardAccessedEmail(
+        email: String,
+        username: String,
+        doctorUsername: String
+    ) {
+        sendPlainText(
+            to = email,
+            subject = "Medical card access notice",
+            body = "Hello $username, your medical card was accessed by $doctorUsername. This access has been recorded."
+        )
+    }
+
 
 }

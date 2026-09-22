@@ -2,6 +2,7 @@ package com.yehorsk.medicalplatformbackend.medical_card.service.dto.request
 
 import com.yehorsk.medicalplatformbackend.medical_card.database.entity.BloodType
 import com.yehorsk.medicalplatformbackend.medical_card.database.entity.Gender
+import com.yehorsk.medicalplatformbackend.medical_card.database.entity.InsuranceCompany
 import jakarta.validation.constraints.Pattern
 
 data class UpdateMedicalCardRequestDto(
@@ -9,7 +10,8 @@ data class UpdateMedicalCardRequestDto(
     val dateOfBirth: String? = null,
     val bloodType: BloodType? = null,
     val gender: Gender? = null,
-    val insuranceNumber: String? = null
+    val insuranceCompany: InsuranceCompany? = null,
+    val insuranceNumber: String? = null,
 )
 
 
