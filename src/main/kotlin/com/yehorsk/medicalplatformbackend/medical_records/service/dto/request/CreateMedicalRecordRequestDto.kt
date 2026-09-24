@@ -14,7 +14,7 @@ data class CreateMedicalRecordRequestDto(
     @field:NotNull
     val appointmentId: AppointmentId,
 
-    @field:NotBlank(message = "Patient ID is required")
+    @field:NotNull()
     val patientId: UserId,
 
     @field:NotBlank(message = "Title is required")
