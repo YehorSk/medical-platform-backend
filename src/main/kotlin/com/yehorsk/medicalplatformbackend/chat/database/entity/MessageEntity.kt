@@ -47,15 +47,14 @@ class MessageEntity(
     )
     @OnDelete(action = OnDeleteAction.CASCADE)
     var conversation: ConversationEntity? = null,
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
         name = "sender_id",
         nullable = false,
-        insertable = false,
         updatable = false
     )
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var sender: UserEntity? = null,
+    var sender: UserEntity,
     @CreationTimestamp
     var createdAt: Instant = Instant.now(),
     @Column(nullable = false)

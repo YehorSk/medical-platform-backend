@@ -97,3 +97,9 @@ enum class UserRole {
 enum class UserLang {
     EN, SK, AU, RU
 }
+
+fun maxSessionsFor(role: UserRole): Int = when (role) {
+    UserRole.PATIENT -> 1
+    UserRole.DOCTOR -> 2
+    UserRole.ADMIN -> 1
+}

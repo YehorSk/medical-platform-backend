@@ -33,6 +33,9 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
 
+    implementation(platform("software.amazon.awssdk:bom:2.37.0"))
+    implementation("software.amazon.awssdk:s3")
+
     implementation("com.google.firebase:firebase-admin:9.5.0")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

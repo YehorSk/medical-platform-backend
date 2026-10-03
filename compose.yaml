@@ -81,6 +81,27 @@ services:
     volumes:
       - rabbitmq-medical-platform-data:/var/lib/rabbitmq
 
+  clamav:
+    image: clamav/clamav:stable
+    container_name: clamav
+    restart: unless-stopped
+    volumes:
+      - clamav-medical-platform-data:/var/lib/clamav
+    environment:
+      CLAMAV_NO_FRESHCLAMD: "false"
+    expose:
+      - "3310"
+    healthcheck:
+      test: [ "CMD", "/usr/local/bin/clamdcheck.sh" ]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 300s
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
 volumes:
   postgres_data:
   mailpit-medical-platform-data:
@@ -88,6 +109,7 @@ volumes:
   redis-medical-platform-data:
   redisinsight-medical-platform-data:
   rabbitmq-medical-platform-data:
+  clamav-medical-platform-data:
 
 networks:
   medical_platform_network:

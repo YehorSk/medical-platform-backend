@@ -21,6 +21,9 @@ class RefreshTokenEntity(
     @Column(name = "user_id", nullable = false)
     var userId: UserId,
 
+//    @Column(name = "family_id", nullable = false)
+//    var familyId: String,
+
     @Column(nullable = false)
     var expiresAt: Instant,
 
