@@ -10,5 +10,5 @@ data class MessageResponseDto(
     val conversationId: ConversationId,
     val content: String,
     val createdAt: Instant,
-    val senderId: UserId
+    val sender: ParticipantDto
 )

@@ -26,7 +26,7 @@ fun UserEntity.toParticipantDto() = ParticipantDto(
 fun MessageEntity.toMessageResponseDto() = MessageResponseDto(
     id = this.id!!,
     conversationId = this.conversationId,
-    senderId = this.sender!!.id!!,
+    sender = this.sender.toParticipantDto(),
     content = this.content,
     createdAt = this.createdAt
 )
