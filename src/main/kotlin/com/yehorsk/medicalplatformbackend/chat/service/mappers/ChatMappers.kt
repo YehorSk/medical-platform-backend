@@ -7,7 +7,7 @@ import com.yehorsk.medicalplatformbackend.chat.service.dto.response.Conversation
 import com.yehorsk.medicalplatformbackend.chat.service.dto.response.MessageResponseDto
 import com.yehorsk.medicalplatformbackend.chat.service.dto.response.ParticipantDto
 
-fun ConversationEntity.toConversationResponseDto(lastMessage: MessageEntity?) = ConversationResponseDto(
+fun ConversationEntity.toConversationResponseDto(lastMessage: MessageEntity? = null) = ConversationResponseDto(
     id = this.id!!,
     patient = this.patient.toParticipantDto(),
     doctor = this.doctor.toParticipantDto(),

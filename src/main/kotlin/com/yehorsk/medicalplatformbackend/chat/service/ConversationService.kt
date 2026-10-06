@@ -5,6 +5,7 @@ import com.yehorsk.medicalplatformbackend.chat.database.repository.MessageReposi
 import com.yehorsk.medicalplatformbackend.chat.service.dto.response.ConversationResponseDto
 import com.yehorsk.medicalplatformbackend.chat.service.dto.response.MessageResponseDto
 import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.ConversationNotFoundException
+import com.yehorsk.medicalplatformbackend.chat.service.mappers.toConversationResponseDto
 import com.yehorsk.medicalplatformbackend.chat.service.mappers.toMessageResponseDto
 import com.yehorsk.medicalplatformbackend.chat.service.mappers.toParticipantDto
 import com.yehorsk.medicalplatformbackend.common.domain.type.ConversationId
@@ -37,14 +38,14 @@ class ConversationService(
 
     fun getConversationById(
         conversationId: ConversationId
-    ): ConversationEntity {
+    ): ConversationResponseDto {
         val userId = currentUserProvider.getCurrentUserId()
         val conversation = conversationRepository.findConversationEntityByParticipantId(
             conversationId = conversationId,
             userId = userId
         ) ?: throw ConversationNotFoundException ()
 
-        return conversation
+        return conversation.toConversationResponseDto()
     }
 
     fun findConversationByUser(): List<ConversationResponseDto> {

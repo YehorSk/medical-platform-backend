@@ -26,7 +26,7 @@ class ConversationController(
     @GetMapping("/{conversationId}")
     fun getConversationById(
         @PathVariable conversationId: ConversationId
-    ): ApiResponseWithData<Any> {
+    ): ApiResponseWithData<ConversationResponseDto> {
         val conversation = conversationService.getConversationById(conversationId)
         return ApiResponseWithData(data = conversation)
     }
