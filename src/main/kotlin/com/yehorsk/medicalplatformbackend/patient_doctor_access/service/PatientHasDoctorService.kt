@@ -18,6 +18,8 @@ import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
 import com.yehorsk.medicalplatformbackend.chat.database.entity.ConversationEntity
 import com.yehorsk.medicalplatformbackend.chat.database.repository.ConversationRepository
+import com.yehorsk.medicalplatformbackend.chat.websocket.ConversationAccessRevokedEvent
+import org.springframework.context.ApplicationEventPublisher
 import com.yehorsk.medicalplatformbackend.doctor.mappers.toPatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.PatientHasDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
@@ -36,7 +38,8 @@ class PatientHasDoctorService(
     private val medicalCardRepository: MedicalCardRepository,
     private val userRepository: UserRepository,
     private val currentUserProvider: CurrentUserProvider,
-    private val conversationRepository: ConversationRepository
+    private val conversationRepository: ConversationRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
 
     private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -167,6 +170,18 @@ class PatientHasDoctorService(
             }
             else -> throw AccessDeniedException()
         }
+
+        val doctorId = relation.doctor.id!!
+        val patientId = relation.medicalCard.patient!!.id!!
+        conversationRepository.findByDoctorIdAndPatientId(doctorId, patientId)?.let { conversation ->
+            applicationEventPublisher.publishEvent(
+                ConversationAccessRevokedEvent(
+                    conversationId = conversation.id!!,
+                    participantIds = listOf(doctorId, patientId)
+                )
+            )
+        }
+
         return relation.toPatientHasDoctorResponseDto()
     }
 

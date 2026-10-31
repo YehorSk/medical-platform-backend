@@ -2,3 +2,5 @@
 /.gradle/
 /build/
 /.idea/
+/src/main/resources/google-services.json
+/src/main/resources/medicalplatform-a579e-firebase-adminsdk-fbsvc-49d6963eaa.json

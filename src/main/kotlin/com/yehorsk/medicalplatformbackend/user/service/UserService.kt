@@ -1,5 +1,6 @@
 package com.yehorsk.medicalplatformbackend.user.service
 
+import com.yehorsk.medicalplatformbackend.auth.database.repository.RefreshTokenRepository
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidCredentialsException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.UserDoesNotExistException
@@ -21,6 +22,7 @@ class UserService(
     private val userProvider: CurrentUserProvider,
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val refreshTokenRepository: RefreshTokenRepository,
 ) {
 
     private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -68,6 +70,7 @@ class UserService(
 
         user.hashedPassword = passwordEncoder.encode(request.password)!!
         userRepository.save(user)
+        refreshTokenRepository.deleteByUserId(userId)
 
         return ApiResponse(
             message = "Password changed successfully"

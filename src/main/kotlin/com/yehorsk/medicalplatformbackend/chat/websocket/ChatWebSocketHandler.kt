@@ -9,6 +9,8 @@ import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.IncomingWebSocketM
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.IncomingWebSocketMessageType
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.OutgoingWebSocketMessage
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.OutgoingWebSocketMessageType
+import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidTokenException
+import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.ConversationNotActiveException
 import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.ConversationNotFoundException
 import com.yehorsk.medicalplatformbackend.common.domain.type.ConversationId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import org.springframework.transaction.event.TransactionalEventListener
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.PingMessage
 import org.springframework.web.socket.PongMessage
@@ -25,6 +28,7 @@ import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator
 import org.springframework.web.socket.handler.TextWebSocketHandler
 import tools.jackson.databind.ObjectMapper
+import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
 @Component
@@ -55,8 +59,9 @@ class ChatWebSocketHandler(
             return
         }
 
-        val userId = try {
-            jwtService.getUserIdFromToken(authHeader)
+        val (userId, tokenExpiresAt) = try {
+            if (!jwtService.validateAccessToken(authHeader)) throw InvalidTokenException()
+            jwtService.getUserIdFromToken(authHeader) to jwtService.getExpirationFromToken(authHeader)
         } catch (e: Exception) {
             logger.warn("Session {} closed: invalid token", session.id)
             session.close(CloseStatus.POLICY_VIOLATION.withReason("Authentication failed"))
@@ -67,7 +72,11 @@ class ChatWebSocketHandler(
             session, SEND_TIME_LIMIT_MS, SEND_BUFFER_LIMIT
         )
 
-        sessions[session.id] = UserSession(userId = userId, session = safeSession)
+        sessions[session.id] = UserSession(
+            userId = userId,
+            session = safeSession,
+            tokenExpiresAt = tokenExpiresAt
+        )
         userToSessions.computeIfAbsent(userId) { ConcurrentHashMap.newKeySet() }.add(session.id)
 
         logger.info("WebSocket connected: user={}", userId)
@@ -90,6 +99,8 @@ class ChatWebSocketHandler(
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
         val userSession = sessions[session.id] ?: return
 
+        if (closeIfTokenExpired(userSession)) return
+
         try {
             val incoming = objectMapper.readValue(message.payload, IncomingWebSocketMessage::class.java)
             when (incoming.type) {
@@ -104,6 +115,8 @@ class ChatWebSocketHandler(
         } catch (e: ConversationNotFoundException) {
             logger.warn("Forbidden chat access attempt: user={}", userSession.userId)
             sendError(userSession.session, "FORBIDDEN", "Conversation not available")
+        } catch (e: ConversationNotActiveException) {
+            sendError(userSession.session, "CONVERSATION_NOT_ACTIVE", "Doctor access is not approved for this conversation")
         } catch (e: Exception) {
             logger.error("Failed to handle message from user={}", userSession.userId, e)
             sendError(userSession.session, "INTERNAL_ERROR", "Could not process message")
@@ -149,6 +162,7 @@ class ChatWebSocketHandler(
         sessions.toMap().forEach { (sessionId, userSession) ->
             try {
                 if (!userSession.session.isOpen) return@forEach
+                if (closeIfTokenExpired(userSession)) return@forEach
 
                 if (now - userSession.lastPongTimestamp > PONG_TIMEOUT_MS) {
                     logger.warn("Session {} timed out", sessionId)
@@ -161,6 +175,31 @@ class ChatWebSocketHandler(
                 runCatching { userSession.session.close(CloseStatus.SERVER_ERROR) }
             }
         }
+    }
+
+    @TransactionalEventListener(fallbackExecution = true)
+    fun onConversationAccessRevoked(event: ConversationAccessRevokedEvent) {
+        val json = objectMapper.writeValueAsString(
+            OutgoingWebSocketMessage(
+                type = OutgoingWebSocketMessageType.ACCESS_REVOKED,
+                payload = objectMapper.writeValueAsString(mapOf("conversationId" to event.conversationId))
+            )
+        )
+
+        event.participantIds.forEach { userId ->
+            userToSessions[userId]?.forEach { sessionId ->
+                sessions[sessionId]?.session?.let { sendSafely(it, json) }
+            }
+        }
+    }
+
+    // The socket is only as valid as the access token it was opened with; the client reconnects with a fresh one
+    private fun closeIfTokenExpired(userSession: UserSession): Boolean {
+        if (Instant.now().isBefore(userSession.tokenExpiresAt)) return false
+
+        logger.info("Session {} closed: access token expired", userSession.session.id)
+        runCatching { userSession.session.close(CloseStatus.POLICY_VIOLATION.withReason("Token expired")) }
+        return true
     }
 
     private fun sendError(session: WebSocketSession, code: String, message: String) {
@@ -184,6 +223,7 @@ class ChatWebSocketHandler(
     private data class UserSession(
         val userId: UserId,
         val session: WebSocketSession,
+        val tokenExpiresAt: Instant,
         val lastPongTimestamp: Long = System.currentTimeMillis()
     )
 }

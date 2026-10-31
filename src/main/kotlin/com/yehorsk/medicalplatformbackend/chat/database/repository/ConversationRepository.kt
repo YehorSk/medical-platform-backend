@@ -27,4 +27,14 @@ interface ConversationRepository : JpaRepository<ConversationEntity, Conversatio
         userId: UserId
     ): ConversationEntity?
 
+    @Query("""
+        SELECT c
+        FROM ConversationEntity c
+        WHERE c.doctor.id = :doctorId AND c.patient.id = :patientId
+    """)
+    fun findByDoctorIdAndPatientId(
+        doctorId: UserId,
+        patientId: UserId
+    ): ConversationEntity?
+
 }

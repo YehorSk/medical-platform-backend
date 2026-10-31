@@ -2,7 +2,9 @@ package com.yehorsk.medicalplatformbackend.auth.service
 
 import com.yehorsk.medicalplatformbackend.common.service.MailService
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
+import com.yehorsk.medicalplatformbackend.auth.database.repository.RefreshTokenRepository
 import com.yehorsk.medicalplatformbackend.auth.database.repository.UserRepository
+import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.ExpiredResetCodeException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidCredentialsException
 import com.yehorsk.medicalplatformbackend.auth.exceptions.types.InvalidResetCodeException
@@ -24,6 +26,7 @@ class PasswordResetService(
     private val passwordEncoder: PasswordEncoder,
     private val redisTemplate: StringRedisTemplate,
     private val userRepository: UserRepository,
+    private val refreshTokenRepository: RefreshTokenRepository,
     private val eventPublisher: EventPublisher
     ) {
 
@@ -66,8 +69,29 @@ class PasswordResetService(
         val user = userRepository.findByEmail(request.email)
             ?: throw InvalidCredentialsException()
 
-        val codeKey = "reset:code:${user.id}"
-        val attemptsKey = "reset:attempts:${user.id}"
+        checkResetCode(user.id!!, request.code)
+        return ApiResponse(message = "Code verified")
+    }
+
+    @Transactional
+    fun resetPassword(request: ResetPasswordRequestDto): ApiResponse{
+        val user = userRepository.findByEmail(request.email)
+            ?: throw InvalidCredentialsException()
+
+        checkResetCode(user.id!!, request.code)
+
+        user.hashedPassword = passwordEncoder.encode(request.password)!!
+        userRepository.save(user)
+        refreshTokenRepository.deleteByUserId(user.id!!)
+
+        redisTemplate.delete(listOf("reset:code:${user.id}", "reset:attempts:${user.id}"))
+        return ApiResponse(message = "Password has been reset")
+    }
+
+    // Shared by verifyCode and resetPassword so both count towards MAX_ATTEMPTS
+    private fun checkResetCode(userId: UserId, code: String) {
+        val codeKey = "reset:code:$userId"
+        val attemptsKey = "reset:attempts:$userId"
 
         val hashedToken = redisTemplate.opsForValue().get(codeKey)
             ?: throw ExpiredResetCodeException()
@@ -80,33 +104,9 @@ class PasswordResetService(
             throw TooManyAttemptsException()
         }
 
-        if (!passwordEncoder.matches(request.code, hashedToken)) {
+        if (!passwordEncoder.matches(code, hashedToken)) {
             throw InvalidResetCodeException()
         }
-        return ApiResponse(message = "Code verified")
-    }
-
-    @Transactional
-    fun resetPassword(request: ResetPasswordRequestDto): ApiResponse{
-        val user = userRepository.findByEmail(request.email)
-            ?: throw InvalidCredentialsException()
-
-
-        val codeKey = "reset:code:${user.id}"
-        val attemptsKey = "reset:attempts:${user.id}"
-
-        val hashedToken = redisTemplate.opsForValue().get(codeKey)
-            ?: throw ExpiredResetCodeException()
-
-        if (!passwordEncoder.matches(request.code, hashedToken)) {
-            throw InvalidResetCodeException()
-        }
-
-        user.hashedPassword = passwordEncoder.encode(request.password)!!
-        userRepository.save(user)
-
-        redisTemplate.delete(listOf(codeKey, attemptsKey))
-        return ApiResponse(message = "Password has been reset")
     }
 
 }

@@ -1,5 +1,6 @@
 package com.yehorsk.medicalplatformbackend.chat.service.exceptions
 
+import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.ConversationNotActiveException
 import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.ConversationNotFoundException
 import com.yehorsk.medicalplatformbackend.common.domain.exceptions.toResponse
 import jakarta.servlet.http.HttpServletRequest
@@ -11,6 +12,10 @@ class ConversationExceptionHandler {
 
     @ExceptionHandler(ConversationNotFoundException::class)
     fun onConversationNotFound(e: ConversationNotFoundException, request: HttpServletRequest) =
+        e.toResponse(request)
+
+    @ExceptionHandler(ConversationNotActiveException::class)
+    fun onConversationNotActive(e: ConversationNotActiveException, request: HttpServletRequest) =
         e.toResponse(request)
 
 }

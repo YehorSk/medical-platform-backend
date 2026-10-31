@@ -20,14 +20,24 @@ class ConversationService(
     private val currentUserProvider: CurrentUserProvider
 ) {
 
+    companion object {
+        private const val MAX_PAGE_SIZE = 100
+    }
+
     fun getConversationMessages(
         conversationId: ConversationId,
         pageSize: Int
     ): List<MessageResponseDto>{
+        val userId = currentUserProvider.getCurrentUserId()
+        conversationRepository.findConversationEntityByParticipantId(
+            conversationId = conversationId,
+            userId = userId
+        ) ?: throw ConversationNotFoundException()
+
         return messageRepository
             .findByConversationIdOrderByCreatedAtDesc(
                 conversationId,
-                pageable = PageRequest.of(0, pageSize)
+                pageable = PageRequest.of(0, pageSize.coerceIn(1, MAX_PAGE_SIZE))
             )
             .content
             .asReversed()

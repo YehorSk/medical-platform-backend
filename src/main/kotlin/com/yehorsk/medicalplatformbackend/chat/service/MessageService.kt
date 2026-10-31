@@ -6,7 +6,9 @@ import com.yehorsk.medicalplatformbackend.chat.database.repository.ConversationR
 import com.yehorsk.medicalplatformbackend.chat.database.repository.MessageRepository
 import com.yehorsk.medicalplatformbackend.chat.service.dto.request.SendMessageRequestDto
 import com.yehorsk.medicalplatformbackend.chat.service.dto.response.MessageResponseDto
+import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.ConversationNotActiveException
 import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.ConversationNotFoundException
+import com.yehorsk.medicalplatformbackend.patient_doctor_access.database.repository.PatientHasDoctorRepository
 import com.yehorsk.medicalplatformbackend.chat.service.mappers.toMessageResponseDto
 import com.yehorsk.medicalplatformbackend.common.domain.events.conversation.ConversationEvent
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
@@ -21,6 +23,7 @@ class MessageService(
     private val conversationRepository: ConversationRepository,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
+    private val patientHasDoctorRepository: PatientHasDoctorRepository,
     private val eventPublisher: EventPublisher
 ) {
 
@@ -30,6 +33,15 @@ class MessageService(
         val conversation = conversationRepository
             .findConversationEntityByParticipantId(request.conversationId, senderId)
             ?: throw ConversationNotFoundException()
+
+        // Chat is only open while the patient has an approved relation with the doctor
+        val relation = patientHasDoctorRepository.getRelation(
+            patientId = conversation.patient.id!!,
+            doctorId = conversation.doctor.id!!
+        )
+        if (relation?.isApproved() != true) {
+            throw ConversationNotActiveException()
+        }
 
         val sender = userRepository.findUserEntityById(senderId)
             ?: throw ConversationNotFoundException()

@@ -9,6 +9,7 @@ import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
@@ -68,6 +69,11 @@ class JwtService(
     fun getUserIdFromToken(token: String): UserId {
         val claims = parseAllClaims(token) ?: throw InvalidTokenException()
         return UUID.fromString(claims.subject)
+    }
+
+    fun getExpirationFromToken(token: String): Instant {
+        val claims = parseAllClaims(token) ?: throw InvalidTokenException()
+        return claims.expiration.toInstant()
     }
 
     fun getUserRoleFromToken(token: String): UserRole {
