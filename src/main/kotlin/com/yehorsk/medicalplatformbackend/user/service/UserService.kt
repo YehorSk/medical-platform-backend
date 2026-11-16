@@ -10,6 +10,7 @@ import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
+import com.yehorsk.medicalplatformbackend.notification.service.PushNotificationService
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.ChangePasswordRequestDto
 import com.yehorsk.medicalplatformbackend.user.service.dto.request.UpdateUserRequestDto
 import jakarta.transaction.Transactional
@@ -23,6 +24,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenRepository: RefreshTokenRepository,
+    private val pushNotificationService: PushNotificationService,
 ) {
 
     private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -71,6 +73,7 @@ class UserService(
         user.hashedPassword = passwordEncoder.encode(request.password)!!
         userRepository.save(user)
         refreshTokenRepository.deleteByUserId(userId)
+        pushNotificationService.unregisterAllDevices(userId)
 
         return ApiResponse(
             message = "Password changed successfully"

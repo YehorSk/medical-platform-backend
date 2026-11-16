@@ -17,7 +17,6 @@ sealed class ConversationEvent(
         val recipient: UserId,
         val senderUsername: String,
         val conversationId: ConversationId,
-        val content: String,
         override val eventKey: String = ConversationEventConstants.CONVERSATION_NEW_MESSAGE
     ): ConversationEvent(), MedConnectEvent
 

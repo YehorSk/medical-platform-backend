@@ -30,6 +30,7 @@ import com.yehorsk.medicalplatformbackend.common.infra.EventPublisher
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import com.yehorsk.medicalplatformbackend.medical_card.database.repository.MedicalCardRepository
+import com.yehorsk.medicalplatformbackend.notification.service.PushNotificationService
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.security.MessageDigest
@@ -47,7 +48,8 @@ class AuthService(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val userProvider: CurrentUserProvider,
     private val emailVerificationService: EmailVerificationService,
-    private val eventPublisher: EventPublisher
+    private val eventPublisher: EventPublisher,
+    private val pushNotificationService: PushNotificationService
 ) {
 
     @Transactional
@@ -174,6 +176,7 @@ class AuthService(
     fun logout(): ApiResponse {
         val userId = userProvider.getCurrentUserId()
         refreshTokenRepository.deleteByUserId(userId)
+        pushNotificationService.unregisterAllDevices(userId)
         return ApiResponse(message = "Logged out successfully")
     }
 

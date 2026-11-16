@@ -61,13 +61,12 @@ class MessageService(
         val patientId = conversation.patient.id!!
         val recipientId = if (senderId == doctorId) patientId else doctorId
 
-        eventPublisher.publish(
+        eventPublisher.publishAfterCommit(
             ConversationEvent.NewMessage(
                 senderId = senderId,
                 recipient = recipientId,
                 senderUsername = "${sender.firstName} ${sender.lastName}",
-                conversationId = request.conversationId,
-                content = request.content
+                conversationId = request.conversationId
             )
         )
 

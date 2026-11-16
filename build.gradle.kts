@@ -35,6 +35,7 @@ dependencies {
 
     implementation(platform("software.amazon.awssdk:bom:2.37.0"))
     implementation("software.amazon.awssdk:s3")
+    implementation("org.apache.tika:tika-core:3.2.3")
 
     implementation("com.google.firebase:firebase-admin:9.5.0")
 

@@ -80,7 +80,7 @@ class FirebaseNotificationService(
                             setAndroidConfig(
                                 AndroidConfig.builder()
                                     .setPriority(AndroidConfig.Priority.HIGH)
-                                    .setCollapseKey(notification.conversationId.toString())
+                                    .setCollapseKey(notification.collapseKey)
                                     .build()
                             )
                         }

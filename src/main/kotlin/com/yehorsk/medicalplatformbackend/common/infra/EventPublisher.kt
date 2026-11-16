@@ -4,6 +4,8 @@ import com.yehorsk.medicalplatformbackend.common.domain.events.MedConnectEvent
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Component
+import org.springframework.transaction.support.TransactionSynchronization
+import org.springframework.transaction.support.TransactionSynchronizationManager
 
 @Component
 class EventPublisher(
@@ -23,5 +25,19 @@ class EventPublisher(
         } catch(e: Exception) {
             logger.error("Failed to publish ${event.eventKey} event", e)
         }
+    }
+
+    // Defers publishing until the surrounding transaction commits, so a rollback never produces an event
+    fun <T: MedConnectEvent> publishAfterCommit(event: T) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            publish(event)
+            return
+        }
+
+        TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
+            override fun afterCommit() {
+                publish(event)
+            }
+        })
     }
 }

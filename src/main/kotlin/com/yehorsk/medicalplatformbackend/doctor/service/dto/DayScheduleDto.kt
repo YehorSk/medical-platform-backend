@@ -3,11 +3,9 @@ package com.yehorsk.medicalplatformbackend.doctor.service.dto
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.WeekDay
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
-import org.jetbrains.annotations.NotNull
 import java.time.LocalTime
 
 data class DayScheduleDto(
-    @field:NotNull()
     val weekday: WeekDay,
 
     val isWorkingDay: Boolean,

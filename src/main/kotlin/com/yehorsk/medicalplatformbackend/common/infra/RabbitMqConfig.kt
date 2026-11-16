@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.common.infra
 
 import com.yehorsk.medicalplatformbackend.common.domain.events.MedConnectEvent
+import com.yehorsk.medicalplatformbackend.common.domain.events.attachment.AttachmentEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.audit.AuditLogEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.conversation.ConversationEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.user.UserEventConstants
@@ -112,6 +113,47 @@ class RabbitMqConfig {
             .bind(notificationUserEventsQueue)
             .to(userExchange)
             .with("user.*")
+    }
+
+    @Bean
+    fun attachmentExchange() = TopicExchange(
+        AttachmentEventConstants.ATTACHMENT_EXCHANGE,
+        true,
+        false
+    )
+
+    @Bean
+    fun attachmentScanQueue() = Queue(
+        MessageQueues.ATTACHMENT_SCAN,
+        true
+    )
+
+    @Bean
+    fun attachmentScanBinding(
+        attachmentScanQueue: Queue,
+        attachmentExchange: TopicExchange,
+    ): Binding {
+        return BindingBuilder
+            .bind(attachmentScanQueue)
+            .to(attachmentExchange)
+            .with(AttachmentEventConstants.ATTACHMENT_UPLOADED)
+    }
+
+    @Bean
+    fun notificationAttachmentEventsQueue() = Queue(
+        MessageQueues.NOTIFICATION_ATTACHMENT_EVENTS,
+        true
+    )
+
+    @Bean
+    fun notificationAttachmentEventsBinding(
+        notificationAttachmentEventsQueue: Queue,
+        attachmentExchange: TopicExchange,
+    ): Binding {
+        return BindingBuilder
+            .bind(notificationAttachmentEventsQueue)
+            .to(attachmentExchange)
+            .with(AttachmentEventConstants.ATTACHMENT_SCAN_FAILED)
     }
 
     @Bean

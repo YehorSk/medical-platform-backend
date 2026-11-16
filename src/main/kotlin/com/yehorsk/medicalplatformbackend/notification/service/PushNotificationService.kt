@@ -1,7 +1,10 @@
 package com.yehorsk.medicalplatformbackend.notification.service
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.ConversationId
+import com.yehorsk.medicalplatformbackend.common.domain.type.MedicalRecordAttachmentId
+import com.yehorsk.medicalplatformbackend.common.domain.type.MedicalRecordId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
+import com.yehorsk.medicalplatformbackend.notification.exceptions.types.InvalidDeviceTokenException
 import com.yehorsk.medicalplatformbackend.notification.infra.database.DeviceTokenRepository
 import com.yehorsk.medicalplatformbackend.notification.infra.database.model.DeviceTokenEntity
 import com.yehorsk.medicalplatformbackend.notification.infra.database.model.PlatformEntity
@@ -39,12 +42,12 @@ class PushNotificationService(
         platform: PlatformEntity
     ): DeviceToken {
         val normalizedToken = token.trim()
-        val storedToken = tokenRepository.findByToken(token)
+        val storedToken = tokenRepository.findByToken(normalizedToken)
 
         if (storedToken == null &&
             !firebaseService.isValidToken(normalizedToken)
         ) {
-            // throw InvalidDeviceTokenException()
+            throw InvalidDeviceTokenException()
         }
 
         val saved = storedToken?.let { existing ->
@@ -62,15 +65,20 @@ class PushNotificationService(
     }
 
     @Transactional
-    fun unregisterDevice(token: String) {
-        tokenRepository.deleteByToken(token.trim())
+    fun unregisterDevice(userId: UserId, token: String) {
+        tokenRepository.deleteByTokenAndUserId(token.trim(), userId)
+    }
+
+    // Used on logout and password change/reset, which already end every session of the user
+    @Transactional
+    fun unregisterAllDevices(userId: UserId) {
+        tokenRepository.deleteByUserId(userId)
     }
 
     fun sendNewMessageNotifications(
         recipientUserIds: List<UserId>,
         senderUserId: UserId,
         senderUsername: String,
-        message: String,
         conversationId: ConversationId
     ) {
         val tokens = tokenRepository.findByUserIdIn(recipientUserIds)
@@ -89,11 +97,44 @@ class PushNotificationService(
         val push = PushNotification(
             title = "New message from $senderUsername",
             recipients = recipients,
-            message = message,
-            conversationId = conversationId,
+            // Generic body on purpose: message content may contain health data and must not reach the lock screen or Firebase
+            message = "You have a new message",
+            collapseKey = conversationId.toString(),
             data = buildMap {
                 put("conversationId", conversationId.toString())
                 put("type", "new_message")
+            }
+        )
+
+        sendWithRetry(push)
+    }
+
+    fun sendAttachmentScanFailedNotification(
+        doctorId: UserId,
+        medicalRecordId: MedicalRecordId,
+        attachmentId: MedicalRecordAttachmentId,
+        status: String
+    ) {
+        val recipients = tokenRepository.findByUserIdIn(listOf(doctorId))
+            .map(DeviceTokenEntity::toDeviceToken)
+
+        if (recipients.isEmpty()) {
+            log.info("No device tokens found for doctor $doctorId")
+            return
+        }
+
+        val push = PushNotification(
+            title = "File upload problem",
+            recipients = recipients,
+            // No file name on purpose: it may contain health data and must not reach the lock screen or Firebase
+            message = "A file attached to a medical record could not be verified. Please upload it again.",
+            // One notification per record, even if several of its files fail
+            collapseKey = "medical-record-$medicalRecordId",
+            data = buildMap {
+                put("type", "attachment_scan_failed")
+                put("medicalRecordId", medicalRecordId.toString())
+                put("attachmentId", attachmentId.toString())
+                put("status", status)
             }
         )
 

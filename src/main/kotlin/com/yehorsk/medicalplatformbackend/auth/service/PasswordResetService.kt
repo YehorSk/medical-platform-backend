@@ -15,6 +15,7 @@ import com.yehorsk.medicalplatformbackend.auth.service.dto.request.VerifyResetTo
 import com.yehorsk.medicalplatformbackend.common.domain.events.user.UserEvent
 import com.yehorsk.medicalplatformbackend.common.infra.EventPublisher
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponse
+import com.yehorsk.medicalplatformbackend.notification.service.PushNotificationService
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,7 +28,8 @@ class PasswordResetService(
     private val redisTemplate: StringRedisTemplate,
     private val userRepository: UserRepository,
     private val refreshTokenRepository: RefreshTokenRepository,
-    private val eventPublisher: EventPublisher
+    private val eventPublisher: EventPublisher,
+    private val pushNotificationService: PushNotificationService
     ) {
 
     companion object {
@@ -83,6 +85,7 @@ class PasswordResetService(
         user.hashedPassword = passwordEncoder.encode(request.password)!!
         userRepository.save(user)
         refreshTokenRepository.deleteByUserId(user.id!!)
+        pushNotificationService.unregisterAllDevices(user.id!!)
 
         redisTemplate.delete(listOf("reset:code:${user.id}", "reset:attempts:${user.id}"))
         return ApiResponse(message = "Password has been reset")

@@ -1,6 +1,8 @@
 package com.yehorsk.medicalplatformbackend.doctor.service
 
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
+import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
+import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentStatus
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.DoctorScheduleEntity
 import com.yehorsk.medicalplatformbackend.appointments.database.repository.AppointmentRepository
@@ -18,6 +20,7 @@ import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepos
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.DayScheduleDto
 import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.DoctorDoesNotExistException
 import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.InvalidScheduleException
+import com.yehorsk.medicalplatformbackend.doctor.exceptions.types.ScheduleConflictsWithAppointmentsException
 import com.yehorsk.medicalplatformbackend.doctor.mappers.toDoctorResponseDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.request.UpdateScheduleRequestDto
 import com.yehorsk.medicalplatformbackend.doctor.service.dto.response.DayScheduleResponseDto
@@ -40,10 +43,12 @@ class DoctorScheduleService(
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     fun updateSchedule(request: UpdateScheduleRequestDto): ApiResponse {
 
-        val doctor = currentUserProvider.getCurrentUserEntity().doctor
+        val user = currentUserProvider.getCurrentUserEntity()
+        val doctor = user.doctor
             ?: throw DoctorDoesNotExistException()
 
-        validateSchedule(request.schedules)
+        ScheduleRules.validate(request.schedules)
+        ensureNoConflictsWithUpcomingAppointments(user.id!!, request.schedules)
 
         doctorScheduleRepository.deleteAllByDoctorId(doctor.id!!)
 
@@ -56,8 +61,9 @@ class DoctorScheduleService(
                     endTime = dto.endTime!!,
                     lunchStart = dto.lunchStart,
                     lunchEnd = dto.lunchEnd,
-                    slotDurationMinutes = dto.slotDurationMinutes ?: 30,
-                    breakBetweenMinutes = dto.breakBetweenMinutes ?: 0,
+                    slotDurationMinutes = dto.slotDurationMinutes ?: ScheduleRules.DEFAULT_SLOT_DURATION_MINUTES,
+                    breakBetweenMinutes = dto.breakBetweenMinutes ?: ScheduleRules.DEFAULT_BREAK_BETWEEN_MINUTES,
+                    isWorkingDay = true,
                     doctor = doctor
                 )
             }
@@ -85,41 +91,15 @@ class DoctorScheduleService(
         return getSchedule(doctor.id!!)
     }
 
-    private fun validateSchedule(schedules: List<DayScheduleDto>) {
-        val workingDays = schedules.filter { it.isWorkingDay }
+    private fun ensureNoConflictsWithUpcomingAppointments(doctorUserId: UserId, schedules: List<DayScheduleDto>) {
+        val upcomingTimes = appointmentRepository
+            .findUpcomingAppointmentsByDoctorId(doctorUserId, Instant.now())
+            .filter { it.status == AppointmentStatus.PENDING || it.status == AppointmentStatus.CONFIRMED }
+            .map { it.dateTime.atZone(ZoneId.systemDefault()).toLocalDateTime() }
 
-        workingDays.forEach { day ->
-            val start = day.startTime
-                ?: throw InvalidScheduleException("Start time is required for working day ${day.weekday}")
-            val end = day.endTime
-                ?: throw InvalidScheduleException("End time is required for working day ${day.weekday}")
-
-            if (!start.isBefore(end)) {
-                throw InvalidScheduleException("Start time must be before end time for ${day.weekday}")
-            }
-
-            if (day.lunchStart != null && day.lunchEnd != null) {
-                if (!day.lunchStart.isBefore(day.lunchEnd)) {
-                    throw InvalidScheduleException("Lunch start must be before lunch end for ${day.weekday}")
-                }
-                if (day.lunchStart.isBefore(start) || day.lunchEnd.isAfter(end)) {
-                    throw InvalidScheduleException("Lunch break must be within working hours for ${day.weekday}")
-                }
-            }
-
-            val slotDuration = day.slotDurationMinutes ?: 30
-            if (slotDuration <= 0) {
-                throw InvalidScheduleException("Slot duration must be positive for ${day.weekday}")
-            }
-        }
-
-        val duplicateWeekdays = workingDays
-            .groupingBy { it.weekday }
-            .eachCount()
-            .filter { it.value > 1 }
-
-        if (duplicateWeekdays.isNotEmpty()) {
-            throw InvalidScheduleException("Duplicate schedule entries for: ${duplicateWeekdays.keys.joinToString()}")
+        val conflicts = ScheduleRules.findConflicts(schedules, upcomingTimes)
+        if (conflicts.isNotEmpty()) {
+            throw ScheduleConflictsWithAppointmentsException(conflicts.size)
         }
     }
 
@@ -153,23 +133,14 @@ class DoctorScheduleService(
             throw SlotNotAvailableException()
         }
 
-        val slots = mutableListOf<LocalTime>()
-        var time = schedule.startTime!!
-        val slotDuration = schedule.slotDurationMinutes
-        val breakBetween = schedule.breakBetweenMinutes
-
-        while (!time.plusMinutes(slotDuration.toLong()).isAfter(schedule.endTime)) {
-            val slotEnd = time.plusMinutes(slotDuration.toLong())
-
-            val overlapsLunch = schedule.lunchStart != null && schedule.lunchEnd != null &&
-                    time.isBefore(schedule.lunchEnd) && slotEnd.isAfter(schedule.lunchStart)
-
-            if (!overlapsLunch) {
-                slots.add(time)
-            }
-
-            time = slotEnd.plusMinutes(breakBetween.toLong())
-        }
+        val slots = ScheduleRules.generateSlots(
+            startTime = schedule.startTime!!,
+            endTime = schedule.endTime!!,
+            lunchStart = schedule.lunchStart,
+            lunchEnd = schedule.lunchEnd,
+            slotDurationMinutes = schedule.slotDurationMinutes,
+            breakBetweenMinutes = schedule.breakBetweenMinutes
+        )
 
         val startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant()
         val endOfDay = date.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()

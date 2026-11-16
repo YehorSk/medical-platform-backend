@@ -25,6 +25,10 @@ class DoctorExceptionHandler {
     fun onInvalidSchedule(e: InvalidScheduleException, request: HttpServletRequest) =
         e.toResponse(request)
 
+    @ExceptionHandler(ScheduleConflictsWithAppointmentsException::class)
+    fun onScheduleConflictsWithAppointments(e: ScheduleConflictsWithAppointmentsException, request: HttpServletRequest) =
+        e.toResponse(request)
+
 
 }
 

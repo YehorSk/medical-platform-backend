@@ -12,21 +12,46 @@ services:
       - "8025:8025"
       - "1025:1025"
 
-#  minio:
-#    image: quay.io/minio/minio
-#    environment:
-#      - MINIO_ROOT_USER=minioadmin
-#      - MINIO_ROOT_PASSWORD=minioadmin
-#      - TZ=Europe/Bratislava
-#    command: server /data --address ":9100" --console-address ":9101"
-#    networks:
-#      - medical_platform_network
-#    container_name: minio-medical-platform
-#    volumes:
-#      - minio-medical-platform-data:/data
-#    ports:
-#      - "9100:9100"
-#      - "9101:9101"
+  # S3-compatible storage (MinIO replacement). API on 9100, web console on 9101.
+  s3:
+    image: rustfs/rustfs:1.0.6
+    container_name: s3-medical-platform
+    environment:
+      - RUSTFS_ACCESS_KEY=minioadmin
+      - RUSTFS_SECRET_KEY=minioadmin
+      - RUSTFS_ADDRESS=:9100
+      - RUSTFS_CONSOLE_ENABLE=true
+      - RUSTFS_CONSOLE_ADDRESS=:9101
+      - TZ=Europe/Bratislava
+    networks:
+      - medical_platform_network
+    volumes:
+      - s3-medical-platform-data:/data
+    ports:
+      - "9100:9100"
+      - "9101:9101"
+
+  # One-shot job: creates the buckets the app expects, then exits.
+  s3-init:
+    image: amazon/aws-cli:2.22.0
+    container_name: s3-init-medical-platform
+    depends_on:
+      - s3
+    environment:
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_DEFAULT_REGION=us-east-1
+    networks:
+      - medical_platform_network
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        for i in $$(seq 1 30); do aws --endpoint-url http://s3:9100 s3 ls >/dev/null 2>&1 && break; sleep 1; done
+        for b in quarantine medical-files; do
+          aws --endpoint-url http://s3:9100 s3 mb s3://$$b 2>/dev/null || echo "bucket $$b already exists"
+        done
+        aws --endpoint-url http://s3:9100 s3 ls
+    restart: "no"
 
   postgres:
     image: postgres:latest
@@ -89,8 +114,10 @@ services:
       - clamav-medical-platform-data:/var/lib/clamav
     environment:
       CLAMAV_NO_FRESHCLAMD: "false"
-    expose:
-      - "3310"
+    networks:
+      - medical_platform_network
+    ports:
+      - "3310:3310"
     healthcheck:
       test: [ "CMD", "/usr/local/bin/clamdcheck.sh" ]
       interval: 60s
@@ -105,7 +132,7 @@ services:
 volumes:
   postgres_data:
   mailpit-medical-platform-data:
-  minio-medical-platform-data:
+  s3-medical-platform-data:
   redis-medical-platform-data:
   redisinsight-medical-platform-data:
   rabbitmq-medical-platform-data:

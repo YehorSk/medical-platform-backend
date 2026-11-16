@@ -37,6 +37,7 @@ class DeviceTokenController(
     fun unregisterDeviceToken(
         @PathVariable("token") token: String
     ) {
-        pushNotificationService.unregisterDevice(token)
+        val userId = currentUserProvider.getCurrentUserId()
+        pushNotificationService.unregisterDevice(userId, token)
     }
 }

@@ -1,6 +1,6 @@
 package com.yehorsk.medicalplatformbackend.chat.websocket
 
-import com.fasterxml.jackson.core.JacksonException
+import tools.jackson.core.JacksonException
 import com.yehorsk.medicalplatformbackend.chat.service.ConversationService
 import com.yehorsk.medicalplatformbackend.chat.service.MessageService
 import com.yehorsk.medicalplatformbackend.chat.service.dto.request.SendMessageRequestDto
