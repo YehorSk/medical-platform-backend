@@ -54,6 +54,11 @@ class AuditLogEntity(
     @Column(nullable = false, length = 20)
     var action: AuditLogAction,
 
+    // Default lets ddl-auto add the column to a table that already has rows
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20) NOT NULL DEFAULT 'SUCCESS'")
+    var outcome: AuditLogOutcome = AuditLogOutcome.SUCCESS,
+
     @Column(nullable = false, columnDefinition = "TEXT")
     var detail: String = "",
 
@@ -64,4 +69,13 @@ class AuditLogEntity(
 
 enum class AuditLogAction {
     CREATE, READ, UPDATE, DELETE
+}
+
+enum class AuditLogOutcome {
+    /** The action was performed */
+    SUCCESS,
+    /** The user was not allowed to perform the action */
+    DENIED,
+    /** The user was allowed, but the action failed (e.g. invalid data) */
+    FAILED
 }
