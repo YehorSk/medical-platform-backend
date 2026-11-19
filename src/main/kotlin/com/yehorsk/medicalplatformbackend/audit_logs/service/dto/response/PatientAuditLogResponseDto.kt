@@ -5,10 +5,10 @@ import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditLogActi
 import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditLogOutcome
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.common.domain.type.AuditLogId
+import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import java.time.Instant
 
-/** One entry of "who accessed my medical card", as shown to the patient */
 data class PatientAuditLogResponseDto(
     val id: AuditLogId,
     val action: AuditLogAction,
@@ -20,10 +20,9 @@ data class PatientAuditLogResponseDto(
 
 data class AuditLogActorDto(
     val id: UserId,
-    /** Full name with title, e.g. "MUDr. Jan Novak" */
+    val doctorId: DoctorId?,
     val name: String,
     val role: UserRole,
-    /** True when the patient did this themself. Annotated so JSON keeps the name "isMe", not "me" */
     @get:JsonProperty("isMe")
     val isMe: Boolean
 )

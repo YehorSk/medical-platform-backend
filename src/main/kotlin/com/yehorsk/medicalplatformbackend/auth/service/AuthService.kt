@@ -1,5 +1,9 @@
 package com.yehorsk.medicalplatformbackend.auth.service
 
+import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditLogOutcome
+import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditLogAction
+import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditFailureReason
+import com.yehorsk.medicalplatformbackend.audit_logs.service.AuthEventService
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.common.service.MailService
@@ -49,7 +53,8 @@ class AuthService(
     private val userProvider: CurrentUserProvider,
     private val emailVerificationService: EmailVerificationService,
     private val eventPublisher: EventPublisher,
-    private val pushNotificationService: PushNotificationService
+    private val pushNotificationService: PushNotificationService,
+    private val authEventService: AuthEventService
 ) {
 
     @Transactional
@@ -110,17 +115,24 @@ class AuthService(
         val user = userRepository.findByEmail(email = request.email)
             ?: throw InvalidCredentialsException()
 
+        val userId = user.id ?: throw UserDoesNotExistException()
+
         if(!passwordEncoder.matches(request.password, user.hashedPassword)){
+            authEventService.record(userId, AuditLogAction.LOGIN, AuditLogOutcome.FAILED, AuditFailureReason.WRONG_PASSWORD)
             throw InvalidCredentialsException()
         }
 
         if(!user.hasVerifiedEmail){
+            authEventService.record(userId, AuditLogAction.LOGIN, AuditLogOutcome.DENIED, AuditFailureReason.EMAIL_NOT_VERIFIED)
             throw EmailNotVerifiedException()
         }
 
         if(user.role == UserRole.DOCTOR && user.doctor?.approved != true){
+            authEventService.record(userId, AuditLogAction.LOGIN, AuditLogOutcome.DENIED, AuditFailureReason.DOCTOR_NOT_APPROVED)
             throw DoctorNotApprovedException()
         }
+
+        authEventService.record(userId, AuditLogAction.LOGIN)
 
         return user.id?.let { id ->
             val accessToken = jwtService.generateAccessToken(id, user.role)
@@ -177,6 +189,7 @@ class AuthService(
         val userId = userProvider.getCurrentUserId()
         refreshTokenRepository.deleteByUserId(userId)
         pushNotificationService.unregisterAllDevices(userId)
+        authEventService.record(userId, AuditLogAction.LOGOUT)
         return ApiResponse(message = "Logged out successfully")
     }
 

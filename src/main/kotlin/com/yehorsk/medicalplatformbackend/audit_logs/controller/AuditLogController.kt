@@ -1,6 +1,8 @@
 package com.yehorsk.medicalplatformbackend.audit_logs.controller
 
+import com.yehorsk.medicalplatformbackend.audit_logs.service.AuthEventService
 import com.yehorsk.medicalplatformbackend.audit_logs.service.PatientAuditLogService
+import com.yehorsk.medicalplatformbackend.audit_logs.service.dto.response.AuthEventResponseDto
 import com.yehorsk.medicalplatformbackend.audit_logs.service.dto.response.PatientAuditLogResponseDto
 import com.yehorsk.medicalplatformbackend.auth.service.dto.response.PagedResponseDto
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
@@ -13,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/audit-logs")
 class AuditLogController(
-    private val patientAuditLogService: PatientAuditLogService
+    private val patientAuditLogService: PatientAuditLogService,
+    private val authEventService: AuthEventService
 ) {
 
     @GetMapping("/me")
@@ -23,5 +26,14 @@ class AuditLogController(
         @RequestParam(defaultValue = "20") size: Int
     ): ApiResponseWithData<PagedResponseDto<PatientAuditLogResponseDto>> {
         return ApiResponseWithData(patientAuditLogService.getMyAuditLogs(page, size))
+    }
+
+    @GetMapping("/me/auth")
+    @PreAuthorize("isAuthenticated()")
+    fun getMyAuthEvents(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): ApiResponseWithData<PagedResponseDto<AuthEventResponseDto>> {
+        return ApiResponseWithData(authEventService.getMyAuthEvents(page, size))
     }
 }

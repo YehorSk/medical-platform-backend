@@ -90,11 +90,6 @@ class MedicalCardService(
         val medicalCard = medicalCardRepository.findMedicalCardEntityByPatientId(userId)
             ?: throw PatientNotFoundException()
 
-        auditLogService.record(
-            user, medicalCard, AuditLogAction.READ, AuditLogOutcome.SUCCESS,
-            "Patient viewed own medical card"
-        )
-
         return medicalCard.toMedicalCardResponseDto()
     }
 
@@ -107,23 +102,10 @@ class MedicalCardService(
         val medicalCard = medicalCardRepository.findMedicalCardEntityByPatientId(userId)
             ?: throw PatientNotFoundException()
 
-        // Field names only, values stay out of the log
-        val changedFields = buildList {
-            if (request.dateOfBirth != null) add("dateOfBirth")
-            if (request.bloodType != null) add("bloodType")
-            if (request.gender != null) add("gender")
-            if (request.insuranceCompany != null) add("insuranceCompany")
-            if (request.insuranceNumber != null) add("insuranceNumber")
-        }
-
         request.dateOfBirth?.let {
             medicalCard.dateOfBirth = try {
                 LocalDate.parse(it)
             } catch (_: Exception) {
-                auditLogService.record(
-                    user, medicalCard, AuditLogAction.UPDATE, AuditLogOutcome.FAILED,
-                    "Patient failed to update own medical card: invalid dateOfBirth"
-                )
                 throw InvalidMedicalCardDataException("Invalid dateOfBirth format. Expected yyyy-MM-dd")
             }
         }
@@ -135,13 +117,6 @@ class MedicalCardService(
         if (request.insuranceNumber != null) medicalCard.insuranceNumber = request.insuranceNumber
 
         val saved = medicalCardRepository.save(medicalCard)
-
-        auditLogService.record(
-            user, saved, AuditLogAction.UPDATE, AuditLogOutcome.SUCCESS,
-            "Patient updated own medical card: " +
-                    changedFields.ifEmpty { listOf("no fields") }.joinToString()
-        )
-
         return saved.toMedicalCardResponseDto()
     }
 }

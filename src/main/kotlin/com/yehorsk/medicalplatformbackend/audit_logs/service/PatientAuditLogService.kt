@@ -19,7 +19,6 @@ class PatientAuditLogService(
     private val currentUserProvider: CurrentUserProvider
 ) {
 
-    /** Audit entries for the current patient's medical card, newest first */
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     fun getMyAuditLogs(page: Int, size: Int): PagedResponseDto<PatientAuditLogResponseDto> {
@@ -28,11 +27,13 @@ class PatientAuditLogService(
             ?: throw PatientNotFoundException()
 
         val pageRequest = PageRequest.of(page.coerceAtLeast(0), size.coerceIn(1, MAX_PAGE_SIZE))
-        val result = auditLogRepository.findAllByMedicalCardIdOrderByCreatedAtDesc(medicalCard.id!!, pageRequest)
+        val result = auditLogRepository.findAllByMedicalCardIdAndAccessedByIdNotOrderByCreatedAtDesc(
+            medicalCard.id!!, patientId, pageRequest
+        )
 
         return PagedResponseDto(
             content = result.content.map { log ->
-                val actor = log.accessedBy
+                val actor = log.accessedBy!!
                 PatientAuditLogResponseDto(
                     id = log.id!!,
                     action = log.action,
@@ -41,6 +42,7 @@ class PatientAuditLogService(
                     createdAt = log.createdAt,
                     actor = AuditLogActorDto(
                         id = log.accessedById,
+                        doctorId = actor.doctor?.id,
                         name = listOfNotNull(actor.title, actor.firstName, actor.lastName)
                             .filter { it.isNotBlank() }
                             .joinToString(" "),

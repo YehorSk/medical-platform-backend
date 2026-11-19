@@ -15,10 +15,6 @@ class AuditLogService(
     private val auditLogRepository: AuditLogRepository
 ) {
 
-    /**
-     * Writes an audit entry in its own transaction, so it is kept even when the caller's
-     * transaction rolls back (e.g. after an access-denied exception is thrown).
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun record(
         user: UserEntity,

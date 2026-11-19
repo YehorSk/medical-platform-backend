@@ -1,5 +1,9 @@
 package com.yehorsk.medicalplatformbackend.auth.service
 
+import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditLogOutcome
+import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditLogAction
+import com.yehorsk.medicalplatformbackend.audit_logs.database.model.AuditFailureReason
+import com.yehorsk.medicalplatformbackend.audit_logs.service.AuthEventService
 import com.yehorsk.medicalplatformbackend.common.service.MailService
 import com.yehorsk.medicalplatformbackend.common.util.PasswordEncoder
 import com.yehorsk.medicalplatformbackend.auth.database.repository.RefreshTokenRepository
@@ -29,7 +33,8 @@ class PasswordResetService(
     private val userRepository: UserRepository,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val eventPublisher: EventPublisher,
-    private val pushNotificationService: PushNotificationService
+    private val pushNotificationService: PushNotificationService,
+    private val authEventService: AuthEventService
     ) {
 
     companion object {
@@ -63,6 +68,8 @@ class PasswordResetService(
             )
         )
 
+        authEventService.record(user.id!!, AuditLogAction.PASSWORD_RESET_REQUESTED)
+
         return ApiResponse(message = "A reset code has been sent to your email")
     }
 
@@ -88,6 +95,7 @@ class PasswordResetService(
         pushNotificationService.unregisterAllDevices(user.id!!)
 
         redisTemplate.delete(listOf("reset:code:${user.id}", "reset:attempts:${user.id}"))
+        authEventService.record(user.id!!, AuditLogAction.PASSWORD_RESET)
         return ApiResponse(message = "Password has been reset")
     }
 
@@ -97,19 +105,28 @@ class PasswordResetService(
         val attemptsKey = "reset:attempts:$userId"
 
         val hashedToken = redisTemplate.opsForValue().get(codeKey)
-            ?: throw ExpiredResetCodeException()
+            ?: run {
+                recordCodeFailure(userId, AuditFailureReason.EXPIRED_RESET_CODE)
+                throw ExpiredResetCodeException()
+            }
 
         val attempts = redisTemplate.opsForValue().increment(attemptsKey) ?: 1
         redisTemplate.expire(attemptsKey, Duration.ofMinutes(OTP_TTL_MINUTES))
 
         if (attempts > MAX_ATTEMPTS) {
             redisTemplate.delete(listOf(codeKey, attemptsKey))
+            recordCodeFailure(userId, AuditFailureReason.TOO_MANY_ATTEMPTS)
             throw TooManyAttemptsException()
         }
 
         if (!passwordEncoder.matches(code, hashedToken)) {
+            recordCodeFailure(userId, AuditFailureReason.INVALID_RESET_CODE)
             throw InvalidResetCodeException()
         }
+    }
+
+    private fun recordCodeFailure(userId: UserId, reason: AuditFailureReason) {
+        authEventService.record(userId, AuditLogAction.PASSWORD_RESET_CODE_CHECK, AuditLogOutcome.FAILED, reason)
     }
 
 }
