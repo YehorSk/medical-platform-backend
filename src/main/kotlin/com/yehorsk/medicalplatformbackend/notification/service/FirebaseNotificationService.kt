@@ -27,6 +27,15 @@ class FirebaseNotificationService(
     private val resourceLoader: ResourceLoader
 ) {
 
+    companion object {
+        private val INVALID_TOKEN_ERRORS = setOf(
+            MessagingErrorCode.UNREGISTERED,
+            MessagingErrorCode.SENDER_ID_MISMATCH,
+            MessagingErrorCode.INVALID_ARGUMENT,
+            MessagingErrorCode.THIRD_PARTY_AUTH_ERROR
+        )
+    }
+
     private val logger = LoggerFactory.getLogger(FirebaseNotificationService::class.java)
 
     @PostConstruct
@@ -38,7 +47,9 @@ class FirebaseNotificationService(
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount.inputStream))
                 .build()
 
-            FirebaseApp.initializeApp(options)
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options)
+            }
             logger.info("Firebase Admin SDK initialized successfully")
         } catch(e: Exception) {
             logger.error("Error initializing Firebase Admin SDK", e)
@@ -55,12 +66,21 @@ class FirebaseNotificationService(
             FirebaseMessaging.getInstance().send(message, true)
             true
         } catch(e: FirebaseMessagingException) {
-            logger.warn("Failed to validate Firebase token", e)
-            false
+            if (e.messagingErrorCode in INVALID_TOKEN_ERRORS) {
+                false
+            } else {
+                // Firebase is unreachable: accept the token, a bad one is removed on the first real send
+                logger.warn("Could not validate Firebase token: {}", e.messagingErrorCode, e)
+                true
+            }
         }
     }
 
     fun sendNotification(notification: PushNotification): PushNotificationSendResult {
+        if (notification.recipients.isEmpty()) {
+            return PushNotificationSendResult(emptyList(), emptyList(), emptyList())
+        }
+
         val messages = notification.recipients.map { recipient ->
             Message.builder()
                 .setToken(recipient.token)
@@ -109,27 +129,19 @@ class FirebaseNotificationService(
             } else {
                 val errorCode = sendResponse.exception?.messagingErrorCode
 
-                logger.warn("Failed to send notification to token ${deviceToken.token}: $errorCode")
+                logger.warn("Failed to send notification to device {} of user {}: {}",
+                    deviceToken.id, deviceToken.userId, errorCode)
 
-                when(errorCode) {
-                    MessagingErrorCode.UNREGISTERED,
-                    MessagingErrorCode.SENDER_ID_MISMATCH,
-                    MessagingErrorCode.INVALID_ARGUMENT,
-                    MessagingErrorCode.THIRD_PARTY_AUTH_ERROR -> {
-                        permanentFailures.add(deviceToken)
-                    }
-                    MessagingErrorCode.INTERNAL,
-                    MessagingErrorCode.QUOTA_EXCEEDED,
-                    MessagingErrorCode.UNAVAILABLE,
-                    null -> {
-                        temporaryFailures.add(deviceToken)
-                    }
+                if (errorCode in INVALID_TOKEN_ERRORS) {
+                    permanentFailures.add(deviceToken)
+                } else {
+                    temporaryFailures.add(deviceToken)
                 }
             }
         }
 
-        logger.debug("Push notifications sent. Succeeded: ${succeeded.size}, " +
-                "temporary failures: ${temporaryFailures.size}, permanent failures: ${permanentFailures.size}")
+        logger.debug("Push notifications sent. Succeeded: {}, temporary failures: {}, permanent failures: {}",
+            succeeded.size, temporaryFailures.size, permanentFailures.size)
 
         return PushNotificationSendResult(
             succeeded = succeeded.toList(),

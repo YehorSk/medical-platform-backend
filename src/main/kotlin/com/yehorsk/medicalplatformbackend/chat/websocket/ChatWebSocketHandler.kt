@@ -6,6 +6,7 @@ import com.yehorsk.medicalplatformbackend.chat.service.MessageService
 import com.yehorsk.medicalplatformbackend.chat.service.dto.request.SendMessageRequestDto
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.ErrorDto
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.IncomingWebSocketMessage
+import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.NotificationDto
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.IncomingWebSocketMessageType
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.OutgoingWebSocketMessage
 import com.yehorsk.medicalplatformbackend.chat.service.dto.ws.OutgoingWebSocketMessageType
@@ -15,7 +16,9 @@ import com.yehorsk.medicalplatformbackend.chat.service.exceptions.types.Conversa
 import com.yehorsk.medicalplatformbackend.common.domain.type.ConversationId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import com.yehorsk.medicalplatformbackend.common.util.JwtService
+import com.yehorsk.medicalplatformbackend.notification.infra.notifications.model.UserNotificationEvent
 import org.slf4j.LoggerFactory
+import org.springframework.context.event.EventListener
 import org.springframework.http.HttpHeaders
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -142,11 +145,7 @@ class ChatWebSocketHandler(
             )
         )
 
-        sent.participantIds.forEach { userId ->
-            userToSessions[userId]?.forEach { sessionId ->
-                sessions[sessionId]?.session?.let { sendSafely(it, json) }
-            }
-        }
+        sendToUsers(sent.participantIds, json)
     }
 
     override fun handlePongMessage(session: WebSocketSession, message: PongMessage) {
@@ -186,7 +185,25 @@ class ChatWebSocketHandler(
             )
         )
 
-        event.participantIds.forEach { userId ->
+        sendToUsers(event.participantIds, json)
+    }
+
+    @EventListener
+    fun onUserNotification(event: UserNotificationEvent) {
+        val json = objectMapper.writeValueAsString(
+            OutgoingWebSocketMessage(
+                type = OutgoingWebSocketMessageType.NOTIFICATION,
+                payload = objectMapper.writeValueAsString(
+                    NotificationDto(title = event.title, body = event.body, data = event.data)
+                )
+            )
+        )
+
+        sendToUsers(event.userIds, json)
+    }
+
+    private fun sendToUsers(userIds: Collection<UserId>, json: String) {
+        userIds.distinct().forEach { userId ->
             userToSessions[userId]?.forEach { sessionId ->
                 sessions[sessionId]?.session?.let { sendSafely(it, json) }
             }

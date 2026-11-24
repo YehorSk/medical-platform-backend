@@ -12,7 +12,6 @@ services:
       - "8025:8025"
       - "1025:1025"
 
-  # S3-compatible storage (MinIO replacement). API on 9100, web console on 9101.
   s3:
     image: rustfs/rustfs:1.0.6
     container_name: s3-medical-platform

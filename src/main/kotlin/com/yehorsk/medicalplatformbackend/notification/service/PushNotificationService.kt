@@ -1,5 +1,6 @@
 package com.yehorsk.medicalplatformbackend.notification.service
 
+import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
 import com.yehorsk.medicalplatformbackend.common.domain.type.ConversationId
 import com.yehorsk.medicalplatformbackend.common.domain.type.MedicalRecordAttachmentId
 import com.yehorsk.medicalplatformbackend.common.domain.type.MedicalRecordId
@@ -9,9 +10,12 @@ import com.yehorsk.medicalplatformbackend.notification.infra.database.DeviceToke
 import com.yehorsk.medicalplatformbackend.notification.infra.database.model.DeviceTokenEntity
 import com.yehorsk.medicalplatformbackend.notification.infra.database.model.PlatformEntity
 import com.yehorsk.medicalplatformbackend.notification.infra.mappers.toDeviceToken
+import com.yehorsk.medicalplatformbackend.notification.infra.notifications.model.AppointmentNotificationType
 import com.yehorsk.medicalplatformbackend.notification.infra.notifications.model.DeviceToken
 import com.yehorsk.medicalplatformbackend.notification.infra.notifications.model.PushNotification
+import com.yehorsk.medicalplatformbackend.notification.infra.notifications.model.UserNotificationEvent
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,7 +26,8 @@ import java.util.concurrent.ConcurrentSkipListMap
 @Service
 class PushNotificationService(
     private val tokenRepository: DeviceTokenRepository,
-    private val firebaseService: FirebaseNotificationService
+    private val firebaseService: FirebaseNotificationService,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
 
     companion object {
@@ -69,11 +74,15 @@ class PushNotificationService(
         tokenRepository.deleteByTokenAndUserId(token.trim(), userId)
     }
 
-    // Used on logout and password change/reset, which already end every session of the user
     @Transactional
     fun unregisterAllDevices(userId: UserId) {
         tokenRepository.deleteByUserId(userId)
     }
+
+    // A session that expired without logout leaves its devices behind; they must stop receiving pushes
+    @Transactional
+    fun unregisterDevicesWithoutActiveSession(now: Instant): Int =
+        tokenRepository.deleteForUsersWithoutActiveSession(now)
 
     fun sendNewMessageNotifications(
         recipientUserIds: List<UserId>,
@@ -81,32 +90,16 @@ class PushNotificationService(
         senderUsername: String,
         conversationId: ConversationId
     ) {
-        val tokens = tokenRepository.findByUserIdIn(recipientUserIds)
-
-        if (tokens.isEmpty()) {
-            log.info("No device tokens found for $recipientUserIds")
-            return
-        }
-
-        val recipients = tokens
-            .asSequence()
-            .filterNot { it.userId == senderUserId }
-            .map(DeviceTokenEntity::toDeviceToken)
-            .toList()
-
-        val push = PushNotification(
+        notifyUsers(
+            userIds = recipientUserIds - senderUserId,
             title = "New message from $senderUsername",
-            recipients = recipients,
-            // Generic body on purpose: message content may contain health data and must not reach the lock screen or Firebase
             message = "You have a new message",
             collapseKey = conversationId.toString(),
-            data = buildMap {
-                put("conversationId", conversationId.toString())
-                put("type", "new_message")
-            }
+            data = mapOf(
+                "type" to "new_message",
+                "conversationId" to conversationId.toString()
+            )
         )
-
-        sendWithRetry(push)
     }
 
     fun sendAttachmentScanFailedNotification(
@@ -115,33 +108,89 @@ class PushNotificationService(
         attachmentId: MedicalRecordAttachmentId,
         status: String
     ) {
-        val recipients = tokenRepository.findByUserIdIn(listOf(doctorId))
+        notifyUsers(
+            userIds = listOf(doctorId),
+            title = "File upload problem",
+            message = "A file attached to a medical record could not be verified. Please upload it again.",
+            collapseKey = "medical-record-$medicalRecordId",
+            data = mapOf(
+                "type" to "attachment_scan_failed",
+                "medicalRecordId" to medicalRecordId.toString(),
+                "attachmentId" to attachmentId.toString(),
+                "status" to status
+            )
+        )
+    }
+
+    fun sendAppointmentNotification(
+        recipientId: UserId,
+        appointmentId: AppointmentId,
+        dateTime: Instant,
+        type: AppointmentNotificationType,
+        counterpartName: String
+    ) {
+        val (title, message) = when (type) {
+            AppointmentNotificationType.REQUESTED ->
+                "New appointment request" to "$counterpartName requested an appointment"
+            AppointmentNotificationType.RESCHEDULED ->
+                "Appointment rescheduled" to "$counterpartName moved their appointment to a new time"
+            AppointmentNotificationType.CONFIRMED ->
+                "Appointment confirmed" to "$counterpartName confirmed your appointment"
+            AppointmentNotificationType.REJECTED ->
+                "Appointment declined" to "$counterpartName declined your appointment request"
+            AppointmentNotificationType.CANCELLED ->
+                "Appointment cancelled" to "$counterpartName cancelled the appointment"
+            AppointmentNotificationType.REMINDER ->
+                "Upcoming appointment" to "You have an appointment with $counterpartName soon"
+        }
+
+        notifyUsers(
+            userIds = listOf(recipientId),
+            title = title,
+            message = message,
+            collapseKey = "appointment-$appointmentId",
+            data = mapOf(
+                "type" to "appointment_${type.name.lowercase()}",
+                "appointmentId" to appointmentId.toString(),
+                "dateTime" to dateTime.toString()
+            )
+        )
+    }
+
+    private fun notifyUsers(
+        userIds: Collection<UserId>,
+        title: String,
+        message: String,
+        collapseKey: String,
+        data: Map<String, String>
+    ) {
+        if (userIds.isEmpty()) return
+
+        // Before the token lookup: desktop clients have no FCM token and rely on this alone
+        eventPublisher.publishEvent(
+            UserNotificationEvent(userIds = userIds, title = title, body = message, data = data)
+        )
+
+        val recipients = tokenRepository.findByUserIdIn(userIds.distinct())
             .map(DeviceTokenEntity::toDeviceToken)
 
         if (recipients.isEmpty()) {
-            log.info("No device tokens found for doctor $doctorId")
+            log.debug("No device tokens found for users {}", userIds)
             return
         }
 
-        val push = PushNotification(
-            title = "File upload problem",
-            recipients = recipients,
-            // No file name on purpose: it may contain health data and must not reach the lock screen or Firebase
-            message = "A file attached to a medical record could not be verified. Please upload it again.",
-            // One notification per record, even if several of its files fail
-            collapseKey = "medical-record-$medicalRecordId",
-            data = buildMap {
-                put("type", "attachment_scan_failed")
-                put("medicalRecordId", medicalRecordId.toString())
-                put("attachmentId", attachmentId.toString())
-                put("status", status)
-            }
+        sendWithRetry(
+            PushNotification(
+                title = title,
+                recipients = recipients,
+                message = message,
+                collapseKey = collapseKey,
+                data = data
+            )
         )
-
-        sendWithRetry(push)
     }
 
-    fun sendWithRetry(
+    private fun sendWithRetry(
         notification: PushNotification,
         attempt: Int = 0
     ) {

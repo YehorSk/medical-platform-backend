@@ -7,6 +7,7 @@ enum class IncomingWebSocketMessageType {
 enum class OutgoingWebSocketMessageType {
     NEW_MESSAGE,
     ACCESS_REVOKED,
+    NOTIFICATION,
     ERROR
 }
 

@@ -4,7 +4,7 @@ import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.notification.controller.dto.DeviceTokenDto
 import com.yehorsk.medicalplatformbackend.notification.controller.dto.RegisterDeviceRequest
 import com.yehorsk.medicalplatformbackend.notification.mappers.toDeviceTokenDto
-import com.yehorsk.medicalplatformbackend.notification.mappers.toPlatformDto
+import com.yehorsk.medicalplatformbackend.notification.mappers.toPlatformEntity
 import com.yehorsk.medicalplatformbackend.notification.service.PushNotificationService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -29,7 +29,7 @@ class DeviceTokenController(
         return pushNotificationService.registerDevice(
             userId = userId,
             token = body.token,
-            platform = body.platform.toPlatformDto()
+            platform = body.platform.toPlatformEntity()
         ).toDeviceTokenDto()
     }
 

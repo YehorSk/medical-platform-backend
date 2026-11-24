@@ -6,6 +6,7 @@ import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
 import com.yehorsk.medicalplatformbackend.common.domain.type.UserId
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.time.Instant
@@ -136,5 +137,31 @@ interface AppointmentRepository : JpaRepository<AppointmentEntity, AppointmentId
         @Param("userId1") userId1: UserId,
         @Param("userId2") userId2: UserId
     ): List<AppointmentEntity>
-}
 
+    @Query("""
+        SELECT a FROM AppointmentEntity a
+        JOIN FETCH a.doctor
+        WHERE a.status = :status
+        AND a.reminderSentAt IS NULL
+        AND a.dateTime > :from
+        AND a.dateTime <= :to
+    """)
+    fun findDueForReminder(
+        @Param("status") status: AppointmentStatus,
+        @Param("from") from: Instant,
+        @Param("to") to: Instant
+    ): List<AppointmentEntity>
+
+    // Returns 0 when the reminder is already claimed, so it is never sent twice
+    @Modifying
+    @Query("""
+        UPDATE AppointmentEntity a
+        SET a.reminderSentAt = :sentAt
+        WHERE a.id = :appointmentId
+        AND a.reminderSentAt IS NULL
+    """)
+    fun markReminderSent(
+        @Param("appointmentId") appointmentId: AppointmentId,
+        @Param("sentAt") sentAt: Instant
+    ): Int
+}

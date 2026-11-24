@@ -17,9 +17,12 @@ import com.yehorsk.medicalplatformbackend.appointments.mappers.toPatientAppointm
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.CreateRescheduleAppointmentRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.UpdateAppointmentStatusRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.AppointmentResponseDto
+import com.yehorsk.medicalplatformbackend.auth.database.entity.UserEntity
 import com.yehorsk.medicalplatformbackend.auth.database.entity.UserRole
 import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
 import com.yehorsk.medicalplatformbackend.common.domain.type.DoctorId
+import com.yehorsk.medicalplatformbackend.common.domain.events.appointment.AppointmentEvent
+import com.yehorsk.medicalplatformbackend.common.infra.EventPublisher
 import com.yehorsk.medicalplatformbackend.common.security.CurrentUserProvider
 import com.yehorsk.medicalplatformbackend.doctor.database.entity.WeekDay
 import com.yehorsk.medicalplatformbackend.doctor.database.repository.DoctorRepository
@@ -45,7 +48,8 @@ class AppointmentService(
     private val currentUserProvider: CurrentUserProvider,
     private val doctorScheduleRepository: DoctorScheduleRepository,
     private val medicalCardRepository: MedicalCardRepository,
-    private val patientHasDoctorRepository: PatientHasDoctorRepository
+    private val patientHasDoctorRepository: PatientHasDoctorRepository,
+    private val eventPublisher: EventPublisher
 ) {
 
     object AppointmentConstants {
@@ -91,17 +95,24 @@ class AppointmentService(
                 throw InvalidAppointmentStatusException()
             }
 
+            val previousDoctor = appointment.doctor
+            val previousDateTime = appointment.dateTime
+
             appointment.doctor = doctor.user!!
             appointment.dateTime = dateTime
             appointment.note = request.note
             appointment.status = AppointmentStatus.PENDING
+            appointment.reminderSentAt = null
 
-            try {
-                return appointmentRepository.saveAndFlush(appointment).toPatientAppointmentResponseDto()
+            val saved = try {
+                appointmentRepository.saveAndFlush(appointment)
             } catch (_: DataIntegrityViolationException) {
                 logger.warn("Slot already booked for doctorId={}, dateTime={}", request.doctorId, dateTime)
                 throw SlotAlreadyBookedException()
             }
+
+            publishRescheduledEvents(saved, previousDoctor, previousDateTime)
+            return saved.toPatientAppointmentResponseDto()
         }
 
         val newAppointment = AppointmentEntity(
@@ -118,6 +129,15 @@ class AppointmentService(
             logger.warn("Slot already booked for doctorId={}, dateTime={}", request.doctorId, dateTime)
             throw SlotAlreadyBookedException()
         }
+
+        eventPublisher.publishAfterCommit(
+            AppointmentEvent.Requested(
+                appointmentId = newAppointment.id!!,
+                dateTime = newAppointment.dateTime,
+                doctorId = newAppointment.doctor.id!!,
+                patientName = newAppointment.patient.fullName()
+            )
+        )
 
         return newAppointment.toPatientAppointmentResponseDto()
     }
@@ -144,6 +164,15 @@ class AppointmentService(
         }
 
         appointmentRepository.save(appointment)
+
+        eventPublisher.publishAfterCommit(
+            AppointmentEvent.Cancelled(
+                appointmentId = appointment.id!!,
+                dateTime = appointment.dateTime,
+                recipientId = if (isDoctor) appointment.patient.id!! else appointment.doctor.id!!,
+                cancelledByName = currentUser.fullName()
+            )
+        )
 
         return when (currentUser.role) {
 
@@ -174,6 +203,8 @@ class AppointmentService(
         }
 
         val saved = appointmentRepository.save(appointment)
+        publishStatusChangedEvent(saved)
+
         val med = getMedicalCardForDoctorView(saved.patient.id!!, currentUser.id!!)
         return saved.toDoctorAppointmentResponseDto(med)
     }
@@ -244,6 +275,65 @@ class AppointmentService(
                 ap.toDoctorAppointmentResponseDto(med)
             }
     }
+
+    private fun publishRescheduledEvents(
+        appointment: AppointmentEntity,
+        previousDoctor: UserEntity,
+        previousDateTime: Instant
+    ) {
+        val patientName = appointment.patient.fullName()
+
+        if (previousDoctor.id == appointment.doctor.id) {
+            eventPublisher.publishAfterCommit(
+                AppointmentEvent.Rescheduled(
+                    appointmentId = appointment.id!!,
+                    dateTime = appointment.dateTime,
+                    doctorId = appointment.doctor.id!!,
+                    patientName = patientName
+                )
+            )
+            return
+        }
+
+        // Moved to another doctor: for the previous one the appointment is gone, for the new one it is a fresh request
+        eventPublisher.publishAfterCommit(
+            AppointmentEvent.Cancelled(
+                appointmentId = appointment.id!!,
+                dateTime = previousDateTime,
+                recipientId = previousDoctor.id!!,
+                cancelledByName = patientName
+            )
+        )
+        eventPublisher.publishAfterCommit(
+            AppointmentEvent.Requested(
+                appointmentId = appointment.id!!,
+                dateTime = appointment.dateTime,
+                doctorId = appointment.doctor.id!!,
+                patientName = patientName
+            )
+        )
+    }
+
+    private fun publishStatusChangedEvent(appointment: AppointmentEntity) {
+        val appointmentId = appointment.id!!
+        val patientId = appointment.patient.id!!
+        val doctorName = appointment.doctor.fullName()
+
+        val event = when (appointment.status) {
+            AppointmentStatus.CONFIRMED ->
+                AppointmentEvent.Confirmed(appointmentId, appointment.dateTime, patientId, doctorName)
+            AppointmentStatus.REJECTED ->
+                AppointmentEvent.Rejected(appointmentId, appointment.dateTime, patientId, doctorName)
+            AppointmentStatus.CANCELLED ->
+                AppointmentEvent.Cancelled(appointmentId, appointment.dateTime, patientId, doctorName)
+            AppointmentStatus.PENDING,
+            AppointmentStatus.COMPLETED -> return
+        }
+
+        eventPublisher.publishAfterCommit(event)
+    }
+
+    private fun UserEntity.fullName() = "$firstName $lastName"
 
     private fun getMedicalCardForDoctorView(patientId: com.yehorsk.medicalplatformbackend.common.domain.type.UserId, doctorId: com.yehorsk.medicalplatformbackend.common.domain.type.UserId): com.yehorsk.medicalplatformbackend.medical_card.database.entity.MedicalCardEntity? {
         val medicalCard = medicalCardRepository.findMedicalCardEntityByPatientId(patientId) ?: return null

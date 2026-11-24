@@ -44,7 +44,6 @@ import java.util.Base64
 @Service
 class AuthService(
     private val jwtService: JwtService,
-    private val mailService: MailService,
     private val userRepository: UserRepository,
     private val doctorRepository: DoctorRepository,
     private val medicalCardRepository: MedicalCardRepository,

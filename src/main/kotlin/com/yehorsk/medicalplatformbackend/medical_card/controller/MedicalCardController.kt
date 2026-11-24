@@ -20,8 +20,6 @@ class MedicalCardController(
     private val medicalCardService: MedicalCardService
 ) {
 
-    // Open to any signed-in user so that attempts by non-doctors reach the service and are audited;
-    // the service only returns the card to a doctor with APPROVED access
     @GetMapping("/{patientId}")
     @PreAuthorize("isAuthenticated()")
     fun getByPatientId(@PathVariable patientId: UserId): ApiResponseWithData<MedicalCardResponseDto> {

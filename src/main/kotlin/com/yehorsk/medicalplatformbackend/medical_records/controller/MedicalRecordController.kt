@@ -32,7 +32,6 @@ class MedicalRecordController(
     private val attachmentService: MedicalRecordAttachmentService,
 ) {
 
-    // JSON-only: creates a record without files
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasRole('DOCTOR')")
     fun createMedicalRecord(
@@ -41,7 +40,6 @@ class MedicalRecordController(
         return medicalRecordService.createMedicalRecord(request)
     }
 
-    // multipart/form-data: part "data" = record JSON (Content-Type: application/json), parts "files" = attachments
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorize("hasRole('DOCTOR')")
     fun createMedicalRecordWithAttachments(
@@ -51,7 +49,6 @@ class MedicalRecordController(
         return medicalRecordService.createMedicalRecord(request, files.orEmpty())
     }
 
-    // Record with every attachment's status, so the doctor can see which files failed and re-upload them
     @GetMapping("/{recordId}")
     fun getMedicalRecord(
         @PathVariable recordId: MedicalRecordId
@@ -59,8 +56,6 @@ class MedicalRecordController(
         return medicalRecordService.getMedicalRecord(recordId)
     }
 
-    // Adds files to an existing record (e.g. re-uploading failed ones); written to the audit log.
-    // multipart/form-data with one or more parts named "files"
     @PostMapping("/{recordId}/attachments", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorize("hasRole('DOCTOR')")
     fun addAttachments(

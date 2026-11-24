@@ -56,6 +56,9 @@ class AppointmentEntity (
     @Column(name = "updated_at")
     var updatedAt: Instant = Instant.now(),
 
+    @Column(name = "reminder_sent_at")
+    var reminderSentAt: Instant? = null,
+
     ){
     fun confirm() {
         check(status == AppointmentStatus.PENDING) { "Only pending appointments can be confirmed" }

@@ -14,7 +14,7 @@ fun DeviceToken.toDeviceTokenDto(): DeviceTokenDto {
     )
 }
 
-fun PlatformDto.toPlatformDto(): PlatformEntity {
+fun PlatformDto.toPlatformEntity(): PlatformEntity {
     return when(this) {
         PlatformDto.ANDROID -> PlatformEntity.ANDROID
     }

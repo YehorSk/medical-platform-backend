@@ -1,6 +1,7 @@
 package com.yehorsk.medicalplatformbackend.common.infra
 
 import com.yehorsk.medicalplatformbackend.common.domain.events.MedConnectEvent
+import com.yehorsk.medicalplatformbackend.common.domain.events.appointment.AppointmentEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.attachment.AttachmentEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.audit.AuditLogEventConstants
 import com.yehorsk.medicalplatformbackend.common.domain.events.conversation.ConversationEventConstants
@@ -167,5 +168,27 @@ class RabbitMqConfig {
             .with("audit.*")
     }
 
+    @Bean
+    fun appointmentExchange() = TopicExchange(
+        AppointmentEventConstants.APPOINTMENT_EXCHANGE,
+        true,
+        false
+    )
 
+    @Bean
+    fun notificationAppointmentEventsQueue() = Queue(
+        MessageQueues.NOTIFICATION_APPOINTMENT_EVENTS,
+        true
+    )
+
+    @Bean
+    fun notificationAppointmentEventsBinding(
+        notificationAppointmentEventsQueue: Queue,
+        appointmentExchange: TopicExchange,
+    ): Binding {
+        return BindingBuilder
+            .bind(notificationAppointmentEventsQueue)
+            .to(appointmentExchange)
+            .with("appointment.*")
+    }
 }
