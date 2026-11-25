@@ -23,3 +23,5 @@ class InvalidAppointmentStatusTransitionException(from: String, to: String) :
 class SlotAlreadyBookedException: AppException("SLOT_ALREADY_BOOKED", HttpStatus.CONFLICT, "This time slot is already booked")
 
 class SlotNotAvailableException: AppException("SLOT_NOT_AVAILABLE", HttpStatus.BAD_REQUEST, "This time slot is not available")
+
+class InvalidAppointmentFilterException: AppException("INVALID_APPOINTMENT_FILTER", HttpStatus.BAD_REQUEST, "Invalid appointment filter")

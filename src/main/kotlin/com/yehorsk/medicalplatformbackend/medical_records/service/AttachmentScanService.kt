@@ -25,11 +25,6 @@ class AttachmentScanService(
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    /**
-     * Scans one quarantined file and moves it to its final status.
-     * Safe to call more than once for the same id: anything not in PENDING_SCAN is skipped.
-     * No DB transaction is held while the file is streamed to ClamAV.
-     */
     fun scan(attachmentId: MedicalRecordAttachmentId) {
         val attachment = attachmentRepository.findById(attachmentId).orElse(null) ?: run {
             logger.warn("Attachment {} not found, skipping scan", attachmentId)
@@ -76,7 +71,6 @@ class AttachmentScanService(
         logger.error("Attachment {} scan failed after {} attempts, left in quarantine", attachmentId, MAX_ATTEMPTS, lastError)
     }
 
-    // Lazy proxies: reading their ids doesn't need a DB session
     private fun notifyScanFailed(attachment: MedicalRecordAttachmentEntity) {
         eventPublisher.publish(
             AttachmentEvent.ScanFailed(
@@ -88,10 +82,6 @@ class AttachmentScanService(
         )
     }
 
-    /**
-     * Safety net for lost messages (broker down at publish time, app killed mid-scan):
-     * re-queues files that have been waiting for a scan for too long.
-     */
     @Scheduled(fixedDelay = SWEEP_INTERVAL_MS, initialDelay = SWEEP_INTERVAL_MS)
     fun requeueStalePendingScans() {
         val threshold = Instant.now().minus(STALE_AFTER)

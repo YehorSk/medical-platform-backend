@@ -36,10 +36,6 @@ class AuthEventService(
         propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRES_NEW
     }
 
-    /**
-     * Saves an account event in its own transaction, so failed attempts are kept when the
-     * caller throws. Never throws itself: a logging problem must not break login.
-     */
     fun record(
         userId: UserId,
         action: AuditLogAction,
@@ -62,7 +58,6 @@ class AuthEventService(
         }
     }
 
-    /** Account activity of the current user (any role), newest first */
     @Transactional(readOnly = true)
     @PreAuthorize("isAuthenticated()")
     fun getMyAuthEvents(page: Int, size: Int): PagedResponseDto<AuthEventResponseDto> {

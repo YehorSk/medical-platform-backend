@@ -50,7 +50,6 @@ class GlobalExceptionHandler {
     fun onAccessDenied(e: AccessDeniedException, request: HttpServletRequest) =
         e.toResponse(request)
 
-    // Fallback for any AppException without its own handler, so it returns its own status instead of 500
     @ExceptionHandler(AppException::class)
     fun onAppException(e: AppException, request: HttpServletRequest) =
         e.toResponse(request)

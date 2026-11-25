@@ -4,7 +4,13 @@ import com.yehorsk.medicalplatformbackend.appointments.database.model.Appointmen
 import com.yehorsk.medicalplatformbackend.appointments.database.model.AppointmentStatus
 import com.yehorsk.medicalplatformbackend.appointments.database.repository.AppointmentRepository
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.AppointmentNotFoundException
+import com.yehorsk.medicalplatformbackend.appointments.database.repository.specification.AppointmentSpecification
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentDateTimeException
+import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentFilterException
+import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.GetAppointmentsWithFilterDto
+import com.yehorsk.medicalplatformbackend.auth.service.dto.response.PagedResponseDto
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentStatusException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentStatusTransitionException
 import com.yehorsk.medicalplatformbackend.appointments.exceptions.SlotAlreadyBookedException
@@ -209,31 +215,49 @@ class AppointmentService(
         return saved.toDoctorAppointmentResponseDto(med)
     }
 
-    @Transactional()
+    @Transactional
     @PreAuthorize("isAuthenticated()")
-    fun getMyAppointments(): List<AppointmentResponseDto> {
+    fun getMyAppointments(
+        request: GetAppointmentsWithFilterDto = GetAppointmentsWithFilterDto(),
+        pageable: Pageable = Pageable.unpaged(Sort.by(request.sortDirection, "dateTime"))
+    ): PagedResponseDto<AppointmentResponseDto> {
+        if (request.from != null && request.to != null && request.from.isAfter(request.to)) {
+            throw InvalidAppointmentFilterException()
+        }
 
         val currentUser = currentUserProvider.getCurrentUserEntity()
+        val spec = AppointmentSpecification.buildDynamicSpecification(request, currentUser)
+        val result = appointmentRepository.findAll(spec, pageable)
 
-        return when (currentUser.role) {
+        val content = result.content.map { ap ->
+            when (currentUser.role) {
+                UserRole.DOCTOR -> {
+                    val med = getMedicalCardForDoctorView(ap.patient.id!!, currentUser.id!!)
+                    ap.toDoctorAppointmentResponseDto(med)
+                }
+                UserRole.PATIENT -> ap.toPatientAppointmentResponseDto()
+                UserRole.ADMIN -> ap.toAdminAppointmentResponseDto()
+            }
+        }
 
-            UserRole.DOCTOR ->
-                appointmentRepository
-                    .findAllByDoctorId(currentUser.id!!)
-                    .map { ap ->
-                        val med = getMedicalCardForDoctorView(ap.patient.id!!, currentUser.id!!)
-                        ap.toDoctorAppointmentResponseDto(med)
-                    }
-
-            UserRole.PATIENT ->
-                appointmentRepository
-                    .findAllByPatientId(currentUser.id!!)
-                    .map { it.toPatientAppointmentResponseDto() }
-
-            UserRole.ADMIN ->
-                appointmentRepository
-                    .findAll()
-                    .map { it.toAdminAppointmentResponseDto() }
+        return if (pageable.isPaged) {
+            PagedResponseDto(
+                content = content,
+                page = result.number,
+                size = result.size,
+                hasNext = result.hasNext(),
+                totalElements = result.totalElements,
+                totalPages = result.totalPages
+            )
+        } else {
+            PagedResponseDto(
+                content = content,
+                page = 0,
+                size = content.size,
+                hasNext = false,
+                totalElements = content.size.toLong(),
+                totalPages = 1
+            )
         }
     }
 

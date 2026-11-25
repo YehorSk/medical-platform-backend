@@ -47,5 +47,8 @@ class AppointmentExceptionHandler {
     @ExceptionHandler(InvalidAppointmentStatusException::class)
     fun onInvalidAppointmentStatus(e: InvalidAppointmentStatusException, request: HttpServletRequest) =
         e.toResponse(request)
-}
 
+    @ExceptionHandler(InvalidAppointmentFilterException::class)
+    fun onInvalidAppointmentFilter(e: InvalidAppointmentFilterException, request: HttpServletRequest) =
+        e.toResponse(request)
+}

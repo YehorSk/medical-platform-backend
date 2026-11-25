@@ -3,6 +3,13 @@ package com.yehorsk.medicalplatformbackend.appointments.controller
 import com.yehorsk.medicalplatformbackend.appointments.service.AppointmentService
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.CreateRescheduleAppointmentRequestDto
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.UpdateAppointmentStatusRequestDto
+import com.yehorsk.medicalplatformbackend.appointments.service.dto.request.GetAppointmentsWithFilterDto
+import com.yehorsk.medicalplatformbackend.appointments.exceptions.InvalidAppointmentFilterException
+import com.yehorsk.medicalplatformbackend.auth.service.dto.response.PagedResponseDto
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.web.bind.annotation.RequestParam
 import com.yehorsk.medicalplatformbackend.appointments.service.dto.response.AppointmentResponseDto
 import com.yehorsk.medicalplatformbackend.common.api.config.IpRateLimit
 import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
@@ -74,9 +81,39 @@ class AppointmentController(
     )
     fun getMyAppointments(): ApiResponseWithData<List<AppointmentResponseDto>> {
         return ApiResponseWithData(
-            data = appointmentService.getMyAppointments(),
+            data = appointmentService.getMyAppointments().content,
             message = "Appointments retrieved successfully"
         )
+    }
+
+    // Without `size` all matching appointments are returned; sorting is always by dateTime
+    @PostMapping("/my-appointments/search")
+    @PreAuthorize("isAuthenticated()")
+    @IpRateLimit(
+        requests = 60,
+        duration = 1L,
+        unit = TimeUnit.MINUTES
+    )
+    fun searchMyAppointments(
+        @RequestBody request: GetAppointmentsWithFilterDto,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) size: Int?
+    ): PagedResponseDto<AppointmentResponseDto> {
+        val sort = Sort.by(request.sortDirection, "dateTime")
+        val pageable = if (size == null) {
+            if (page != null) throw InvalidAppointmentFilterException()
+            Pageable.unpaged(sort)
+        } else {
+            if (size !in 1..MAX_PAGE_SIZE || (page != null && page < 0)) {
+                throw InvalidAppointmentFilterException()
+            }
+            PageRequest.of(page ?: 0, size, sort)
+        }
+        return appointmentService.getMyAppointments(request, pageable)
+    }
+
+    private companion object {
+        const val MAX_PAGE_SIZE = 100
     }
 
     @GetMapping("/upcoming")
