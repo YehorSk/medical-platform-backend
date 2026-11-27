@@ -16,6 +16,7 @@ import com.yehorsk.medicalplatformbackend.common.domain.type.AppointmentId
 import com.yehorsk.medicalplatformbackend.common.service.dto.ApiResponseWithData
 import org.springframework.http.ResponseEntity
 import jakarta.validation.Valid
+import org.springframework.data.web.PageableDefault
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -72,18 +73,18 @@ class AppointmentController(
         )
     }
 
-    @GetMapping("/my-appointments")
+    @PostMapping("/search")
     @PreAuthorize("isAuthenticated()")
     @IpRateLimit(
         requests = 60,
         duration = 1L,
         unit = TimeUnit.MINUTES
     )
-    fun getMyAppointments(): ApiResponseWithData<List<AppointmentResponseDto>> {
-        return ApiResponseWithData(
-            data = appointmentService.getMyAppointments().content,
-            message = "Appointments retrieved successfully"
-        )
+    fun getMyAppointments(
+        @RequestBody request: GetAppointmentsWithFilterDto,
+        @PageableDefault(size = 10) pageable: Pageable
+    ): PagedResponseDto<AppointmentResponseDto> {
+        return appointmentService.getMyAppointments(request, pageable)
     }
 
     // Without `size` all matching appointments are returned; sorting is always by dateTime
